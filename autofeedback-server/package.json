@@ -12,12 +12,14 @@
   "license": "ISC",
   "description": "Autofeedback test tool express server application",
   "dependencies": {
+    "@types/mongoose": "^5.11.96",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "openai": "^4.67.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
