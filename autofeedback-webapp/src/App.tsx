@@ -1,25 +1,55 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import MainView from "./views/main.view";
+import {createTheme, CssBaseline, GlobalStyles, makeStyles, ThemeProvider} from "@mui/material";
+import Paper from "@mui/material/Paper";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+        <MainView/>
+    ),
+  }
+]);
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    return (
+      <ThemeProvider theme={darkTheme}>
+          <CssBaseline/>
+          <GlobalStyles
+              styles={{
+                  "::-webkit-scrollbar": {
+                      width: "8px",
+                  },
+                  "::-webkit-scrollbar-track": {
+                      backgroundColor: "rgba(0,0,0,0)",
+                  },
+                  "::-webkit-scrollbar-thumb": {
+                      backgroundColor: "grey",
+                      borderRadius: "10px",
+                  },
+                  "::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#888",
+                  },
+              }}
+          />
+        <Paper
+            className="App"
+            elevation={0}>
+          <RouterProvider router={router}/>
+        </Paper>
+      </ThemeProvider>
   );
 }
 
