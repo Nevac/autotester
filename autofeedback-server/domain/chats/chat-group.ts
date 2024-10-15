@@ -1,5 +1,5 @@
 import Exercise from "../exercises/exercise";
-import ContextPrompt from "../prompts/context-prompt";
+import ContextPrompt from "../prompts/prompts";
 import {model, Schema} from "mongoose";
 
 const chatGroupSchema = new Schema({

@@ -6,7 +6,7 @@ import Chat from "../../chats/chat";
 export default class ChatGptService implements LLMClient {
 
     constructor(
-        public readonly client
+        public readonly client: OpenAI
     ) {
         this.client = new OpenAI({
             apiKey: process.env['API_KEY_CHAT_GPT'], // This is the default and can be omitted
@@ -14,5 +14,6 @@ export default class ChatGptService implements LLMClient {
     }
 
     create(chat: Chat) {
+
     }
 }
