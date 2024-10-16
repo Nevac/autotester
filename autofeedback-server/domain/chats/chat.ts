@@ -1,15 +1,14 @@
-import Model from "../llms/llm";
-import Exercise from "../exercises/exercise";
 import { Schema, model } from 'mongoose';
-import Llm from "../llms/llm";
-import Prompts from "../prompts/prompts";
+import {Exercise, exerciseSchema} from "../exercises/exercise";
+import {PromptGroup, promptGroup} from "../prompts/promptGroup";
+import {Llm, llmSchema} from "../llms/llm";
 
-interface Chat {
+export interface Chat {
     name: String,
     chatGroupId: String,
     model: Llm,
     exercise: Exercise,
-    prompts: Prompts,
+    prompts: PromptGroup,
     attempt: String,
     feedback: String
 }
@@ -17,13 +16,11 @@ interface Chat {
 const chatSchema = new Schema<Chat>({
     name: { type: String, required: true },
     chatGroupId: { type: String, required: true },
-    model: { type: Model, required: true },
-    exercise: { type: Exercise, required: true },
-    prompts: { type: Prompts, required: true },
+    model: { type: llmSchema, required: true },
+    exercise: { type: exerciseSchema, required: true },
+    prompts: { type: promptGroup, required: true },
     attempt: { type: String, required: true },
     feedback: { type: String, required: true },
 });
 
-const Chat = model<Chat>('Chat', chatSchema);
-
-export default Chat;
+export const ChatModel = model<Chat>('Chat', chatSchema);

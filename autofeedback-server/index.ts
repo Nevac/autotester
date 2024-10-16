@@ -1,22 +1,28 @@
 import express, { Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import * as mongoose from "mongoose";
+import ChatGroupResource from "./domain/chats/group/chat-group-resource";
+import cors from 'cors'
 
 //For env File
 dotenv.config();
 
-const index: Application = express();
+const app: Application = express();
 const port = process.env.PORT || 8000;
+app.use(cors())
+app.use(express.json())
 connectDB().catch(err => console.log(err));
 
-index.get('/', (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to Express & TypeScript Server');
 });
 
-index.listen(port, () => {
+app.listen(port, () => {
     console.log(`Server is Fire at http://localhost:${port}`);
 });
 
 async function connectDB() {
     await mongoose.connect("" + process.env.DB_URL)
 }
+
+const chatResource = new ChatGroupResource(app);

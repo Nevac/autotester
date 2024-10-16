@@ -1,15 +1,13 @@
 import {model, Schema} from "mongoose";
 
-interface Llm {
+export interface Llm {
     name: String,
     logoUrl: String,
 }
 
-const llmSchema = new Schema<Llm>({
+export const llmSchema = new Schema<Llm>({
     name: { type: String, required: true },
     logoUrl: { type: String, required: true },
 });
 
-const Llm = model<Llm>('Llm', llmSchema);
-
-export default Llm;
+export const LlmModel = model<Llm>('Llm', llmSchema);
