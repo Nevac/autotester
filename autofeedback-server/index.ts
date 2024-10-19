@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import * as mongoose from "mongoose";
 import ChatGroupResource from "./domain/chats/group/chat-group-resource";
 import cors from 'cors'
+import ExerciseResource from "./domain/exercises/exercise-resource";
+import PromptGroupResource from "./domain/prompts/prompt-group-resource";
 
 //For env File
 dotenv.config();
@@ -26,3 +28,5 @@ async function connectDB() {
 }
 
 const chatResource = new ChatGroupResource(app);
+const exerciseResource = new ExerciseResource(app);
+const promptGroupResource = new PromptGroupResource(app);
