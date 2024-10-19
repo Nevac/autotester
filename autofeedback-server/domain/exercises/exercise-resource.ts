@@ -1,18 +1,18 @@
 import {Application} from "express";
-import ChatGroupUpdateDto from "./chat-group-update-dto";
 import { Request } from 'express';
-import ChatGroupService from "./chat-group-service";
+import ExerciseService from "./exercise-service";
+import ExerciseUpdate from "./exercise-update";
 import {coerceBoolean} from "openai/core";
 
-export default class ChatGroupResource {
+export default class ExerciseResource {
 
-    private readonly service: ChatGroupService
-    private readonly RESOURCE: string = 'chat-group'
+    private readonly service: ExerciseService
+    private readonly RESOURCE: string = 'exercise'
 
     constructor(
         private readonly app: Application,
     ) {
-        this.service = new ChatGroupService();
+        this.service = new ExerciseService();
 
         app.get(`/${this.RESOURCE}`, (req, res) => {
             const populate = req.query.populate ? coerceBoolean(req.query.populate as string) : false;
@@ -33,12 +33,20 @@ export default class ChatGroupResource {
             }
         })
 
-        app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, ChatGroupUpdateDto>, res) => {
+        app.get(`/${this.RESOURCE}/:id`, (req, res) => {
+            this.service.getById(req.params.id).then(
+                exercise => {
+                    res.json(exercise)
+                }
+            );
+        })
+
+        app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, ExerciseUpdate>, res) => {
             this.service.create(
                 req.body
-            ).then(chatGroup =>
-                res.json(chatGroup)
-            )
+            ).then(exercise =>
+                res.json(exercise)
+            );
         })
     }
 }

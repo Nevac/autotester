@@ -1,14 +1,14 @@
 import { Schema, model } from 'mongoose';
-import {Exercise, exerciseSchema} from "../exercises/exercise";
-import {PromptGroup, promptGroup} from "../prompts/promptGroup";
+import {IExercise, exerciseSchema} from "../exercises/exercise";
+import {IPromptGroup, promptGroup} from "../prompts/promptGroup";
 import {Llm, llmSchema} from "../llms/llm";
 
 export interface Chat {
     name: String,
     chatGroupId: String,
     model: Llm,
-    exercise: Exercise,
-    prompts: PromptGroup,
+    exercise: IExercise,
+    prompts: IPromptGroup,
     attempt: String,
     feedback: String
 }
