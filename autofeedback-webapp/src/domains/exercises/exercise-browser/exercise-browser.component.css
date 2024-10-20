@@ -1,0 +1,9 @@
+.chat-browser-paper {
+    padding: 0;
+    flex: 1;
+    overflow: auto;
+}
+.chat-browser-header {
+    display: flex;
+    align-items: center;
+}

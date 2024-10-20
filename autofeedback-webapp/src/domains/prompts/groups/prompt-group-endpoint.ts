@@ -1,23 +1,20 @@
-import ChatGroupListItem from "./chat-group-list-item";
+import PromptGroupListItem from "./prompt-group-list-item";
+import PromptGroupUpdate from "./prompt-group-update";
 import {EndpointCreationStatus} from "../../util/EndpointCreationStatus";
-import ChatGroupUpdate from "./chat-group-update";
 
-export default class ChatGroupEndpoint {
+export default class PromptGroupEndpoint {
 
-    private readonly RESOURCE_NAME: string = 'chat-group'
+    private readonly RESOURCE_NAME: string = 'prompt-group'
     private readonly ENDPOINT = `${process.env.REACT_APP_API}/${this.RESOURCE_NAME}`
 
-    constructor() {
-    }
-
-    public getListItems(): Promise<ChatGroupListItem[]> {
+    public getListItems(): Promise<PromptGroupListItem[]> {
         return fetch(this.ENDPOINT)
             .then((res) => {
                 return res.json();
             })
     }
 
-    public create(chat: ChatGroupUpdate): Promise<EndpointCreationStatus> {
+    public create(chat: PromptGroupUpdate): Promise<EndpointCreationStatus> {
         console.log(chat);
         return fetch(this.ENDPOINT, {
             method: "POST",

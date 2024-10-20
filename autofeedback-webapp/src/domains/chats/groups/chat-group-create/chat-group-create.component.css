@@ -1,0 +1,17 @@
+.chat-create-modal-paper {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    flex: 1;
+}
+
+.chat-create-modal-text-area-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+}
+
+.chat-create-modal-text-area {
+    width: 100%;
+}

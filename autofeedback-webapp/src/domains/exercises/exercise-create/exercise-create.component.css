@@ -1,15 +1,8 @@
-.chat-create-modal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 50px;
-}
-
 .chat-create-modal-paper {
-    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 50px;
+    flex: 1;
 }
 
 .chat-create-modal-text-area-container {
@@ -20,5 +13,5 @@
 }
 
 .chat-create-modal-text-area {
-    width: 800px;
+    width: 100%;
 }

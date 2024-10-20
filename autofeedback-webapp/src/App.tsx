@@ -4,18 +4,9 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import MainView from "./views/main.view";
+import MainView from "./views/main/main.view";
 import {createTheme, CssBaseline, GlobalStyles, makeStyles, ThemeProvider} from "@mui/material";
 import Paper from "@mui/material/Paper";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-        <MainView/>
-    ),
-  }
-]);
 
 const darkTheme = createTheme({
   palette: {
@@ -47,7 +38,7 @@ function App() {
         <Paper
             className="App"
             elevation={0}>
-          <RouterProvider router={router}/>
+            <MainView/>
         </Paper>
       </ThemeProvider>
   );
