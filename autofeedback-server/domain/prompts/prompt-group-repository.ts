@@ -1,6 +1,8 @@
 import PromptGroupListEntry from "./prompt-group-list-entry";
 import PromptGroup, {PromptGroupModel} from "./promptGroup";
 import PromptGroupUpdate from "./prompt-group-update";
+import ExerciseUpdate from "../exercises/exercise-update";
+import {Exercise, ExerciseModel} from "../exercises/exercise";
 
 export default class PromptGroupRepository {
 
@@ -39,4 +41,17 @@ export default class PromptGroupRepository {
             return PromptGroup.ofDocument(document)
         })
     }
+
+    public async update(id: string, update: PromptGroupUpdate): Promise<PromptGroup> {
+        return await PromptGroupModel.updateOne(
+            {_id: id},
+            update
+        )
+            .exec()
+            .then(document => {
+                return this.getById(id)
+            })
+    }
+
+
 }

@@ -2,6 +2,8 @@ import PromptGroupRepository from "./prompt-group-repository";
 import PromptGroupUpdate from "./prompt-group-update";
 import PromptGroupListEntry from "./prompt-group-list-entry";
 import PromptGroup from "./promptGroup";
+import ExerciseUpdate from "../exercises/exercise-update";
+import {Exercise} from "../exercises/exercise";
 
 export default class PromptGroupService {
 
@@ -26,5 +28,9 @@ export default class PromptGroupService {
 
     public async create(promptGroupUpdate: PromptGroupUpdate): Promise<PromptGroup> {
         return await this.repository.create(promptGroupUpdate);
+    }
+
+    public async update(id: string, update: PromptGroupUpdate): Promise<PromptGroup> {
+        return await this.repository.update(id, update);
     }
 }

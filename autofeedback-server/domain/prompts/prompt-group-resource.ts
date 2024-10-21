@@ -3,6 +3,7 @@ import { Request } from 'express';
 import PromptGroupService from "./prompt-group-service";
 import PromptGroupUpdate from "./prompt-group-update";
 import {coerceBoolean} from "openai/core";
+import ExerciseUpdate from "../exercises/exercise-update";
 
 export default class PromptGroupResource {
 
@@ -43,6 +44,15 @@ export default class PromptGroupResource {
 
         app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, PromptGroupUpdate>, res) => {
             this.service.create(
+                req.body
+            ).then(exercise =>
+                res.json(exercise)
+            );
+        })
+
+        app.put(`/${this.RESOURCE}/:id`, (req: Request<{id: string}, {}, PromptGroupUpdate>, res) => {
+            this.service.update(
+                req.params.id,
                 req.body
             ).then(exercise =>
                 res.json(exercise)

@@ -40,4 +40,15 @@ export default class ExerciseRepository {
             return Exercise.ofDocument(document)
         })
     }
+
+    public async update(id: string, exercise: ExerciseUpdate): Promise<Exercise> {
+        return await ExerciseModel.updateOne(
+            {_id: id},
+            exercise
+        )
+            .exec()
+            .then(document => {
+                return this.getById(id)
+            })
+    }
 }

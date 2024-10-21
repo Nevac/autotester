@@ -27,4 +27,8 @@ export default class ExerciseService {
     public async create(exercise: ExerciseUpdate): Promise<IExercise> {
         return await this.repository.create(exercise);
     }
+
+    public async update(id: string, update: ExerciseUpdate): Promise<Exercise> {
+        return await this.repository.update(id, update);
+    }
 }

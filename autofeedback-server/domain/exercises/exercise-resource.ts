@@ -48,5 +48,14 @@ export default class ExerciseResource {
                 res.json(exercise)
             );
         })
+
+        app.put(`/${this.RESOURCE}/:id`, (req: Request<{id: string}, {}, ExerciseUpdate>, res) => {
+            this.service.update(
+                req.params.id,
+                req.body
+            ).then(exercise =>
+                res.json(exercise)
+            );
+        })
     }
 }
