@@ -50,7 +50,7 @@ export default function PromptGroupBrowserComponent() {
                 {items.map(item =>
                     <ListItem disablePadding key={item._id}>
                         <Divider/>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate(Routes.promptGroupEdit(item._id))}>
                             <ListItemText primary={item.name}/>
                         </ListItemButton>
                     </ListItem>

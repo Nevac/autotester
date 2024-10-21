@@ -52,7 +52,7 @@ export default function ExerciseBrowserComponent() {
                 {entries.map(item =>
                     <ListItem disablePadding key={item._id}>
                         <Divider/>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate(Routes.exerciseEdit(item._id))}>
                             <ListItemText primary={item.name}/>
                         </ListItemButton>
                     </ListItem>

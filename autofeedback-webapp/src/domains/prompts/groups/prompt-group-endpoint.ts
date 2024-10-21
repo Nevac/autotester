@@ -1,6 +1,8 @@
 import PromptGroupListItem from "./prompt-group-list-item";
 import PromptGroupUpdate from "./prompt-group-update";
 import {EndpointCreationStatus} from "../../util/EndpointCreationStatus";
+import Exercise from "../../exercises/exercise";
+import PromptGroup from "./prompt-group";
 
 export default class PromptGroupEndpoint {
 
@@ -14,19 +16,38 @@ export default class PromptGroupEndpoint {
             })
     }
 
-    public create(chat: PromptGroupUpdate): Promise<EndpointCreationStatus> {
-        console.log(chat);
+    public getById(id: string): Promise<PromptGroup> {
+        return fetch(`${this.ENDPOINT}/${id}`)
+            .then(res => {
+                return res.json();
+            });
+    }
+
+    public create(promptGroupUpdate: PromptGroupUpdate): Promise<EndpointCreationStatus> {
         return fetch(this.ENDPOINT, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(chat)
+            body: JSON.stringify(promptGroupUpdate)
         }).then(res => {
             if(res.ok) return EndpointCreationStatus.SUCCESS
             return EndpointCreationStatus.FAIL;
         })
     }
 
+    public update(id: string, promptGroupUpdate: PromptGroupUpdate): Promise<EndpointCreationStatus> {
+        return fetch(`${this.ENDPOINT}/${id}`, {
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(promptGroupUpdate)
+        }).then(res => {
+            if(res.ok) return EndpointCreationStatus.SUCCESS
+            return EndpointCreationStatus.FAIL;
+        })
+    }
 }

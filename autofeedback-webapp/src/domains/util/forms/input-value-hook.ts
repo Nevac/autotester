@@ -1,10 +1,12 @@
 import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
 
 type InputEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
+type InputType<T> = T | undefined;
 
 export interface InputValue<T> {
-    value: T,
-    setValue: Dispatch<SetStateAction<T>>,
+    value: InputType<T>,
+    valueOrThrow: () => T,
+    setValue: Dispatch<SetStateAction<InputType<T>>>,
     error: boolean,
     setError: Dispatch<SetStateAction<boolean>>,
     handleChange: (e: InputEvent) => void
@@ -15,9 +17,9 @@ interface InputOptions<T> {
     regex?: string
 }
 
-export default function useInputValue<T>(initValue: T, options?: InputOptions<T>): InputValue<T>
+export default function useInputValue<T>(initValue: InputType<T>, options?: InputOptions<T>): InputValue<T>
 {
-    const [value, setValue] = useState<T>(initValue);
+    const [value, setValue] = useState<InputType<T>>(initValue);
     const [error, setError] = useState<boolean>(true);
 
     useEffect(() => {
@@ -28,8 +30,14 @@ export default function useInputValue<T>(initValue: T, options?: InputOptions<T>
         setValue(e.target.value as T);
     }
 
+    const valueOrThrow = () => {
+        if(value) return value;
+        else throw "Input value is undefined";
+    }
+
     return {
         value,
+        valueOrThrow,
         setValue,
         error,
         setError,
@@ -37,7 +45,7 @@ export default function useInputValue<T>(initValue: T, options?: InputOptions<T>
     }
 
 
-    function checkValidation(value: T, options? : InputOptions<T>): void {
+    function checkValidation(value: InputType<T>, options? : InputOptions<T>): void {
         let isValid = true;
         if(options) {
             if(options.required) {
