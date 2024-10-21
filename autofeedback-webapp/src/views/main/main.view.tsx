@@ -23,6 +23,7 @@ export default function MainView() {
                     <RoutesComponent>
                         <Route path={Routes.CHAT_CREATE} element={<ChatGroupCreateComponent/>}/>
                         <Route path={Routes.CHAT_DETAILS} element={<ChatGroupDetailComponent/>}/>
+                        <Route path={Routes.CHAT_DETAIL} element={<ChatGroupDetailComponent/>}/>
                         <Route path={Routes.EXERCISE_CREATE} element={<ExerciseCreateComponent/>}/>
                         <Route path={Routes.EXERCISE_EDIT} element={<ExerciseEditComponent/>}/>
                         <Route path={Routes.PROMPT_GROUP_CREATE} element={<PromptGroupCreateComponent/>}/>

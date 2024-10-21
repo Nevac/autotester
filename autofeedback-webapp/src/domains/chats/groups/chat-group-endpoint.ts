@@ -1,5 +1,5 @@
 import ChatGroupListItem from "./chat-group-list-item";
-import {EndpointCreationStatus} from "../../util/EndpointCreationStatus";
+import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import ChatGroupUpdate from "./chat-group-update";
 
 export default class ChatGroupEndpoint {
@@ -17,7 +17,7 @@ export default class ChatGroupEndpoint {
             })
     }
 
-    public create(chat: ChatGroupUpdate): Promise<EndpointCreationStatus> {
+    public create(chat: ChatGroupUpdate): Promise<EndpointResponeStatus> {
         console.log(chat);
         return fetch(this.ENDPOINT, {
             method: "POST",
@@ -27,9 +27,18 @@ export default class ChatGroupEndpoint {
             },
             body: JSON.stringify(chat)
         }).then(res => {
-            if(res.ok) return EndpointCreationStatus.SUCCESS
-            return EndpointCreationStatus.FAIL;
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
         })
     }
 
+    public delete(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}`, {
+            method: "DELETE"
+        })
+            .then(res => {
+                if(res.ok) return EndpointResponeStatus.SUCCESS
+                return EndpointResponeStatus.FAIL;
+            });
+    }
 }

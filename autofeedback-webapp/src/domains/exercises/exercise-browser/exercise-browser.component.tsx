@@ -14,6 +14,8 @@ import ExerciseListItem from "../exercise-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import Routes from "../../routes/routes";
 import {useNavigate} from "react-router-dom";
+import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
+import DeleteConfirmButtonComponent from "../../util/delete-confirm-button/delete-confirm-button.component";
 
 
 export default function ExerciseBrowserComponent() {
@@ -37,6 +39,14 @@ export default function ExerciseBrowserComponent() {
             )
     }, []);
 
+    const deleteItem = (id: string) => {
+        endpoint.delete(id)
+            .then(state => {
+                if(state === EndpointResponeStatus.SUCCESS) openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
+            });
+    }
+
     return (
         <>
             <Snackbar/>
@@ -50,12 +60,16 @@ export default function ExerciseBrowserComponent() {
                 }
             >
                 {entries.map(item =>
-                    <ListItem disablePadding key={item._id}>
+                    <>
+                        <ListItem disablePadding key={item._id}>
+                            <Divider/>
+                            <ListItemButton onClick={() => navigate(Routes.exerciseEdit(item._id))}>
+                                <ListItemText primary={item.name}/>
+                                <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
+                            </ListItemButton>
+                        </ListItem>
                         <Divider/>
-                        <ListItemButton onClick={() => navigate(Routes.exerciseEdit(item._id))}>
-                            <ListItemText primary={item.name}/>
-                        </ListItemButton>
-                    </ListItem>
+                    </>
                 ) }
             </List>
         </>

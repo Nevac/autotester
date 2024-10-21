@@ -7,6 +7,8 @@ import {Add} from '@mui/icons-material';
 import {useNavigate} from "react-router-dom";
 import Routes from "../../../routes/routes";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
+import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
+import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 
 
 export default function ChatGroupBrowserComponent() {
@@ -31,6 +33,14 @@ export default function ChatGroupBrowserComponent() {
             )
     }, []);
 
+    const deleteItem = (id: string) => {
+        endpoint.delete(id)
+            .then(state => {
+                if(state === EndpointResponeStatus.SUCCESS) openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
+            });
+    }
+
     return (
         <>
             <Snackbar/>
@@ -44,12 +54,16 @@ export default function ChatGroupBrowserComponent() {
                 }
             >
                 {items.map(item =>
-                    <ListItem disablePadding key={item._id}>
+                    <>
+                        <ListItem disablePadding key={item._id}>
+                            <Divider/>
+                            <ListItemButton>
+                                <ListItemText primary={item.name}/>
+                                <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
+                            </ListItemButton>
+                        </ListItem>
                         <Divider/>
-                        <ListItemButton>
-                            <ListItemText primary={item.name}/>
-                        </ListItemButton>
-                    </ListItem>
+                    </>
                 ) }
             </List>
         </>

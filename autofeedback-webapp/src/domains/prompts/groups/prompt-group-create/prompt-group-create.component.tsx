@@ -3,7 +3,7 @@ import PaperDefaultComponent from "../../../util/paper/paper-default.component";
 import {Divider, Typography} from "@mui/material";
 import PromptGroupFormComponent from "../prompt-group-form/prompt-group-form.component";
 import PromptGroupUpdate from "../prompt-group-update";
-import {EndpointCreationStatus} from "../../../util/EndpointCreationStatus";
+import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import PromptGroupEndpoint from "../prompt-group-endpoint";
 
@@ -16,7 +16,7 @@ export default function PromptGroupCreateComponent() {
         promptGroupEndpoint.create(
             update
         ).then(state =>
-            state == EndpointCreationStatus.SUCCESS ?
+            state == EndpointResponeStatus.SUCCESS ?
                 openSnackbar("Exercise created successfully", SnackbarVariant.SUCCESS) :
                 openSnackbar("Failed to create exercise", SnackbarVariant.ERROR)
         )

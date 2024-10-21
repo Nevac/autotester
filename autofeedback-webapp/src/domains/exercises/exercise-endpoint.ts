@@ -1,6 +1,6 @@
 import ExerciseListItem from "./exercise-list-item";
 import ExerciseUpdate from "./exercise-update";
-import {EndpointCreationStatus} from "../util/EndpointCreationStatus";
+import {EndpointResponeStatus} from "../util/EndpointResponeStatus";
 import Exercise from "./exercise";
 
 export default class ExerciseEndpoint {
@@ -22,7 +22,7 @@ export default class ExerciseEndpoint {
             });
     }
 
-    public create(exerciseUpdate: ExerciseUpdate): Promise<EndpointCreationStatus> {
+    public create(exerciseUpdate: ExerciseUpdate): Promise<EndpointResponeStatus> {
         return fetch(this.ENDPOINT, {
             method: "POST",
             headers: {
@@ -31,12 +31,12 @@ export default class ExerciseEndpoint {
             },
             body: JSON.stringify(exerciseUpdate)
         }).then(res => {
-            if(res.ok) return EndpointCreationStatus.SUCCESS
-            return EndpointCreationStatus.FAIL;
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
         });
     }
 
-    public update(id: string, exerciseUpdate: ExerciseUpdate): Promise<EndpointCreationStatus> {
+    public update(id: string, exerciseUpdate: ExerciseUpdate): Promise<EndpointResponeStatus> {
         return fetch(`${this.ENDPOINT}/${id}`, {
             method: "PUT",
             headers: {
@@ -45,8 +45,18 @@ export default class ExerciseEndpoint {
             },
             body: JSON.stringify(exerciseUpdate)
         }).then(res => {
-            if(res.ok) return EndpointCreationStatus.SUCCESS
-            return EndpointCreationStatus.FAIL;
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
         })
+    }
+
+    public delete(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}`, {
+            method: "DELETE"
+        })
+        .then(res => {
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
+        });
     }
 }

@@ -8,7 +8,7 @@ import PromptGroupEndpoint from "../prompt-group-endpoint";
 import PromptGroup from "../prompt-group";
 import PromptGroupFormComponent from "../prompt-group-form/prompt-group-form.component";
 import PromptGroupUpdate from "../prompt-group-update";
-import {EndpointCreationStatus} from "../../../util/EndpointCreationStatus";
+import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 
 export default function PromptGroupEditComponent() {
     let { id } = useParams();
@@ -33,7 +33,7 @@ export default function PromptGroupEditComponent() {
             id!,
             update
         ).then(state =>
-            state == EndpointCreationStatus.SUCCESS ?
+            state == EndpointResponeStatus.SUCCESS ?
                 openSnackbar("Exercise created successfully", SnackbarVariant.SUCCESS) :
                 openSnackbar("Failed to create exercise", SnackbarVariant.ERROR)
         )

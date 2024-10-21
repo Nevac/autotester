@@ -1,6 +1,6 @@
 import PromptGroupListItem from "./prompt-group-list-item";
 import PromptGroupUpdate from "./prompt-group-update";
-import {EndpointCreationStatus} from "../../util/EndpointCreationStatus";
+import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import Exercise from "../../exercises/exercise";
 import PromptGroup from "./prompt-group";
 
@@ -23,7 +23,7 @@ export default class PromptGroupEndpoint {
             });
     }
 
-    public create(promptGroupUpdate: PromptGroupUpdate): Promise<EndpointCreationStatus> {
+    public create(promptGroupUpdate: PromptGroupUpdate): Promise<EndpointResponeStatus> {
         return fetch(this.ENDPOINT, {
             method: "POST",
             headers: {
@@ -32,12 +32,12 @@ export default class PromptGroupEndpoint {
             },
             body: JSON.stringify(promptGroupUpdate)
         }).then(res => {
-            if(res.ok) return EndpointCreationStatus.SUCCESS
-            return EndpointCreationStatus.FAIL;
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
         })
     }
 
-    public update(id: string, promptGroupUpdate: PromptGroupUpdate): Promise<EndpointCreationStatus> {
+    public update(id: string, promptGroupUpdate: PromptGroupUpdate): Promise<EndpointResponeStatus> {
         return fetch(`${this.ENDPOINT}/${id}`, {
             method: "PUT",
             headers: {
@@ -46,8 +46,18 @@ export default class PromptGroupEndpoint {
             },
             body: JSON.stringify(promptGroupUpdate)
         }).then(res => {
-            if(res.ok) return EndpointCreationStatus.SUCCESS
-            return EndpointCreationStatus.FAIL;
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
         })
+    }
+
+    public delete(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}`, {
+            method: "DELETE"
+        })
+            .then(res => {
+                if(res.ok) return EndpointResponeStatus.SUCCESS
+                return EndpointResponeStatus.FAIL;
+            });
     }
 }

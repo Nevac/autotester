@@ -9,7 +9,7 @@ import {
 import {useEffect, useState} from "react";
 import ChatGroupEndpoint from "../chat-group-endpoint";
 import ChatGroupUpdate from "../chat-group-update";
-import {EndpointCreationStatus} from "../../../util/EndpointCreationStatus";
+import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import PaperDefaultComponent from "../../../util/paper/paper-default.component";
 import ExerciseEndpoint from "../../../exercises/exercise-endpoint";
 import PromptGroupEndpoint from "../../../prompts/groups/prompt-group-endpoint";
@@ -74,7 +74,7 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
                 attemptInput.valueOrThrow()
             )
         ).then(state =>
-            state == EndpointCreationStatus.SUCCESS ?
+            state == EndpointResponeStatus.SUCCESS ?
                 openSnackbar("Chat created successfully", SnackbarVariant.SUCCESS) :
                 openSnackbar("Failed to create chat", SnackbarVariant.ERROR)
         )
