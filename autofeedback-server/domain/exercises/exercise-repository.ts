@@ -51,4 +51,14 @@ export default class ExerciseRepository {
                 return this.getById(id)
             })
     }
+
+    public async delete(id: string): Promise<boolean> {
+        return await ExerciseModel.deleteOne(
+            {_id: id}
+        )
+            .exec()
+            .then(document => {
+                return document.acknowledged;
+            })
+    }
 }

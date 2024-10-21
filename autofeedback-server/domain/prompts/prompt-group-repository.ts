@@ -53,5 +53,13 @@ export default class PromptGroupRepository {
             })
     }
 
-
+    public async delete(id: string): Promise<boolean> {
+        return await PromptGroupModel.deleteOne(
+            {_id: id}
+        )
+            .exec()
+            .then(document => {
+                return document.acknowledged;
+            })
+    }
 }

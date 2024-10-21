@@ -31,7 +31,7 @@ export default class ChatGroupResource {
                     }
                 );
             }
-        })
+        });
 
         app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, ChatGroupUpdateDto>, res) => {
             this.service.create(
@@ -39,6 +39,15 @@ export default class ChatGroupResource {
             ).then(chatGroup =>
                 res.json(chatGroup)
             )
-        })
+        });
+
+        app.delete(`/${this.RESOURCE}/:id`, (req, res) => {
+            this.service.delete(req.params.id).then(
+                deleted => {
+                    if(deleted) res.sendStatus(200);
+                    else res.sendStatus(409);
+                }
+            );
+        });
     }
 }

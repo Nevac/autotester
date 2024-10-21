@@ -33,4 +33,8 @@ export default class PromptGroupService {
     public async update(id: string, update: PromptGroupUpdate): Promise<PromptGroup> {
         return await this.repository.update(id, update);
     }
+
+    public async delete(id: string): Promise<boolean> {
+        return await this.repository.delete(id);
+    }
 }

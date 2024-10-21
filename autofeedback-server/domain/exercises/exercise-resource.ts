@@ -31,7 +31,7 @@ export default class ExerciseResource {
                     }
                 );
             }
-        })
+        });
 
         app.get(`/${this.RESOURCE}/:id`, (req, res) => {
             this.service.getById(req.params.id).then(
@@ -39,7 +39,7 @@ export default class ExerciseResource {
                     res.json(exercise)
                 }
             );
-        })
+        });
 
         app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, ExerciseUpdate>, res) => {
             this.service.create(
@@ -47,7 +47,7 @@ export default class ExerciseResource {
             ).then(exercise =>
                 res.json(exercise)
             );
-        })
+        });
 
         app.put(`/${this.RESOURCE}/:id`, (req: Request<{id: string}, {}, ExerciseUpdate>, res) => {
             this.service.update(
@@ -56,6 +56,15 @@ export default class ExerciseResource {
             ).then(exercise =>
                 res.json(exercise)
             );
-        })
+        });
+
+        app.delete(`/${this.RESOURCE}/:id`, (req, res) => {
+            this.service.delete(req.params.id).then(
+                deleted => {
+                    if(deleted) res.sendStatus(200);
+                    else res.sendStatus(409);
+                }
+            );
+        });
     }
 }

@@ -31,4 +31,8 @@ export default class ExerciseService {
     public async update(id: string, update: ExerciseUpdate): Promise<Exercise> {
         return await this.repository.update(id, update);
     }
+
+    public async delete(id: string): Promise<boolean> {
+        return await this.repository.delete(id);
+    }
 }

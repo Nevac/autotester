@@ -36,4 +36,14 @@ export default class ChatGroupRepository {
             ChatGroup.ofDocument(document)
         )
     }
+
+    public async delete(id: string): Promise<boolean> {
+        return await ChatGroupModel.deleteOne(
+            {_id: id}
+        )
+            .exec()
+            .then(document => {
+                return document.acknowledged;
+            })
+    }
 }

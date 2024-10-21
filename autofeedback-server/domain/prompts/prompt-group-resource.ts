@@ -32,7 +32,7 @@ export default class PromptGroupResource {
                     }
                 );
             }
-        })
+        });
 
         app.get(`/${this.RESOURCE}/:id`, (req, res) => {
             this.service.getById(req.params.id).then(
@@ -40,7 +40,7 @@ export default class PromptGroupResource {
                     res.json(exercise)
                 }
             );
-        })
+        });
 
         app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, PromptGroupUpdate>, res) => {
             this.service.create(
@@ -48,7 +48,7 @@ export default class PromptGroupResource {
             ).then(exercise =>
                 res.json(exercise)
             );
-        })
+        });
 
         app.put(`/${this.RESOURCE}/:id`, (req: Request<{id: string}, {}, PromptGroupUpdate>, res) => {
             this.service.update(
@@ -57,6 +57,15 @@ export default class PromptGroupResource {
             ).then(exercise =>
                 res.json(exercise)
             );
-        })
+        });
+
+        app.delete(`/${this.RESOURCE}/:id`, (req, res) => {
+            this.service.delete(req.params.id).then(
+                deleted => {
+                    if(deleted) res.sendStatus(200);
+                    else res.sendStatus(409);
+                }
+            );
+        });
     }
 }
