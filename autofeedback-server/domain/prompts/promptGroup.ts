@@ -33,7 +33,7 @@ export default class PromptGroup implements IPromptGroup, Entity {
 export const promptGroup = new Schema<IPromptGroup>(
     {
         name: { type: String, required: true },
-        prompts: [{ type: [String]}]
+        prompts: {type: [String]}
     },
     {
         timestamps: true
