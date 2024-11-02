@@ -6,7 +6,7 @@ import ExerciseEndpoint from "../exercise-endpoint";
 import ExerciseListItem from "../exercise-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import Routes from "../../routes/routes";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import DeleteConfirmButtonComponent from "../../util/delete-confirm-button/delete-confirm-button.component";
 import {useAppSelector} from "../../../app/redux-hooks";
@@ -41,6 +41,15 @@ export default function ExerciseBrowserComponent() {
     useEffect(loadExercises, []);
     useEffect(loadExercises, [exercisesChanged]);
 
+    const location = useLocation();
+    const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        setSelectedItem(
+            location.pathname.split("/")[2]
+        );
+    }, [location]);
+
     const deleteItem = (id: string) => {
         endpoint.delete(id)
             .then(state => {
@@ -65,9 +74,11 @@ export default function ExerciseBrowserComponent() {
             >
                 {entries.map(item =>
                     <div key={item._id}>
-                        <ListItem disablePadding >
+                        <ListItem disablePadding>
                             <Divider/>
-                            <ListItemButton onClick={() => navigate(Routes.exerciseEdit(item._id))}>
+                            <ListItemButton
+                                selected={item._id === selectedItem}
+                                onClick={() => navigate(Routes.exerciseEdit(item._id))}>
                                 <ListItemText primary={item.name}/>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

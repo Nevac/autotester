@@ -12,7 +12,7 @@ import {Add} from '@mui/icons-material';
 import PromptGroupEndpoint from "../prompt-group-endpoint";
 import PromptGroupListItem from "../prompt-group-list-item";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import Routes from "../../../routes/routes";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
@@ -48,6 +48,15 @@ export default function PromptGroupBrowserComponent() {
     useEffect(loadPromptGroups, []);
     useEffect(loadPromptGroups, [promptGroupsChanged]);
 
+    const location = useLocation();
+    const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        setSelectedItem(
+            location.pathname.split("/")[2]
+        );
+    }, [location]);
+
     const deleteItem = (id: string) => {
         endpoint.delete(id)
             .then(state => {
@@ -74,7 +83,8 @@ export default function PromptGroupBrowserComponent() {
                 {items.map(item =>
                     <>
                         <ListItem disablePadding key={item._id}>
-                            <ListItemButton onClick={() => navigate(Routes.promptGroupEdit(item._id))}>
+                            <ListItemButton selected={item._id === selectedItem}
+                                            onClick={() => navigate(Routes.promptGroupEdit(item._id))}>
                                 <ListItemText primary={item.name}/>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import ChatGroupListItem from "../chat-group-list-item";
 import ChatGroupEndpoint from "../chat-group-endpoint";
 import {Add} from '@mui/icons-material';
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import Routes from "../../../routes/routes";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
@@ -42,6 +42,15 @@ export default function ChatGroupBrowserComponent() {
     useEffect(loadChatGroups, []);
     useEffect(loadChatGroups, [exercisesChanged]);
 
+    const location = useLocation();
+    const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        setSelectedItem(
+            location.pathname.split("/")[2]
+        );
+    }, [location]);
+
     const deleteItem = (id: string) => {
         endpoint.delete(id)
             .then(state => {
@@ -68,7 +77,7 @@ export default function ChatGroupBrowserComponent() {
                     <div key={item._id}>
                         <ListItem disablePadding >
                             <Divider/>
-                            <ListItemButton>
+                            <ListItemButton selected={item._id === selectedItem}>
                                 <ListItemText primary={item.name}/>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>
