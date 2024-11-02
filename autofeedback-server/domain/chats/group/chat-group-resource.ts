@@ -14,40 +14,28 @@ export default class ChatGroupResource {
     ) {
         this.service = new ChatGroupService();
 
-        app.get(`/${this.RESOURCE}`, (req, res) => {
+        app.get(`/${this.RESOURCE}`, async (req, res, next) => {
             const populate = req.query.populate ? coerceBoolean(req.query.populate as string) : false;
 
             if(populate) {
-                this.service.getAll().then(
-                    list => {
-                        res.json(list)
-                    }
-                );
+                const list = await this.service.getAll().catch(next);
+                res.json(list);
             }
             else {
-                this.service.getAllListEntries().then(
-                    list => {
-                        res.json(list)
-                    }
-                );
+                const list = await this.service.getAllListEntries().catch(next);
+                res.json(list);
             }
         });
 
-        app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, ChatGroupUpdateDto>, res) => {
-            this.service.create(
-                req.body
-            ).then(chatGroup =>
-                res.json(chatGroup)
-            )
+        app.post(`/${this.RESOURCE}`, async (req, res, next) => {
+            const chatGroup = await this.service.create(req.body).catch(next);
+            res.json(chatGroup);
         });
 
-        app.delete(`/${this.RESOURCE}/:id`, (req, res) => {
-            this.service.delete(req.params.id).then(
-                deleted => {
-                    if(deleted) res.sendStatus(200);
-                    else res.sendStatus(409);
-                }
-            );
+        app.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            const deleted = await this.service.delete(req.params.id).catch(next);
+            if(deleted) res.sendStatus(200);
+            else res.sendStatus(409);
         });
     }
 }

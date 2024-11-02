@@ -4,6 +4,7 @@ import PromptGroupService from "./prompt-group-service";
 import PromptGroupUpdate from "./prompt-group-update";
 import {coerceBoolean} from "openai/core";
 import ExerciseUpdate from "../exercises/exercise-update";
+import * as wasi from "node:wasi";
 
 export default class PromptGroupResource {
 
@@ -15,57 +16,41 @@ export default class PromptGroupResource {
     ) {
         this.service = new PromptGroupService();
 
-        app.get(`/${this.RESOURCE}`, (req, res) => {
+        app.get(`/${this.RESOURCE}`, async (req, res, next) => {
             const populate = req.query.populate ? coerceBoolean(req.query.populate as string) : false;
 
             if(populate) {
-                this.service.getAll().then(
-                    list => {
-                        res.json(list)
-                    }
-                );
+                const list = await this.service.getAll().catch(next);
+                res.json(list);
             }
             else {
-                this.service.getAllListEntries().then(
-                    list => {
-                        res.json(list)
-                    }
-                );
+                const list = await this.service.getAllListEntries().catch(next);
+                res.json(list);
             }
         });
 
-        app.get(`/${this.RESOURCE}/:id`, (req, res) => {
-            this.service.getById(req.params.id).then(
-                exercise => {
-                    res.json(exercise)
-                }
-            );
+        app.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            const exercise = await this.service.getById(req.params.id).catch(next);
+            res.json(exercise);
         });
 
-        app.post(`/${this.RESOURCE}`, (req: Request<{}, {}, PromptGroupUpdate>, res) => {
-            this.service.create(
-                req.body
-            ).then(exercise =>
-                res.json(exercise)
-            );
+        app.post(`/${this.RESOURCE}`, async (req, res, next) => {
+            const exercise = await this.service.create(req.body).catch(next);
+            res.json(exercise);
         });
 
-        app.put(`/${this.RESOURCE}/:id`, (req: Request<{id: string}, {}, PromptGroupUpdate>, res) => {
-            this.service.update(
+        app.put(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            const exercise = await this.service.update(
                 req.params.id,
                 req.body
-            ).then(exercise =>
-                res.json(exercise)
-            );
+            ).catch(next);
+            res.json(exercise);
         });
 
-        app.delete(`/${this.RESOURCE}/:id`, (req, res) => {
-            this.service.delete(req.params.id).then(
-                deleted => {
-                    if(deleted) res.sendStatus(200);
-                    else res.sendStatus(409);
-                }
-            );
+        app.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            const deleted = await this.service.delete(req.params.id).catch(next);
+            if(deleted) res.sendStatus(200);
+            else res.sendStatus(409);
         });
     }
 }

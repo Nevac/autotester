@@ -1,4 +1,4 @@
-import express, { Request, Response , Application } from 'express';
+import express, {Request, Response, Application, NextFunction} from 'express';
 import dotenv from 'dotenv';
 import * as mongoose from "mongoose";
 import ChatGroupResource from "./domain/chats/group/chat-group-resource";
@@ -14,7 +14,6 @@ const port = process.env.PORT || 8000;
 app.use(cors())
 app.use(express.json())
 connectDB().catch(err => console.log(err));
-
 app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to Express & TypeScript Server');
 });
@@ -30,3 +29,8 @@ async function connectDB() {
 const chatResource = new ChatGroupResource(app);
 const exerciseResource = new ExerciseResource(app);
 const promptGroupResource = new PromptGroupResource(app);
+
+app.use(function errorHandler (err: Error, req: Request, res: Response, next: NextFunction) {
+    res.status(500)
+    res.render('error', { error: err })
+})
