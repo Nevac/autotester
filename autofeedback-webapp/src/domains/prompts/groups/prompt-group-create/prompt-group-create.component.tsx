@@ -6,20 +6,25 @@ import PromptGroupUpdate from "../prompt-group-update";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import PromptGroupEndpoint from "../prompt-group-endpoint";
+import {useDispatch} from "react-redux";
+import {promptGroupUpdateSlice} from "../prompt-group-update.slice";
 
 export default function PromptGroupCreateComponent() {
 
     const [openSnackbar, Snackbar] = useSnackbar();
     const promptGroupEndpoint = new PromptGroupEndpoint();
 
+    const dispatch = useDispatch()
+
     const createPromptGroup = (update: PromptGroupUpdate) => {
         promptGroupEndpoint.create(
             update
-        ).then(state =>
-            state == EndpointResponeStatus.SUCCESS ?
-                openSnackbar("Exercise created successfully", SnackbarVariant.SUCCESS) :
-                openSnackbar("Failed to create exercise", SnackbarVariant.ERROR)
-        )
+        ).then(state => {
+            if(state == EndpointResponeStatus.SUCCESS) {
+                openSnackbar("Exercise created successfully", SnackbarVariant.SUCCESS);
+                dispatch(promptGroupUpdateSlice.actions.update());
+            } else openSnackbar("Failed to create exercise", SnackbarVariant.ERROR);
+        });
     }
 
     return (

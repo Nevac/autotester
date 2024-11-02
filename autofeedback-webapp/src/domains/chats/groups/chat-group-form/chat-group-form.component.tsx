@@ -1,11 +1,5 @@
 import './chat-group-form.component.css';
-import {
-    Button,
-    FormControl,
-    InputLabel, MenuItem,
-    Select, TextField,
-    Typography
-} from "@mui/material";
+import {Button, FormControl, MenuItem, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import ChatGroupEndpoint from "../chat-group-endpoint";
 import ChatGroupUpdate from "../chat-group-update";
@@ -16,8 +10,10 @@ import PromptGroupEndpoint from "../../../prompts/groups/prompt-group-endpoint";
 import ExerciseListItem from "../../../exercises/exercise-list-item";
 import PromptGroupListItem from "../../../prompts/groups/prompt-group-list-item";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
-import useInputValue, {InputValue} from "../../../util/forms/input-value-hook";
+import useInputValue from "../../../util/forms/input-value-hook";
 import useFormValidationHook from "../../../util/forms/form-validation-hook";
+import {useDispatch} from "react-redux";
+import chatGroupUpdateSlice from "../chat-group-update.slice";
 
 interface ChatGroupFormProps {
     nameInit?: string,
@@ -49,6 +45,8 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
     const [openSnackbar, Snackbar] = useSnackbar();
     const textAreaRows: number = 12;
 
+    const dispatch = useDispatch()
+
     useEffect(() => {
         exerciseEndpoint.getListItems()
             .then(items => setSelectableExercises(items))
@@ -64,7 +62,6 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
             });
     }, []);
 
-
     const createChat = () => {
         chatGroupEndpoint.create(
             new ChatGroupUpdate(
@@ -73,11 +70,13 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
                 promptGroupInput.valueOrThrow(),
                 attemptInput.valueOrThrow()
             )
-        ).then(state =>
-            state == EndpointResponeStatus.SUCCESS ?
-                openSnackbar("Chat created successfully", SnackbarVariant.SUCCESS) :
-                openSnackbar("Failed to create chat", SnackbarVariant.ERROR)
-        )
+        ).then(state => {
+            if(state == EndpointResponeStatus.SUCCESS) {
+                openSnackbar("Chat created successfully", SnackbarVariant.SUCCESS);
+                dispatch(chatGroupUpdateSlice.actions.update());
+            } else openSnackbar("Failed to create chat", SnackbarVariant.ERROR);
+
+        });
     }
 
     return (

@@ -7,7 +7,6 @@ export default function useFormValidationHook(inputs: InputValue<any>[]): boolea
 
     useEffect(() => {
         setIsValid(inputs.every(input => !input.error));
-        console.log(isValid);
     }, [...inputs.map(input => input.value)]);
 
     return isValid;

@@ -1,13 +1,6 @@
 import './exercise-browser.component.css';
-import {
-    Divider,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText
-} from "@mui/material";
-import React, { useState, useEffect } from 'react';
+import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText} from "@mui/material";
+import React, {useEffect, useState} from 'react';
 import {Add} from '@mui/icons-material';
 import ExerciseEndpoint from "../exercise-endpoint";
 import ExerciseListItem from "../exercise-list-item";
@@ -16,6 +9,9 @@ import Routes from "../../routes/routes";
 import {useNavigate} from "react-router-dom";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import DeleteConfirmButtonComponent from "../../util/delete-confirm-button/delete-confirm-button.component";
+import {useAppSelector} from "../../../app/redux-hooks";
+import {useDispatch} from "react-redux";
+import {exerciseUpdateSlice} from "../exercise-update.slice";
 
 
 export default function ExerciseBrowserComponent() {
@@ -24,9 +20,12 @@ export default function ExerciseBrowserComponent() {
 
     const navigate = useNavigate();
 
+    const exercisesChanged = useAppSelector(state => state.exercisesUpdated.value)
+    const dispatch = useDispatch()
+
     const [openSnackbar, Snackbar] = useSnackbar();
 
-    useEffect(() => {
+    const loadExercises = () => {
         endpoint.getListItems()
             .then(items =>
                 setEntries(items)
@@ -37,13 +36,18 @@ export default function ExerciseBrowserComponent() {
                     openSnackbar("Failed to load exercises", SnackbarVariant.ERROR);
                 }
             )
-    }, []);
+    }
+
+    useEffect(loadExercises, []);
+    useEffect(loadExercises, [exercisesChanged]);
 
     const deleteItem = (id: string) => {
         endpoint.delete(id)
             .then(state => {
-                if(state === EndpointResponeStatus.SUCCESS) openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
-                else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
+                if(state === EndpointResponeStatus.SUCCESS) {
+                    openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                    dispatch(exerciseUpdateSlice.actions.update());
+                } else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
             });
     }
 
@@ -60,8 +64,8 @@ export default function ExerciseBrowserComponent() {
                 }
             >
                 {entries.map(item =>
-                    <>
-                        <ListItem disablePadding key={item._id}>
+                    <div key={item._id}>
+                        <ListItem disablePadding >
                             <Divider/>
                             <ListItemButton onClick={() => navigate(Routes.exerciseEdit(item._id))}>
                                 <ListItemText primary={item.name}/>
@@ -69,7 +73,7 @@ export default function ExerciseBrowserComponent() {
                             </ListItemButton>
                         </ListItem>
                         <Divider/>
-                    </>
+                    </div>
                 ) }
             </List>
         </>

@@ -9,6 +9,9 @@ import Routes from "../../../routes/routes";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
+import {useDispatch} from "react-redux";
+import chatGroupUpdateSlice from "../chat-group-update.slice";
+import {useAppSelector} from "../../../../app/redux-hooks";
 
 
 export default function ChatGroupBrowserComponent() {
@@ -20,7 +23,10 @@ export default function ChatGroupBrowserComponent() {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
+    const exercisesChanged = useAppSelector(state => state.chatGroupsUpdated.value)
+    const dispatch = useDispatch()
+
+    const loadChatGroups = () => {
         endpoint.getListItems()
             .then(items =>
                 setItems(items)
@@ -30,14 +36,19 @@ export default function ChatGroupBrowserComponent() {
                     console.log(err);
                     openSnackbar("Failed to load chat groups", SnackbarVariant.ERROR);
                 }
-            )
-    }, []);
+            );
+    }
+
+    useEffect(loadChatGroups, []);
+    useEffect(loadChatGroups, [exercisesChanged]);
 
     const deleteItem = (id: string) => {
         endpoint.delete(id)
             .then(state => {
-                if(state === EndpointResponeStatus.SUCCESS) openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
-                else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
+                if(state === EndpointResponeStatus.SUCCESS) {
+                    openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                    dispatch(chatGroupUpdateSlice.actions.update());
+                } else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
             });
     }
 
@@ -54,8 +65,8 @@ export default function ChatGroupBrowserComponent() {
                 }
             >
                 {items.map(item =>
-                    <>
-                        <ListItem disablePadding key={item._id}>
+                    <div key={item._id}>
+                        <ListItem disablePadding >
                             <Divider/>
                             <ListItemButton>
                                 <ListItemText primary={item.name}/>
@@ -63,7 +74,7 @@ export default function ChatGroupBrowserComponent() {
                             </ListItemButton>
                         </ListItem>
                         <Divider/>
-                    </>
+                    </div>
                 ) }
             </List>
         </>

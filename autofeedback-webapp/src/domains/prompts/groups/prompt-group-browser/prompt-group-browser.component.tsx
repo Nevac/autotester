@@ -16,6 +16,10 @@ import {useNavigate} from "react-router-dom";
 import Routes from "../../../routes/routes";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
+import {useAppSelector} from "../../../../app/redux-hooks";
+import {useDispatch} from "react-redux";
+import {exerciseUpdateSlice} from "../../../exercises/exercise-update.slice";
+import {promptGroupUpdateSlice} from "../prompt-group-update.slice";
 
 export default function PromptGroupBrowserComponent() {
     const endpoint = new PromptGroupEndpoint();
@@ -25,7 +29,10 @@ export default function PromptGroupBrowserComponent() {
 
     const [openSnackbar, Snackbar] = useSnackbar();
 
-    useEffect(() => {
+    const promptGroupsChanged = useAppSelector(state => state.promptGroupsUpdated.value)
+    const dispatch = useDispatch()
+
+    const loadPromptGroups = () => {
         endpoint.getListItems()
             .then(items =>
                 setItems(items)
@@ -35,12 +42,19 @@ export default function PromptGroupBrowserComponent() {
                     console.log(err);
                     openSnackbar("Failed to load prompt groups", SnackbarVariant.ERROR);
                 }
-        )}, []);
+            );
+    }
+
+    useEffect(loadPromptGroups, []);
+    useEffect(loadPromptGroups, [promptGroupsChanged]);
 
     const deleteItem = (id: string) => {
         endpoint.delete(id)
             .then(state => {
-                if(state === EndpointResponeStatus.SUCCESS) openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                if(state === EndpointResponeStatus.SUCCESS) {
+                    openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                    dispatch(promptGroupUpdateSlice.actions.update());
+                }
                 else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
             });
     }

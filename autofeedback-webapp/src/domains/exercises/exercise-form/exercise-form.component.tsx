@@ -1,10 +1,7 @@
 import './exercise-form.component.css';
 import useInputValue from "../../util/forms/input-value-hook";
 import useFormValidationHook from "../../util/forms/form-validation-hook";
-import ExerciseEndpoint from "../exercise-endpoint";
-import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import ExerciseUpdate from "../exercise-update";
-import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import {Button, TextField, Typography} from "@mui/material";
 
 export interface ExerciseFormProps {

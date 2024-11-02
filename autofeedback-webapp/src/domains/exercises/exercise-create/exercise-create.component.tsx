@@ -6,19 +6,26 @@ import ExerciseUpdate from "../exercise-update";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import ExerciseEndpoint from "../exercise-endpoint";
+import {useDispatch} from "react-redux";
+import {exerciseUpdateSlice} from "../exercise-update.slice";
 
 export default function ExerciseCreateComponent() {
     const [openSnackbar, Snackbar] = useSnackbar();
     const exerciseEndpoint = new ExerciseEndpoint();
 
+    const dispatch = useDispatch()
+
     const saveExercise = (update: ExerciseUpdate) => {
         exerciseEndpoint.create(
             update
-        ).then(state =>
-            state == EndpointResponeStatus.SUCCESS ?
-                openSnackbar("Exercise saved successfully", SnackbarVariant.SUCCESS) :
-                openSnackbar("Failed to saved exercise", SnackbarVariant.ERROR)
-        )
+        ).then(state => {
+            if(state == EndpointResponeStatus.SUCCESS) {
+                openSnackbar("Exercise saved successfully", SnackbarVariant.SUCCESS);
+                dispatch(exerciseUpdateSlice.actions.update());
+            } else {
+                openSnackbar("Failed to saved exercise", SnackbarVariant.ERROR);
+            }
+        })
     }
 
     return(
