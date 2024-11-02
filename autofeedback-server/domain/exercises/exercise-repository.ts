@@ -1,7 +1,6 @@
-import {IExercise, ExerciseModel, Exercise, ExerciseDocument} from "./exercise";
+import {ExerciseModel, Exercise} from "./exercise";
 import ExerciseUpdate from "./exercise-update";
 import ExerciseListEntry from "./exercise-list-entry";
-import Timestamp from "../entities/timestamps/timestamp";
 
 export default class ExerciseRepository {
 
@@ -17,6 +16,7 @@ export default class ExerciseRepository {
     public async getAllListEntries(): Promise<ExerciseListEntry[]> {
         return await ExerciseModel.find()
             .select('_id name createdAt')
+            .sort({createdAt: "desc"})
             .exec()
             .then(documents =>
                 documents.map(document =>

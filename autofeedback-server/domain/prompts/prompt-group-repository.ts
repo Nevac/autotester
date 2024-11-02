@@ -18,6 +18,7 @@ export default class PromptGroupRepository {
     public async getAllListEntries(): Promise<PromptGroupListEntry[]> {
         return await PromptGroupModel.find()
             .select('_id name createdAt')
+            .sort({createdAt: "desc"})
             .exec()
             .then(documents =>
                 documents.map(document =>
