@@ -5,7 +5,7 @@ import ExerciseRepository from "../../exercises/exercise-repository";
 import ExerciseListEntry from "../../exercises/exercise-list-entry";
 import ChatGroupListEntry from "./chat-group-list-entry";
 import {Exercise} from "../../exercises/exercise";
-import PromptGroup from "../../prompts/promptGroup";
+import PromptGroup from "../../prompts/prompt-group";
 import PromptGroupRepository from "../../prompts/prompt-group-repository";
 import ChatGroupUpdate from "./chat-group-update";
 
@@ -29,6 +29,10 @@ export default class ChatGroupService {
 
     public async getAllListEntries(): Promise<ChatGroupListEntry[]> {
         return await this.chatGroupRepo.getAllListEntries();
+    }
+
+    public async getById(id: string): Promise<ChatGroup> {
+        return await this.chatGroupRepo.getById(id);
     }
 
     public async create(chatGroup: ChatGroupUpdateDto): Promise<ChatGroup> {

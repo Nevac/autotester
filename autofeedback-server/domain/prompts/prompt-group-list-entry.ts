@@ -1,5 +1,5 @@
 import EntityUtil from "../entities/entity";
-import {PromptGroupDocument} from "./promptGroup";
+import {PromptGroupDocument} from "./prompt-group";
 
 export default class PromptGroupListEntry {
     constructor(

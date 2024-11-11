@@ -1,5 +1,5 @@
-import {ExerciseDocument} from "../../exercises/exercise";
 import EntityUtil from "../../entities/entity";
+import {ChatGroupDocument} from "./chat-group";
 
 export default class ChatGroupListEntry {
     constructor(
@@ -9,12 +9,12 @@ export default class ChatGroupListEntry {
     ) {
     }
 
-    public static ofDocument(exercise: ExerciseDocument): ChatGroupListEntry {
-        const [createdAt, _] = EntityUtil.checkForProperties(exercise);
+    public static ofDocument(chatGroup: ChatGroupDocument): ChatGroupListEntry {
+        const [createdAt, _] = EntityUtil.checkForProperties(chatGroup);
 
         return new ChatGroupListEntry(
-            EntityUtil.convertId(exercise._id),
-            exercise.name,
+            EntityUtil.convertId(chatGroup._id),
+            chatGroup.name,
             createdAt
         )
     }

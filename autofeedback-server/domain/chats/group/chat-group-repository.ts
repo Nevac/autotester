@@ -1,12 +1,7 @@
-import {IChatGroup, ChatGroupModel, ChatGroup} from "./chat-group";
-import ChatGroupUpdateDto from "./chat-group-update-dto";
-import ExerciseListEntry from "../../exercises/exercise-list-entry";
-import {Exercise, ExerciseModel} from "../../exercises/exercise";
+import {ChatGroupModel, ChatGroup} from "./chat-group";
 import ChatGroupListEntry from "./chat-group-list-entry";
-import PromptGroup from "../../prompts/promptGroup";
-import ExerciseRepository from "../../exercises/exercise-repository";
-import PromptGroupRepository from "../../prompts/prompt-group-repository";
 import ChatGroupUpdate from "./chat-group-update";
+
 
 export default class ChatGroupRepository {
 
@@ -28,6 +23,15 @@ export default class ChatGroupRepository {
                 documents.map(document =>
                     ChatGroup.ofDocument(document)
                 ))
+    }
+
+    public async getById(id: string): Promise<ChatGroup> {
+        return await ChatGroupModel.findById(id)
+            .exec()
+            .then(document => {
+                if (document) return ChatGroup.ofDocument(document);
+                throw `Exercise with id ${id} not found`
+            });
     }
 
     public async create(chatGroup: ChatGroupUpdate): Promise<ChatGroup> {

@@ -1,7 +1,7 @@
 import PromptGroupRepository from "./prompt-group-repository";
 import PromptGroupUpdate from "./prompt-group-update";
 import PromptGroupListEntry from "./prompt-group-list-entry";
-import PromptGroup from "./promptGroup";
+import PromptGroup from "./prompt-group";
 import ExerciseUpdate from "../exercises/exercise-update";
 import {Exercise} from "../exercises/exercise";
 

@@ -1,5 +1,5 @@
 import ExerciseRepository from "./exercise-repository";
-import {Exercise, IExercise} from "./exercise";
+import {Exercise} from "./exercise";
 import ExerciseUpdate from "./exercise-update";
 import ExerciseListEntry from "./exercise-list-entry";
 
@@ -12,7 +12,7 @@ export default class ExerciseService {
         this.repository = new ExerciseRepository();
     }
 
-    public async getAll(): Promise<IExercise[]> {
+    public async getAll(): Promise<Exercise[]> {
         return await this.repository.getAll();
     }
 
@@ -24,7 +24,7 @@ export default class ExerciseService {
         return await this.repository.getById(id);
     }
 
-    public async create(exercise: ExerciseUpdate): Promise<IExercise> {
+    public async create(exercise: ExerciseUpdate): Promise<Exercise> {
         return await this.repository.create(exercise);
     }
 

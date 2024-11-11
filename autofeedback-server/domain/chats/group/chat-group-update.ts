@@ -1,5 +1,5 @@
 import {Exercise} from "../../exercises/exercise";
-import PromptGroup from "../../prompts/promptGroup";
+import PromptGroup from "../../prompts/prompt-group";
 
 export default class ChatGroupUpdate {
     constructor(

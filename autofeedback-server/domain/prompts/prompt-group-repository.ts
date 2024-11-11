@@ -1,5 +1,5 @@
 import PromptGroupListEntry from "./prompt-group-list-entry";
-import PromptGroup, {PromptGroupModel} from "./promptGroup";
+import PromptGroup, {PromptGroupModel} from "./prompt-group";
 import PromptGroupUpdate from "./prompt-group-update";
 
 export default class PromptGroupRepository {

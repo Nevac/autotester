@@ -30,7 +30,7 @@ export default class PromptGroup implements IPromptGroup, Entity {
     }
 }
 
-export const promptGroup = new Schema<IPromptGroup>(
+export const promptGroupSchema = new Schema<IPromptGroup>(
     {
         name: { type: String, required: true },
         prompts: {type: [String]}
@@ -41,4 +41,4 @@ export const promptGroup = new Schema<IPromptGroup>(
 );
 
 export type PromptGroupDocument = Document<unknown, {}, IPromptGroup> & IPromptGroup & {};
-export const PromptGroupModel = model<IPromptGroup>('PromptGroup', promptGroup);
+export const PromptGroupModel = model<IPromptGroup>('PromptGroup', promptGroupSchema);
