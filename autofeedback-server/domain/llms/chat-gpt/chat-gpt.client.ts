@@ -1,48 +1,54 @@
 import OpenAI from 'openai';
-import LLMClient from "../llm-client";
+import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Chat} from "../../chats/chat";
 import {ChatCompletion} from "openai/resources";
+import {Llm} from "../llm";
+import {model} from "mongoose";
 
 
-export default class ChatGptService implements LLMClient {
+export default class ChatGptClient implements LlmClient {
+
+    private readonly client: OpenAI;
 
     public constructor(
-        public readonly client: OpenAI
+        private readonly model: Llm
     ) {
         this.client = new OpenAI({
             apiKey: process.env['API_KEY_CHAT_GPT'],
         });
     }
 
-    public async create(chat: Chat) {
+    public async create(request: ClientRequest): Promise<ClientResponse> {
         const completion = await this.client.chat.completions.create({
             messages: [
-                this.generateSystemMessage(chat),
-                ...this.generateMessages(chat)
+                this.generateSystemMessage(request),
+                ...this.generateMessages(request)
             ],
-            model: "gpt-4o"
+            model: this.model.toString()
         })
 
         console.log(completion);
+
+        return ClientResponse.ofGPTChatCompletion(completion);
     }
 
-    private generateSystemMessage(chat: Chat): ChatGPTMessage {
+    private generateSystemMessage(request: ClientRequest): ChatGPTMessage {
         return ChatGPTMessage.of(
             ChatGPTRole.SYSTEM,
             `
-            ${chat.promptGroup.prompts[0]}
+            ${request.promptGroup.prompts[0]}
                 
             Exercise:
-            ${chat.exercise.task}
+            ${request.exercise.task}
             
             Example Solution:
-            ${chat.exercise.solution}
+            ${request.exercise.solution}
             `
         );
     }
 
-    private generateMessages(chat: Chat): ChatGPTMessage[] {
-        return chat.promptGroup.prompts.map(prompt =>
+    private generateMessages(request: ClientRequest): ChatGPTMessage[] {
+        return request.promptGroup.prompts.map(prompt =>
             ChatGPTMessage.of(
                 ChatGPTRole.USER,
                 prompt

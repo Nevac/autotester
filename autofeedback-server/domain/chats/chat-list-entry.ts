@@ -1,4 +1,4 @@
-import {ILlm} from "../llms/llm";
+import {ILlm} from "../llms/llm-obsolete";
 import {ExerciseDocument} from "../exercises/exercise";
 import EntityUtil from "../entities/entity";
 import {ChatDocument} from "./chat";

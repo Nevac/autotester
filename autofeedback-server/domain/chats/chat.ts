@@ -1,9 +1,9 @@
 import {Schema, model, Document} from 'mongoose';
-import {IExercise, exerciseSchema, Exercise} from "../exercises/exercise";
-import PromptGroup, {IPromptGroup, promptGroupSchema} from "../prompts/prompt-group";
-import {ILlm, Llm, llmSchema} from "../llms/llm";
+import {exerciseSchema, Exercise} from "../exercises/exercise";
+import PromptGroup, {promptGroupSchema} from "../prompts/prompt-group";
 import Entity from "../entities/entity";
 import EntityUtil from "../entities/entity";
+import {Llm} from "../llms/llm";
 
 export interface IChat {
     name: string,
@@ -51,7 +51,7 @@ export const chatSchema = new Schema<IChat>(
     {
         name: { type: String, required: true },
         chatGroupId: { type: String, required: true },
-        model: { type: llmSchema, required: true },
+        model: { type: String, required: true, enum: Object.values(Llm) },
         exercise: { type: exerciseSchema, required: true },
         promptGroup: { type: promptGroupSchema, required: true },
         attempt: { type: String, required: true },

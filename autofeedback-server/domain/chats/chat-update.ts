@@ -1,6 +1,6 @@
-import {ILlm, Llm} from "../llms/llm";
 import {Exercise} from "../exercises/exercise";
 import PromptGroup from "../prompts/prompt-group";
+import {Llm} from "../llms/llm";
 
 
 export default class ChatUpdate {

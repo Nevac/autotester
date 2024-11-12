@@ -1,4 +1,4 @@
-import {Llm, LlmModel} from "./llm";
+import {Llm, LlmModel} from "./llm-obsolete";
 
 export default class LlmRepository {
     public async getAll(): Promise<Llm[]> {
