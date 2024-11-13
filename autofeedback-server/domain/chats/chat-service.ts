@@ -7,6 +7,7 @@ import LlmRepository from "../llms/llm-repository";
 import ChatGroupRepository from "./group/chat-group-repository";
 import LlmService from "../llms/llm-service";
 import {ClientRequest} from "../llms/llm-client";
+import {ChatGroup} from "./group/chat-group";
 
 export default class ChatService {
 
@@ -25,13 +26,21 @@ export default class ChatService {
         return await this.chatRepo.getAllListEntriesByChatGroupId(chatGroupId);
     }
 
+    public async getById(id: string): Promise<Chat> {
+        return await this.chatRepo.getById(id);
+    }
+
     public async create(chat: ChatUpdateDto): Promise<Chat> {
         const chatGroup = await this.chatGroupRepo.getById(chat.chatGroupId);
 
+        console.log(chatGroup);
+
         const client = this.llmService.resolveLlmService(chat.llm);
         const response = await client.create(
-            new ClientRequest(chatGroup.promptGroup, chatGroup.exercise)
+            ClientRequest.ofChatGroup(chatGroup)
         );
+
+        console.log(response);
 
         return await this.chatRepo.create(
             new ChatUpdate(

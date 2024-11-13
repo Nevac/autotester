@@ -6,5 +6,6 @@ export const llmMap = new Map<string, LlmClient>([
     [Llm.GPT_3_5_turbo, new ChatGptClient(Llm.GPT_3_5_turbo)],
     [Llm.GPT_4, new ChatGptClient(Llm.GPT_4)],
     [Llm.GPT_4_turbo, new ChatGptClient(Llm.GPT_4_turbo)],
-    [Llm.GPT_4o, new ChatGptClient(Llm.GPT_4o)]
+    [Llm.GPT_4o, new ChatGptClient(Llm.GPT_4o)],
+    [Llm.GPT_4o_mini, new ChatGptClient(Llm.GPT_4o_mini)],
 ]);

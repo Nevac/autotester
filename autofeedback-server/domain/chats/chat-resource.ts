@@ -1,7 +1,7 @@
 import {Application} from "express";
 import ChatService from "./chat-service";
 
-export default class ChatGroupResource {
+export default class ChatResource {
 
     private readonly service: ChatService;
     private readonly RESOURCE: string = 'chat';
@@ -17,9 +17,14 @@ export default class ChatGroupResource {
             if(chatGroupId) {
                 const list = await this.service.getAllListEntriesByChatGroupId(chatGroupId);
                 res.json(list);
+            } else {
+                res.json([]);
             }
+        });
 
-            res.json([]);
+        app.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            const exercise = await this.service.getById(req.params.id).catch(next);
+            res.json(exercise);
         });
 
         app.post(`/${this.RESOURCE}`, async (req, res, next) => {

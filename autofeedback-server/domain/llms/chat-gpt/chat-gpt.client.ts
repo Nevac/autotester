@@ -1,10 +1,7 @@
 import OpenAI from 'openai';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
-import {Chat} from "../../chats/chat";
-import {ChatCompletion} from "openai/resources";
 import {Llm} from "../llm";
-import {model} from "mongoose";
-
+import dotenv from 'dotenv';
 
 export default class ChatGptClient implements LlmClient {
 
@@ -13,23 +10,30 @@ export default class ChatGptClient implements LlmClient {
     public constructor(
         private readonly model: Llm
     ) {
+        dotenv.config();
         this.client = new OpenAI({
             apiKey: process.env['API_KEY_CHAT_GPT'],
         });
     }
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
-        const completion = await this.client.chat.completions.create({
-            messages: [
-                this.generateSystemMessage(request),
-                ...this.generateMessages(request)
-            ],
-            model: this.model.toString()
-        })
+        console.log(this.model.toString())
+        try {
+            const completion = await this.client.chat.completions.create({
+                messages: [
+                    this.generateSystemMessage(request),
+                    ...this.generateMessages(request)
+                ],
+                model: this.model.toString()
+            })
 
-        console.log(completion);
+            console.log(completion);
 
-        return ClientResponse.ofGPTChatCompletion(completion);
+            return ClientResponse.ofGPTChatCompletion(completion);
+        } catch (error) {
+            console.error("Error in completion:", error);
+            throw error;
+        }
     }
 
     private generateSystemMessage(request: ClientRequest): ChatGPTMessage {
@@ -43,6 +47,9 @@ export default class ChatGptClient implements LlmClient {
             
             Example Solution:
             ${request.exercise.solution}
+            
+            Attempt:
+            ${request.attempt}
             `
         );
     }

@@ -7,6 +7,7 @@ export default class ChatRepository {
 
     public async getAllListEntriesByChatGroupId(chatGroupId: string): Promise<ChatListEntry[]> {
         return await ChatModel.find()
+            .where('chatGroupId', chatGroupId)
             .exec()
             .then(documents => documents.map(
                 document =>

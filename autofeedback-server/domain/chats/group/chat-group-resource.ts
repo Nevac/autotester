@@ -27,6 +27,11 @@ export default class ChatGroupResource {
             }
         });
 
+        app.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            const exercise = await this.service.getById(req.params.id).catch(next);
+            res.json(exercise);
+        });
+
         app.post(`/${this.RESOURCE}`, async (req, res, next) => {
             const chatGroup = await this.service.create(req.body).catch(next);
             res.json(chatGroup);

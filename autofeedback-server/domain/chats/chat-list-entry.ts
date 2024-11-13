@@ -2,12 +2,13 @@ import {ILlm} from "../llms/llm-obsolete";
 import {ExerciseDocument} from "../exercises/exercise";
 import EntityUtil from "../entities/entity";
 import {ChatDocument} from "./chat";
+import {Llm} from "../llms/llm";
 
 export class ChatListEntry {
     constructor(
         public readonly _id: string,
         public readonly name: string,
-        public readonly model: ILlm,
+        public readonly model: Llm,
         public readonly createdAt: Date
     ) {
     }

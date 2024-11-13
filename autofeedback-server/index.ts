@@ -5,6 +5,7 @@ import ChatGroupResource from "./domain/chats/group/chat-group-resource";
 import cors from 'cors'
 import ExerciseResource from "./domain/exercises/exercise-resource";
 import PromptGroupResource from "./domain/prompts/prompt-group-resource";
+import ChatResource from "./domain/chats/chat-resource";
 
 //For env File
 dotenv.config();
@@ -26,7 +27,8 @@ async function connectDB() {
     await mongoose.connect("" + process.env.DB_URL)
 }
 
-const chatResource = new ChatGroupResource(app);
+const chatResource = new ChatResource(app);
+const chatGroupResource = new ChatGroupResource(app);
 const exerciseResource = new ExerciseResource(app);
 const promptGroupResource = new PromptGroupResource(app);
 

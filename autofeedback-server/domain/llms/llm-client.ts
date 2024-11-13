@@ -10,13 +10,15 @@ export default interface LlmClient {
 export class ClientRequest {
     constructor(
         public promptGroup: PromptGroup,
-        public exercise: Exercise
+        public exercise: Exercise,
+        public attempt: string
     ) {}
 
     public static ofChatGroup(chatGroup: ChatGroup): ClientRequest {
         return new ClientRequest(
             chatGroup.promptGroup,
-            chatGroup.exercise
+            chatGroup.exercise,
+            chatGroup.attempt
         )
     }
 }
