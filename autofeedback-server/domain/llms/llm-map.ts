@@ -1,11 +1,17 @@
 import {Llm} from "./llm";
 import ChatGptClient from "./chat-gpt/chat-gpt.client";
 import LlmClient from "./llm-client";
+import ClaudeClient from "./claude/claude.client";
 
 export const llmMap = new Map<string, LlmClient>([
-    [Llm.GPT_3_5_turbo, new ChatGptClient(Llm.GPT_3_5_turbo)],
-    [Llm.GPT_4, new ChatGptClient(Llm.GPT_4)],
-    [Llm.GPT_4_turbo, new ChatGptClient(Llm.GPT_4_turbo)],
-    [Llm.GPT_4o, new ChatGptClient(Llm.GPT_4o)],
-    [Llm.GPT_4o_mini, new ChatGptClient(Llm.GPT_4o_mini)],
+    [Llm.GPT_3_5_turbo, new ChatGptClient("gpt-3.5-turbo-0125")],
+    [Llm.GPT_4, new ChatGptClient("gpt-4-0613")],
+    [Llm.GPT_4_turbo, new ChatGptClient("gpt-4-turbo-2024-04-09")],
+    [Llm.GPT_4o, new ChatGptClient("gpt-4o-2024-08-06")],
+    [Llm.GPT_4o_mini, new ChatGptClient("gpt-4o-mini-2024-07-18")],
+    [Llm.CLAUDE_3_HAIKU, new ClaudeClient("claude-3-haiku-20240307")],
+    [Llm.CLAUDE_3_SONNET, new ClaudeClient("claude-3-sonnet-20240229")],
+    [Llm.CLAUDE_3_OPUS, new ClaudeClient("claude-3-opus-20240229")],
+    [Llm.CLAUDE_3_5_HAIKU, new ClaudeClient("claude-3-5-haiku-20241022")],
+    [Llm.CLAUDE_3_5_SONNET, new ClaudeClient("claude-3-5-sonnet-20241022")],
 ]);

@@ -2,6 +2,7 @@ import PromptGroup from "../prompts/prompt-group";
 import {Exercise} from "../exercises/exercise";
 import {ChatCompletion} from "openai/resources";
 import {ChatGroup} from "../chats/group/chat-group";
+import Anthropic from "@anthropic-ai/sdk";
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -31,6 +32,14 @@ export class ClientResponse {
     public static ofGPTChatCompletion(completion: ChatCompletion): ClientResponse {
         return new ClientResponse(
             completion.choices.map(choice => choice.message.content!)
+        )
+    }
+
+    public static ofClaudeMessage(message: Anthropic.Message): ClientResponse {
+        return new ClientResponse(
+            message.content
+                .filter(content => content.type === "text")
+                .map(content => content.text)
         )
     }
 }

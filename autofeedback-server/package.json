@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "Autofeedback test tool express server application",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
     "@types/mongoose": "^5.11.96",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

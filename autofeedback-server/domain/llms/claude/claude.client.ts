@@ -1,44 +1,44 @@
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Llm} from "../llm";
 import dotenv from 'dotenv';
 
-export default class ChatGptClient implements LlmClient {
+export default class ClaudeClient implements LlmClient {
 
-    private readonly client: OpenAI;
+    private readonly client: Anthropic;
 
     public constructor(
         private readonly model: string
     ) {
         dotenv.config();
-        this.client = new OpenAI({
-            apiKey: process.env['API_KEY_CHAT_GPT'],
+        this.client = new Anthropic({
+            apiKey: process.env['ANTHROPIC_API_KEY'], // This is the default and can be omitted
         });
     }
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
-        console.log(this.model.toString())
         try {
-            const completion = await this.client.chat.completions.create({
+            const message = await this.client.messages.create({
+                max_tokens: 1024,
                 messages: [
                     this.generateSystemMessage(request),
                     ...this.generateMessages(request)
                 ],
                 model: this.model
-            })
+            });
 
-            console.log(completion);
+            console.log(message);
 
-            return ClientResponse.ofGPTChatCompletion(completion);
+            return ClientResponse.ofClaudeMessage(message);
         } catch (error) {
             console.error("Error in completion:", error);
             throw error;
         }
     }
 
-    private generateSystemMessage(request: ClientRequest): ChatGPTMessage {
-        return ChatGPTMessage.of(
-            ChatGPTRole.SYSTEM,
+    private generateSystemMessage(request: ClientRequest): ClaudeMessage {
+        return ClaudeMessage.of(
+            ClaudeRole.ASSISTANT,
             `
             ${request.promptGroup.prompts[0]}
                 
@@ -54,35 +54,34 @@ export default class ChatGptClient implements LlmClient {
         );
     }
 
-    private generateMessages(request: ClientRequest): ChatGPTMessage[] {
+    private generateMessages(request: ClientRequest): ClaudeMessage[] {
         return request.promptGroup.prompts.map(prompt =>
-            ChatGPTMessage.of(
-                ChatGPTRole.USER,
+            ClaudeMessage.of(
+                ClaudeRole.USER,
                 prompt
             )
         );
     }
 }
 
-class ChatGPTMessage {
+class ClaudeMessage {
     private constructor(
-        public readonly role: ChatGPTRole,
+        public readonly role: ClaudeRole,
         public readonly content: string
     ) {}
 
     public static of(
-        role: ChatGPTRole,
+        role: ClaudeRole,
         content: string
-    ): ChatGPTMessage {
-        return new ChatGPTMessage(
+    ): ClaudeMessage {
+        return new ClaudeMessage(
             role,
             content
         )
     }
 }
 
-enum ChatGPTRole {
-    SYSTEM = "system",
+enum ClaudeRole {
     ASSISTANT = "assistant",
     USER = "user"
 }

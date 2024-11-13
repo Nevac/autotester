@@ -16,6 +16,7 @@ export interface ChatGroupDetailsModelListProps {
 export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelListProps) {
 
     const [isGptListOpen, setIsGptListOpen] = useState<boolean>(false);
+    const [isClaudeListOpen, setIsClaudeListOpen] = useState<boolean>(false);
     const ref = useOnClickOutside(() => props.setIsOpen(false));
 
     const removeUsedFromSelection = (modelMap: Map<Llm, string>): Map<Llm, string> => {
@@ -33,6 +34,18 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 [Llm.GPT_4o, "gpt-4o"],
                 [Llm.GPT_4o_mini, "gpt-4o-mini"],
                 [Llm.GPT_3_5_turbo, "gpt-3.5-turbo"],
+            ])
+        );
+    }
+
+    const claudeModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.CLAUDE_3_HAIKU, "claude-3-haiku"],
+                [Llm.CLAUDE_3_SONNET, "claude-3-sonnet"],
+                [Llm.CLAUDE_3_OPUS, "claude-3-opus"],
+                [Llm.CLAUDE_3_5_HAIKU, "claude-3-5-haiku"],
+                [Llm.CLAUDE_3_5_SONNET, "claude-3-5-sonnet"]
             ])
         );
     }
@@ -60,6 +73,22 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 <Collapse in={isGptListOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         {Array.from(gptModelMap().entries()).map(([key, value]: [Llm, string]) =>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                                <ListItemText primary={value} />
+                            </ListItemButton>
+                        )}
+                    </List>
+                </Collapse>
+                <ListItemButton onClick={() => setIsClaudeListOpen(!isClaudeListOpen)}>
+                    <ListItemIcon>
+                        <AutoAwesomeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Claude" />
+                    {isClaudeListOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={isClaudeListOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {Array.from(claudeModelMap().entries()).map(([key, value]: [Llm, string]) =>
                             <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
                                 <ListItemText primary={value} />
                             </ListItemButton>

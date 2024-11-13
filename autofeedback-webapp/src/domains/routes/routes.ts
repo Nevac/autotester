@@ -1,10 +1,11 @@
 export default class Routes {
 
     public static readonly ROOT = "";
-    public static readonly CHAT = `${Routes.ROOT}/chat`;
-    public static readonly CHAT_DETAIL = `${Routes.ROOT}/chat/detail`;
-    public static readonly CHAT_CREATE = `${Routes.CHAT}/create`;
-    public static readonly CHAT_DETAILS = `${Routes.CHAT}/:id`;
+    public static readonly CHAT_GROUP = `${Routes.ROOT}/chat-group`;
+    public static readonly CHAT_GROUP_DETAIL = `${Routes.CHAT_GROUP}/detail`;
+    public static readonly CHAT_GROUP_CREATE = `${Routes.CHAT_GROUP}/create`;
+    public static readonly CHAT_GROUP_DETAILS = `${Routes.CHAT_GROUP}/:id`;
+    public static chatGroupDetails(id: string): string { return `${Routes.CHAT_GROUP}/${id}`};
     public static readonly EXERCISE = `${Routes.ROOT}/exercise`;
     public static readonly EXERCISE_CREATE = `${Routes.EXERCISE}/create`;
     public static readonly EXERCISE_EDIT = `${Routes.EXERCISE}/:id`;
