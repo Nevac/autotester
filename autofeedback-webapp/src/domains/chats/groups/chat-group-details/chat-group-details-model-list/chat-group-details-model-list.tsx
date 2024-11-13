@@ -1,0 +1,74 @@
+import './chat-group-details-model-list.css';
+import {Llm} from "../../../../llms/llm";
+import {Collapse, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader} from "@mui/material";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
+import React, {useState} from "react";
+import useOnClickOutside from "../../../../util/click/on-click-outside-hook";
+
+export interface ChatGroupDetailsModelListProps {
+    usedSelection: Set<Llm>,
+    isOpen: boolean;
+    setIsOpen: (value: boolean) => void,
+    onSelected: (value: Llm) => void,
+}
+
+export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelListProps) {
+
+    const [isGptListOpen, setIsGptListOpen] = useState<boolean>(false);
+    const ref = useOnClickOutside(() => props.setIsOpen(false));
+
+    const removeUsedFromSelection = (modelMap: Map<Llm, string>): Map<Llm, string> => {
+        props.usedSelection.forEach(selection =>
+            modelMap.delete(selection)
+        );
+        return modelMap;
+    }
+
+    const gptModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.GPT_4, "gpt-4"],
+                [Llm.GPT_4_turbo, "gpt-4-turbo"],
+                [Llm.GPT_4o, "gpt-4o"],
+                [Llm.GPT_4o_mini, "gpt-4o-mini"],
+                [Llm.GPT_3_5_turbo, "gpt-3.5-turbo"],
+            ])
+        );
+    }
+
+    if(props.isOpen) {
+        return (
+            <List
+                ref={ref}
+                sx={{ position: "absolute", width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                component="nav"
+                aria-labelledby="nested-list-subheader"
+                subheader={
+                    <ListSubheader component="div" id="nested-list-subheader">
+                        Available Large Language Models
+                    </ListSubheader>
+                }
+            >
+                <ListItemButton onClick={() => setIsGptListOpen(!isGptListOpen)}>
+                    <ListItemIcon>
+                        <AutoAwesomeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="GPT" />
+                    {isGptListOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={isGptListOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {Array.from(gptModelMap().entries()).map(([key, value]: [Llm, string]) =>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                                <ListItemText primary={value} />
+                            </ListItemButton>
+                        )}
+                    </List>
+                </Collapse>
+            </List>
+        )
+    }
+
+    return <></>;
+}

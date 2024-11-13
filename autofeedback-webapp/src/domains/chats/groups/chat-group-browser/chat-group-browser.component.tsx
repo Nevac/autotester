@@ -67,7 +67,7 @@ export default function ChatGroupBrowserComponent() {
             <List
                 subheader={
                 <div style={{display: "flex", justifyContent: "end", background: "#121212"}}>
-                    <IconButton aria-label="add" onClick={() => navigate(Routes.CHAT_CREATE)}>
+                    <IconButton aria-label="add" onClick={() => navigate(Routes.CHAT_GROUP_CREATE)}>
                         <Add/>
                     </IconButton>
                 </div>
@@ -77,7 +77,8 @@ export default function ChatGroupBrowserComponent() {
                     <div key={item._id}>
                         <ListItem disablePadding >
                             <Divider/>
-                            <ListItemButton selected={item._id === selectedItem}>
+                            <ListItemButton selected={item._id === selectedItem}
+                                            onClick={() => navigate(Routes.chatGroupDetails(item._id))}>
                                 <ListItemText primary={item.name}/>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

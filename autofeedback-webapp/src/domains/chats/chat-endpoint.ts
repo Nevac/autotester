@@ -1,32 +1,31 @@
-import ChatGroupListItem from "./chat-group-list-item";
-import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
-import ChatGroupUpdate from "./chat-group-update";
-import Exercise from "../../exercises/exercise";
-import {ChatGroup} from "./chat-group";
+import {ChatListItem} from "./chat-list-item";
+import {Chat} from "./chat";
+import {EndpointResponeStatus} from "../util/EndpointResponeStatus";
+import ChatUpdate from "./chat-update";
 
-export default class ChatGroupEndpoint {
+export default class ChatEndpoint {
 
-    private readonly RESOURCE_NAME: string = 'chat-group'
+    private readonly RESOURCE_NAME: string = 'chat'
     private readonly ENDPOINT = `${process.env.REACT_APP_API}/${this.RESOURCE_NAME}`
 
     constructor() {
     }
 
-    public getListItems(): Promise<ChatGroupListItem[]> {
-        return fetch(this.ENDPOINT)
+    public getListItemsByChatGroupId(chatGroupId: string): Promise<ChatListItem[]> {
+        return fetch(`${this.ENDPOINT}?chatGroupId=${chatGroupId}`)
             .then((res) => {
                 return res.json();
             })
     }
 
-    public getById(id: string): Promise<ChatGroup> {
+    public getById(id: string): Promise<Chat> {
         return fetch(`${this.ENDPOINT}/${id}`)
             .then(res => {
                 return res.json();
             });
     }
 
-    public create(chat: ChatGroupUpdate): Promise<EndpointResponeStatus> {
+    public create(chat: ChatUpdate): Promise<EndpointResponeStatus> {
         console.log(chat);
         return fetch(this.ENDPOINT, {
             method: "POST",
