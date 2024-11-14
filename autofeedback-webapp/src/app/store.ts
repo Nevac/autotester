@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import {exerciseUpdateSlice} from "../domains/exercises/exercise-update.slice";
 import chatGroupUpdateSlice from "../domains/chats/groups/chat-group-update.slice";
 import {promptGroupUpdateSlice} from "../domains/prompts/groups/prompt-group-update.slice";
+import chatUpdateSlice from "../domains/chats/chat-update.slice";
 
 export const store = configureStore({
     reducer: {
         exercisesUpdated: exerciseUpdateSlice.reducer,
         chatGroupsUpdated: chatGroupUpdateSlice.reducer,
-        promptGroupsUpdated: promptGroupUpdateSlice.reducer
+        promptGroupsUpdated: promptGroupUpdateSlice.reducer,
+        chatsUpdated: chatUpdateSlice.reducer
     }
 })
 

@@ -1,6 +1,5 @@
 import {Chat, ChatModel} from "./chat";
 import {ChatListEntry} from "./chat-list-entry";
-import ChatUpdateDto from "./chat-update-dto";
 import ChatUpdate from "./chat-update";
 
 export default class ChatRepository {

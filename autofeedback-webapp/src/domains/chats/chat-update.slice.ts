@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-const chatGroupUpdateSlice = createSlice({
-    name: 'chatGroupsUpdated',
+const chatUpdateSlice = createSlice({
+    name: 'chatsUpdated',
     initialState: {
         value: () => {},
     },
@@ -12,4 +12,4 @@ const chatGroupUpdateSlice = createSlice({
     }
 })
 
-export default chatGroupUpdateSlice;
+export default chatUpdateSlice;

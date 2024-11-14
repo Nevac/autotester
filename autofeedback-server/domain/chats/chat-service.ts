@@ -56,6 +56,6 @@ export default class ChatService {
     }
 
     public async delete(id: string): Promise<boolean> {
-        return await this.chatGroupRepo.delete(id);
+        return await this.chatRepo.delete(id);
     }
 }

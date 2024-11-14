@@ -1,6 +1,6 @@
 import './chat-group-detail.component.css';
 import {
-    Box,
+    Box, CircularProgress,
     Divider,
     IconButton,
     Tab,
@@ -20,16 +20,25 @@ import ChatGroupDetailsModelList from "./chat-group-details-model-list/chat-grou
 import {Llm} from "../../../llms/llm";
 import ChatUpdate from "../../chat-update";
 import ChatDetailComponent from "../../chat-detail/chat-detail.component";
+import {useAppSelector} from "../../../../app/redux-hooks";
+import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
+import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
+import chatUpdateSlice from "../../chat-update.slice";
+import {useDispatch} from "react-redux";
 
 export default function ChatGroupDetailComponent() {
     let { id } = useParams();
     const [value, setValue] = useState(0);
     const [chatGroup, setChatGroup] = useState<ChatGroup>();
     const [chats, setChats] = useState<ChatListItem[]>([]);
+    const [isCreatingChat, setIsCreatingChat] = useState<boolean>();
 
     const [isModelListOpen, setIsModelListOpen] = useState<boolean>(false);
-    const [isGptListOpen, setIsGptListOpen] = useState<boolean>(false);
     const [usedLlms, setUsedLlms] = useState<Set<Llm>>()
+
+    const [openSnackbar, Snackbar] = useSnackbar()
+    const dispatch = useDispatch()
+    const chatsChanged = useAppSelector(state => state.chatsUpdated.value)
 
     const chatGroupEndpoint = new ChatGroupEndpoint();
     const chatEndpoint = new ChatEndpoint();
@@ -38,7 +47,7 @@ export default function ChatGroupDetailComponent() {
         setValue(newValue);
     };
 
-    useEffect(() => {
+    const loadChatGroup = () => {
         chatGroupEndpoint.getById(id!).then(chatGroup =>
             setChatGroup(chatGroup)
         );
@@ -46,16 +55,27 @@ export default function ChatGroupDetailComponent() {
             setUsedLlms(new Set<Llm>(chats.map(chat => chat.model)));
             setChats(chats);
         })
-    }, [id]);
+    }
+
+    useEffect(loadChatGroup, [id]);
+    useEffect(loadChatGroup, [chatsChanged]);
 
     const createChat = (llm: Llm) => {
+        setIsModelListOpen(false);
+        setIsCreatingChat(true);
         chatEndpoint.create(
             new ChatUpdate(
                 llm.toString(),
                 chatGroup!._id,
                 llm
             )
-        ).then(result => console.log(result));
+        ).then(state => {
+            setIsCreatingChat(false);
+            if(state === EndpointResponeStatus.SUCCESS) {
+                openSnackbar("Chat create successful", SnackbarVariant.SUCCESS);
+                dispatch(chatUpdateSlice.actions.update());
+            } else openSnackbar("Chat create failed", SnackbarVariant.ERROR)
+        });
     }
 
     const renderTabHeaders = () => {
@@ -72,8 +92,23 @@ export default function ChatGroupDetailComponent() {
         )
     }
 
+    const renderAddButton = () => {
+        if(isCreatingChat) {
+            return (
+                <CircularProgress/>
+            )
+        } else {
+            return (
+                <IconButton aria-label="add" onClick={() => setIsModelListOpen(!isModelListOpen)}>
+                    <Add/>
+                </IconButton>
+            )
+        }
+    }
+
     return (
         <PaperDefaultComponent className={'chat-group-detail-paper'}>
+            <Snackbar/>
             <Typography id="modal-modal-title" variant="h4">
                 <div style={{padding: 20}}>
                     {chatGroup?.name}
@@ -82,9 +117,7 @@ export default function ChatGroupDetailComponent() {
             </Typography>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <IconButton aria-label="add" onClick={() => setIsModelListOpen(!isModelListOpen)}>
-                        <Add/>
-                    </IconButton>
+                    {renderAddButton()}
                     <ChatGroupDetailsModelList
                         usedSelection={usedLlms!}
                         onSelected={createChat}
