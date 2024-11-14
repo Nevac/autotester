@@ -55,7 +55,7 @@ export default class ClaudeClient implements LlmClient {
     }
 
     private generateMessages(request: ClientRequest): ClaudeMessage[] {
-        return request.promptGroup.prompts.map(prompt =>
+        return request.promptGroup.prompts.slice(1).map(prompt =>
             ClaudeMessage.of(
                 ClaudeRole.USER,
                 prompt

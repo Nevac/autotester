@@ -3,6 +3,7 @@ import ChatGptClient from "./chat-gpt/chat-gpt.client";
 import LlmClient from "./llm-client";
 import ClaudeClient from "./claude/claude.client";
 import LlamaClient from "./llama/llama.client";
+import GeminiClient from "./gemini/gemini.client";
 
 export const llmMap = new Map<string, LlmClient>([
     [Llm.GPT_3_5_turbo, new ChatGptClient("gpt-3.5-turbo-0125")],
@@ -21,4 +22,7 @@ export const llmMap = new Map<string, LlmClient>([
     [Llm.LLAMA_3, new LlamaClient("llama3-70b")],
     [Llm.LLAMA_3_1, new LlamaClient("llama3.1-405b")],
     [Llm.LLAMA_3_2, new LlamaClient("llama3.2-3b")],
+    [Llm.GEMINI_1_5_FLASH, new GeminiClient("gemini-1.5-flash-002")],
+    [Llm.GEMINI_1_5_FLASH_8B, new GeminiClient("gemini-1.5-flash-8b-001")],
+    [Llm.GEMINI_1_5_PRO, new GeminiClient("gemini-1.5-pro-002")],
 ]);

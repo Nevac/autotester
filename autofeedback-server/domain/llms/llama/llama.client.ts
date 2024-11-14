@@ -30,7 +30,7 @@ export default class LlamaClient implements LlmClient {
 
             console.log(completion);
 
-            return ClientResponse.ofGPTChatCompletion(completion);
+            return ClientResponse.ofLlamaCompletion(completion);
         } catch (error) {
             console.error("Error in completion:", error);
             throw error;
@@ -56,7 +56,7 @@ export default class LlamaClient implements LlmClient {
     }
 
     private generateMessages(request: ClientRequest): LlamaMessage[] {
-        return request.promptGroup.prompts.map(prompt =>
+        return request.promptGroup.prompts.slice(1).map(prompt =>
             LlamaMessage.of(
                 LlamaRole.USER,
                 prompt

@@ -55,7 +55,7 @@ export default class ChatGptClient implements LlmClient {
     }
 
     private generateMessages(request: ClientRequest): ChatGPTMessage[] {
-        return request.promptGroup.prompts.map(prompt =>
+        return request.promptGroup.prompts.slice(1).map(prompt =>
             ChatGPTMessage.of(
                 ChatGPTRole.USER,
                 prompt

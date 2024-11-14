@@ -3,9 +3,7 @@ import {Exercise} from "../exercises/exercise";
 import {ChatCompletion} from "openai/resources";
 import {ChatGroup} from "../chats/group/chat-group";
 import Anthropic from "@anthropic-ai/sdk";
-import LlamaStackClient from "llama-stack-client";
-import {InferenceChatCompletionResponse} from "llama-stack-client/resources";
-import ChatCompletionResponse = InferenceChatCompletionResponse.ChatCompletionResponse;
+import {GenerateContentResult} from "@google/generative-ai";
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -46,17 +44,13 @@ export class ClientResponse {
         )
     }
 
-    public static ofLlamaCompletion(completion: ChatCompletionResponse): ClientResponse {
-        const content = completion.completion_message.content;
+    public static ofLlamaCompletion(completion: ChatCompletion): ClientResponse {
+        return this.ofGPTChatCompletion(completion);
+    }
 
-        if(Array.isArray(content)) {
-            return new ClientResponse(
-                content
-            )
-        }
-
+    public static ofGeminiContentResult(contentResult: GenerateContentResult) {
         return new ClientResponse(
-            [content as string]
-        );
+            [contentResult.response.text()]
+        )
     }
 }

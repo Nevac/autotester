@@ -11,5 +11,8 @@ export enum Llm {
     CLAUDE_3_HAIKU = "claude-3-haiku",
     LLAMA_3_2 = "llama-3.2",
     LLAMA_3_1 = "llama-3.1",
-    LLAMA_3 = "llama-3"
+    LLAMA_3 = "llama-3",
+    GEMINI_1_5_FLASH = "gemini-1.5-flash",
+    GEMINI_1_5_FLASH_8B = "gemini-1.5-flash-8b",
+    GEMINI_1_5_PRO = "gemini-1.5-pro",
 }

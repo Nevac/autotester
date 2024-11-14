@@ -18,6 +18,7 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
     const [isGptListOpen, setIsGptListOpen] = useState<boolean>(false);
     const [isClaudeListOpen, setIsClaudeListOpen] = useState<boolean>(false);
     const [isLlamaListOpen, setIsLlamaListOpen] = useState<boolean>(false);
+    const [isGeminiListOpen, setIsGeminiListOpen] = useState<boolean>(false);
     const ref = useOnClickOutside(() => props.setIsOpen(false));
 
     const removeUsedFromSelection = (modelMap: Map<Llm, string>): Map<Llm, string> => {
@@ -57,6 +58,16 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 [Llm.LLAMA_3, "llama-3"],
                 [Llm.LLAMA_3_1, "llama-3.1"],
                 [Llm.LLAMA_3_2, "llama-3.2"],
+            ])
+        );
+    }
+
+    const geminiModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.GEMINI_1_5_FLASH, "gemini-1.5-flash"],
+                [Llm.GEMINI_1_5_FLASH_8B, "gemini-1.5-flash-8b"],
+                [Llm.GEMINI_1_5_PRO, "gemini-1.5-pro"],
             ])
         );
     }
@@ -116,6 +127,22 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 <Collapse in={isLlamaListOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         {Array.from(llamaModelMap().entries()).map(([key, value]: [Llm, string]) =>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                                <ListItemText primary={value} />
+                            </ListItemButton>
+                        )}
+                    </List>
+                </Collapse>
+                <ListItemButton onClick={() => setIsGeminiListOpen(!isGeminiListOpen)}>
+                    <ListItemIcon>
+                        <AutoAwesomeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Gemini" />
+                    {isGeminiListOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={isGeminiListOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {Array.from(geminiModelMap().entries()).map(([key, value]: [Llm, string]) =>
                             <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
                                 <ListItemText primary={value} />
                             </ListItemButton>
