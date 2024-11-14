@@ -3,6 +3,9 @@ import {Exercise} from "../exercises/exercise";
 import {ChatCompletion} from "openai/resources";
 import {ChatGroup} from "../chats/group/chat-group";
 import Anthropic from "@anthropic-ai/sdk";
+import LlamaStackClient from "llama-stack-client";
+import {InferenceChatCompletionResponse} from "llama-stack-client/resources";
+import ChatCompletionResponse = InferenceChatCompletionResponse.ChatCompletionResponse;
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -41,5 +44,19 @@ export class ClientResponse {
                 .filter(content => content.type === "text")
                 .map(content => content.text)
         )
+    }
+
+    public static ofLlamaCompletion(completion: ChatCompletionResponse): ClientResponse {
+        const content = completion.completion_message.content;
+
+        if(Array.isArray(content)) {
+            return new ClientResponse(
+                content
+            )
+        }
+
+        return new ClientResponse(
+            [content as string]
+        );
     }
 }

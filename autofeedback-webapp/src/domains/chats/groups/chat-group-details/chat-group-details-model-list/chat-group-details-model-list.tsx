@@ -17,6 +17,7 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
 
     const [isGptListOpen, setIsGptListOpen] = useState<boolean>(false);
     const [isClaudeListOpen, setIsClaudeListOpen] = useState<boolean>(false);
+    const [isLlamaListOpen, setIsLlamaListOpen] = useState<boolean>(false);
     const ref = useOnClickOutside(() => props.setIsOpen(false));
 
     const removeUsedFromSelection = (modelMap: Map<Llm, string>): Map<Llm, string> => {
@@ -46,6 +47,16 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 [Llm.CLAUDE_3_OPUS, "claude-3-opus"],
                 [Llm.CLAUDE_3_5_HAIKU, "claude-3-5-haiku"],
                 [Llm.CLAUDE_3_5_SONNET, "claude-3-5-sonnet"]
+            ])
+        );
+    }
+
+    const llamaModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.LLAMA_3, "llama-3"],
+                [Llm.LLAMA_3_1, "llama-3.1"],
+                [Llm.LLAMA_3_2, "llama-3.2"],
             ])
         );
     }
@@ -89,6 +100,22 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 <Collapse in={isClaudeListOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         {Array.from(claudeModelMap().entries()).map(([key, value]: [Llm, string]) =>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                                <ListItemText primary={value} />
+                            </ListItemButton>
+                        )}
+                    </List>
+                </Collapse>
+                <ListItemButton onClick={() => setIsLlamaListOpen(!isLlamaListOpen)}>
+                    <ListItemIcon>
+                        <AutoAwesomeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Llama" />
+                    {isLlamaListOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={isLlamaListOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {Array.from(llamaModelMap().entries()).map(([key, value]: [Llm, string]) =>
                             <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
                                 <ListItemText primary={value} />
                             </ListItemButton>

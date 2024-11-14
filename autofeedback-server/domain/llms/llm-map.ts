@@ -2,6 +2,7 @@ import {Llm} from "./llm";
 import ChatGptClient from "./chat-gpt/chat-gpt.client";
 import LlmClient from "./llm-client";
 import ClaudeClient from "./claude/claude.client";
+import LlamaClient from "./llama/llama.client";
 
 export const llmMap = new Map<string, LlmClient>([
     [Llm.GPT_3_5_turbo, new ChatGptClient("gpt-3.5-turbo-0125")],
@@ -14,4 +15,10 @@ export const llmMap = new Map<string, LlmClient>([
     [Llm.CLAUDE_3_OPUS, new ClaudeClient("claude-3-opus-20240229")],
     [Llm.CLAUDE_3_5_HAIKU, new ClaudeClient("claude-3-5-haiku-20241022")],
     [Llm.CLAUDE_3_5_SONNET, new ClaudeClient("claude-3-5-sonnet-20241022")],
+    [Llm.CLAUDE_3_OPUS, new ClaudeClient("claude-3-opus-20240229")],
+    [Llm.CLAUDE_3_5_HAIKU, new ClaudeClient("claude-3-5-haiku-20241022")],
+    [Llm.CLAUDE_3_5_SONNET, new ClaudeClient("claude-3-5-sonnet-20241022")],
+    [Llm.LLAMA_3, new LlamaClient("llama3-70b")],
+    [Llm.LLAMA_3_1, new LlamaClient("llama3.1-405b")],
+    [Llm.LLAMA_3_2, new LlamaClient("llama3.2-3b")],
 ]);
