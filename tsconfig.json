@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "autofeedback-webapp/node_modules",
+    "autofeedback-server/node_modules",
+    "autofeedback-webapp/package.json",
+    "autofeedback-server/package.json"
+  ]
+}

@@ -6,6 +6,7 @@ import cors from 'cors'
 import ExerciseResource from "./domain/exercises/exercise-resource";
 import PromptGroupResource from "./domain/prompts/prompt-group-resource";
 import ChatResource from "./domain/chats/chat-resource";
+import * as path from "node:path";
 
 //For env File
 dotenv.config();
@@ -15,8 +16,13 @@ const port = process.env.PORT || 8000;
 app.use(cors())
 app.use(express.json())
 connectDB().catch(err => console.log(err));
-app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to Express & TypeScript Server');
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'webapp')));
+
+// Serve the React app for all unknown routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'webapp', 'index.html'));
 });
 
 app.listen(port, () => {
