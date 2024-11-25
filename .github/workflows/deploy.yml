@@ -45,6 +45,7 @@ jobs:
             -e API_KEY_GEMINI=AIzaSyCERyVxnZJca0ywCiy5e8Nio1NcKGaTlNM \
             -e DB_URL=mongodb://127.0.0.1:27017/autofeedback-test-tool \
             -e REACT_APP_API=http://localhost:8000/api \
+            --network autofeedback-testing-tool \
             -p 80:8000 ${{ secrets.DOCKER_USERNAME }}/autofeedback-testing-tool:latest
         EOF
       env:
