@@ -1,7 +1,9 @@
 # Use Node.js as the base image
 FROM node:20
 
-ADD .env /autofeedback-webapp
+COPY . .
+
+RUN touch /autofeedback-webapp/.env
 RUN echo "REACT_APP_API=http://localhost:8000/api" > ./autofeedback-webapp/.env
 
 # Install dependencies for both frontend and backend
