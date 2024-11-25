@@ -1,4 +1,4 @@
-import {Application} from "express";
+import {Application, Router} from "express";
 import ChatGroupUpdateDto from "./chat-group-update-dto";
 import { Request } from 'express';
 import ChatGroupService from "./chat-group-service";
@@ -10,11 +10,11 @@ export default class ChatGroupResource {
     private readonly RESOURCE: string = 'chat-group'
 
     constructor(
-        private readonly app: Application,
+        private readonly router: Router,
     ) {
         this.service = new ChatGroupService();
 
-        app.get(`/${this.RESOURCE}`, async (req, res, next) => {
+        router.get(`/${this.RESOURCE}`, async (req, res, next) => {
             const populate = req.query.populate ? coerceBoolean(req.query.populate as string) : false;
 
             if(populate) {
@@ -27,17 +27,17 @@ export default class ChatGroupResource {
             }
         });
 
-        app.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+        router.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
             const exercise = await this.service.getById(req.params.id).catch(next);
             res.json(exercise);
         });
 
-        app.post(`/${this.RESOURCE}`, async (req, res, next) => {
+        router.post(`/${this.RESOURCE}`, async (req, res, next) => {
             const chatGroup = await this.service.create(req.body).catch(next);
             res.json(chatGroup);
         });
 
-        app.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+        router.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {
             const deleted = await this.service.delete(req.params.id).catch(next);
             if(deleted) res.sendStatus(200);
             else res.sendStatus(409);

@@ -20,10 +20,6 @@ connectDB().catch(err => console.log(err));
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'webapp')));
 
-// Serve the React app for all unknown routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'webapp', 'index.html'));
-});
 
 app.listen(port, () => {
     console.log(`Server is Fire at http://localhost:${port}`);
@@ -33,10 +29,17 @@ async function connectDB() {
     await mongoose.connect("" + process.env.DB_URL)
 }
 
-const chatResource = new ChatResource(app);
-const chatGroupResource = new ChatGroupResource(app);
-const exerciseResource = new ExerciseResource(app);
-const promptGroupResource = new PromptGroupResource(app);
+const router = express.Router();
+const chatResource = new ChatResource(router);
+const chatGroupResource = new ChatGroupResource(router);
+const exerciseResource = new ExerciseResource(router);
+const promptGroupResource = new PromptGroupResource(router);
+app.use('/api', router);
+
+// Serve the React app for all unknown routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'webapp', 'index.html'));
+});
 
 app.use(function errorHandler (err: Error, req: Request, res: Response, next: NextFunction) {
     res.status(500)
