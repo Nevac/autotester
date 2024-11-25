@@ -5,7 +5,8 @@
   "scripts": {
     "install": "npm install --prefix ./ package.json && npm install --prefix ./autofeedback-webapp package.json && npm install --prefix ./autofeedback-server package.json",
     "build": "npm run build --prefix ./autofeedback-webapp && npm run prepare-backend",
-    "prepare-backend": "shx mkdir -p ./autofeedback-server/dist/webapp && shx cp -r ./autofeedback-webapp/build/* autofeedback-server/dist/webapp && npm run build --prefix ./autofeedback-server"
+    "prepare-backend": "shx mkdir -p ./autofeedback-server/dist/webapp && shx cp -r ./autofeedback-webapp/build/* autofeedback-server/dist/webapp && npm run build --prefix ./autofeedback-server",
+    "start": "npm run start --prefix ./autofeedback-server"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
