@@ -39,13 +39,13 @@ jobs:
           docker rm autofeedback-testing-tool || true
           docker run \
             -d --name autofeedback-testing-tool \
-            -e API_KEY_CHAT_GPT: sk-svcacct-Fs4LudxZOMDPevQnqlNdOUwWpxZo3qkHwk3M55BAHQvFhhx0O5ZitnXVxikKKqSe2km8T3BlbkFJY0tVxKSXbbcqiL1UfOgsyovCAi2K1xf-98hqeoQkjPrl51_BCNIWK3UHeIrKYXh3ZYIA \
-            -e ANTHROPIC_API_KEY: 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 \
-            -e API_KEY_LLAMA: LA-73bb5ae0fd3d4ff581a4f52b93ecf422ef697d176ed44b4b813411af96786c3c \
-            -e API_KEY_GEMINI: AIzaSyCERyVxnZJca0ywCiy5e8Nio1NcKGaTlNM \
-            -e DB_URL: mongodb://127.0.0.1:27017/autofeedback-test-tool \
-            -e REACT_APP_API: http://localhost:8000/api \
-            -p 80:3000 ${{ secrets.DOCKER_USERNAME }}/autofeedback-testing-tool:latest
+            -e API_KEY_CHAT_GPT=sk-svcacct-Fs4LudxZOMDPevQnqlNdOUwWpxZo3qkHwk3M55BAHQvFhhx0O5ZitnXVxikKKqSe2km8T3BlbkFJY0tVxKSXbbcqiL1UfOgsyovCAi2K1xf-98hqeoQkjPrl51_BCNIWK3UHeIrKYXh3ZYIA \
+            -e ANTHROPIC_API_KEY=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 \
+            -e API_KEY_LLAMA=LA-73bb5ae0fd3d4ff581a4f52b93ecf422ef697d176ed44b4b813411af96786c3c \
+            -e API_KEY_GEMINI=AIzaSyCERyVxnZJca0ywCiy5e8Nio1NcKGaTlNM \
+            -e DB_URL=mongodb://127.0.0.1:27017/autofeedback-test-tool \
+            -e REACT_APP_API=http://localhost:8000/api \
+            -p 80:8000 ${{ secrets.DOCKER_USERNAME }}/autofeedback-testing-tool:latest
         EOF
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
