@@ -25,6 +25,8 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import chatUpdateSlice from "../../chat-update.slice";
 import {useDispatch} from "react-redux";
+import Paper from "@mui/material/Paper";
+import Markdown from "react-markdown";
 
 export default function ChatGroupDetailComponent() {
     let { id } = useParams();
@@ -115,6 +117,16 @@ export default function ChatGroupDetailComponent() {
                 </div>
                 <Divider/>
             </Typography>
+            <Box sx={{ width: '100%', padding: '20px'}}>
+                <Typography variant="h5">
+                    Attempt
+                </Typography>
+                <Paper className={'chat-detail-paper'}>
+                    <Markdown>
+                        {chatGroup?.attempt}
+                    </Markdown>
+                </Paper>
+            </Box>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     {renderAddButton()}
