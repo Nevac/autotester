@@ -1,6 +1,9 @@
 # Use Node.js as the base image
 FROM node:20
 
+ARG AZURE_VM_IP
+ARG PORT
+
 COPY . .
 
 RUN touch /autofeedback-webapp/.env
