@@ -79,7 +79,7 @@ export default function ChatGroupBrowserComponent() {
                             <Divider/>
                             <ListItemButton selected={item._id === selectedItem}
                                             onClick={() => navigate(Routes.chatGroupDetails(item._id))}>
-                                <div style={{display: "flex", flexDirection: "column"}}>
+                                <div style={{display: "flex", flex: '1', flexDirection: "column"}}>
                                     <ListItemText primary={item.name}/>
                                     <Typography color={'textSecondary'} fontSize={'0.7em'}>PG: {item.exercise}</Typography>
                                     <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.promptGroup}</Typography>
