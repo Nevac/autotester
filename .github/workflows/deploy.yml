@@ -20,7 +20,7 @@ jobs:
       run: |
         docker build \
           --build-arg AZURE_VM_IP=${{ secrets.AZURE_VM_IP }} \
-          --build-arg PORT=8000 \
+          --build-arg PORT=80 \
           -t ${{ secrets.DOCKER_USERNAME }}/autofeedback-testing-tool:latest .
 
     - name: Push Docker image to Docker Hub
@@ -48,7 +48,7 @@ jobs:
             -e API_KEY_GEMINI=AIzaSyCERyVxnZJca0ywCiy5e8Nio1NcKGaTlNM \
             -e DB_URL=mongodb://0.0.0.0:27017/autofeedback-test-tool \
             --net=host \
-            -p 80:8000 ${{ secrets.DOCKER_USERNAME }}/autofeedback-testing-tool:latest
+            -p 80:80 ${{ secrets.DOCKER_USERNAME }}/autofeedback-testing-tool:latest
         EOF
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}

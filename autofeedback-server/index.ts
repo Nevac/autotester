@@ -12,7 +12,7 @@ import * as path from "node:path";
 dotenv.config();
 
 const app: Application = express();
-const port = process.env.PORT || "8000";
+const port = process.env.PORT || "80";
 app.use(cors())
 app.use(express.json())
 connectDB().catch(err => console.log(err));
