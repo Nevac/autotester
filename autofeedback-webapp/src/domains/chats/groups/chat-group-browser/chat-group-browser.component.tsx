@@ -1,5 +1,5 @@
 import './chat-group-browser.component.css';
-import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText} from "@mui/material";
+import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Typography} from "@mui/material";
 import React, {useEffect, useState} from 'react';
 import ChatGroupListItem from "../chat-group-list-item";
 import ChatGroupEndpoint from "../chat-group-endpoint";
@@ -79,7 +79,11 @@ export default function ChatGroupBrowserComponent() {
                             <Divider/>
                             <ListItemButton selected={item._id === selectedItem}
                                             onClick={() => navigate(Routes.chatGroupDetails(item._id))}>
-                                <ListItemText primary={item.name}/>
+                                <div style={{display: "flex", flexDirection: "column"}}>
+                                    <ListItemText primary={item.name}/>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>PG: {item.exercise}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.promptGroup}</Typography>
+                                </div>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>
                         </ListItem>

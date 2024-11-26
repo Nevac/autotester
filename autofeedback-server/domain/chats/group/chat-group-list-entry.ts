@@ -5,6 +5,8 @@ export default class ChatGroupListEntry {
     constructor(
         public readonly _id: string,
         public readonly name: string,
+        public readonly exercise: string,
+        public readonly promptGroup: string,
         public readonly createdAt: Date
     ) {
     }
@@ -15,6 +17,8 @@ export default class ChatGroupListEntry {
         return new ChatGroupListEntry(
             EntityUtil.convertId(chatGroup._id),
             chatGroup.name,
+            chatGroup.exercise.name,
+            chatGroup.promptGroup.name,
             createdAt
         )
     }

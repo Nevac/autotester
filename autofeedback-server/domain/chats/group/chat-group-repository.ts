@@ -16,12 +16,12 @@ export default class ChatGroupRepository {
 
     public async getAllListEntries(): Promise<ChatGroupListEntry[]> {
         return await ChatGroupModel.find()
-            .select('_id name createdAt')
+            .select('_id name exercise promptGroup createdAt')
             .sort({createdAt: "desc"})
             .exec()
             .then(documents =>
                 documents.map(document =>
-                    ChatGroup.ofDocument(document)
+                    ChatGroupListEntry.ofDocument(document)
                 ))
     }
 
