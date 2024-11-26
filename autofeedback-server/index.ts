@@ -12,7 +12,7 @@ import * as path from "node:path";
 dotenv.config();
 
 const app: Application = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || "8000";
 app.use(cors())
 app.use(express.json())
 connectDB().catch(err => console.log(err));
@@ -21,7 +21,7 @@ connectDB().catch(err => console.log(err));
 app.use(express.static(path.join(__dirname, 'webapp')));
 
 
-app.listen(port, () => {
+app.listen(parseInt(port), '0.0.0.0', () => {
     console.log(`Server is Fire at http://localhost:${port}`);
 });
 
