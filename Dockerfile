@@ -4,7 +4,7 @@ FROM node:20
 COPY . .
 
 RUN touch /autofeedback-webapp/.env
-RUN echo "REACT_APP_API=http://74.241.248.39:8000/api" > ./autofeedback-webapp/.env
+RUN echo "REACT_APP_API=http://${AZURE_VM_IP}:${PORT}/api" > ./autofeedback-webapp/.env
 
 # Install dependencies for both frontend and backend
 RUN npm install
