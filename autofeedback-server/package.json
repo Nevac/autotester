@@ -14,6 +14,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
     "@google/generative-ai": "^0.21.0",
+    "@huggingface/inference": "^2.8.1",
     "@types/mongoose": "^5.11.96",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

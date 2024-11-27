@@ -4,6 +4,8 @@ export enum Llm {
     GPT_4o = "gpt-4o",
     GPT_4o_mini = "gpt-4o-mini",
     GPT_3_5_turbo = "gpt-3.5-turbo",
+    O1_PREVIEW = "01-preview",
+    O1_MINI = "01-mini",
     CLAUDE_3_5_SONNET = "claude-3-5-sonnet",
     CLAUDE_3_5_HAIKU = "claude-3-5-haiku",
     CLAUDE_3_OPUS = "claude-3-opus",
@@ -15,4 +17,6 @@ export enum Llm {
     GEMINI_1_5_FLASH = "gemini-1.5-flash",
     GEMINI_1_5_FLASH_8B = "gemini-1.5-flash-8b",
     GEMINI_1_5_PRO = "gemini-1.5-pro",
+    QWEN_2_5_CODER_32B_INSTRUCT = "qwen-2.5-coder-32B-instruct",
+    QWEN_2_5_72B_INSTRUCT = "qwen-2.5-72B-instruct"
 }

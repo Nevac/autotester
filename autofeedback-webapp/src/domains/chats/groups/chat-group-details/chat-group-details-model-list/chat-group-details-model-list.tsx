@@ -16,9 +16,11 @@ export interface ChatGroupDetailsModelListProps {
 export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelListProps) {
 
     const [isGptListOpen, setIsGptListOpen] = useState<boolean>(false);
+    const [isO1ListOpen, setIsO1ListOpen] = useState<boolean>(false);
     const [isClaudeListOpen, setIsClaudeListOpen] = useState<boolean>(false);
     const [isLlamaListOpen, setIsLlamaListOpen] = useState<boolean>(false);
     const [isGeminiListOpen, setIsGeminiListOpen] = useState<boolean>(false);
+    const [isQwenListOpen, setIsQwenListOpen] = useState<boolean>(false);
     const ref = useOnClickOutside(() => props.setIsOpen(false));
 
     const removeUsedFromSelection = (modelMap: Map<Llm, string>): Map<Llm, string> => {
@@ -36,6 +38,15 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 [Llm.GPT_4o, "gpt-4o"],
                 [Llm.GPT_4o_mini, "gpt-4o-mini"],
                 [Llm.GPT_3_5_turbo, "gpt-3.5-turbo"],
+            ])
+        );
+    }
+
+    const o1ModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.O1_MINI, "o1-mini"],
+                [Llm.O1_PREVIEW, "o1-preview"],
             ])
         );
     }
@@ -72,6 +83,14 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
         );
     }
 
+    const qwenModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.QWEN_2_5_72B_INSTRUCT, "qwen-2.5-72B-instruct"],
+                [Llm.QWEN_2_5_CODER_32B_INSTRUCT, "qwen-2.5-coder-32B-instruct"],
+            ])
+        );
+    }
     if(props.isOpen) {
         return (
             <List
@@ -95,6 +114,22 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 <Collapse in={isGptListOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         {Array.from(gptModelMap().entries()).map(([key, value]: [Llm, string]) =>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                                <ListItemText primary={value} />
+                            </ListItemButton>
+                        )}
+                    </List>
+                </Collapse>
+                <ListItemButton onClick={() => setIsO1ListOpen(!isO1ListOpen)}>
+                    <ListItemIcon>
+                        <AutoAwesomeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="O1" />
+                    {isO1ListOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={isO1ListOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {Array.from(o1ModelMap().entries()).map(([key, value]: [Llm, string]) =>
                             <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
                                 <ListItemText primary={value} />
                             </ListItemButton>
@@ -143,6 +178,22 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 <Collapse in={isGeminiListOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         {Array.from(geminiModelMap().entries()).map(([key, value]: [Llm, string]) =>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                                <ListItemText primary={value} />
+                            </ListItemButton>
+                        )}
+                    </List>
+                </Collapse>
+                <ListItemButton onClick={() => setIsQwenListOpen(!isQwenListOpen)}>
+                    <ListItemIcon>
+                        <AutoAwesomeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="QWEN" />
+                    {isQwenListOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={isQwenListOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        {Array.from(qwenModelMap().entries()).map(([key, value]: [Llm, string]) =>
                             <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
                                 <ListItemText primary={value} />
                             </ListItemButton>

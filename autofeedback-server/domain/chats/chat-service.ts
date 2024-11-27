@@ -33,14 +33,12 @@ export default class ChatService {
     public async create(chat: ChatUpdateDto): Promise<Chat> {
         const chatGroup = await this.chatGroupRepo.getById(chat.chatGroupId);
 
-        console.log(chatGroup);
-
         const client = this.llmService.resolveLlmService(chat.llm);
+        console.log("here");
         const response = await client.create(
             ClientRequest.ofChatGroup(chatGroup)
         );
 
-        console.log(response);
 
         return await this.chatRepo.create(
             new ChatUpdate(
