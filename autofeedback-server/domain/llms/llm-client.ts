@@ -53,4 +53,8 @@ export class ClientResponse {
             [contentResult.response.text()]
         )
     }
+
+    public static ofQwenCompletion(completion: ChatCompletion): ClientResponse {
+        return this.ofGPTChatCompletion(completion);
+    }
 }
