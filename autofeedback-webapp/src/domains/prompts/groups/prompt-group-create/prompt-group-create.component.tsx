@@ -1,6 +1,5 @@
 import './prompt-group-create.component.css';
-import PaperDefaultComponent from "../../../util/paper/paper-default.component";
-import {Divider, Typography} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
 import PromptGroupFormComponent from "../prompt-group-form/prompt-group-form.component";
 import PromptGroupUpdate from "../prompt-group-update";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
@@ -8,6 +7,7 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import PromptGroupEndpoint from "../prompt-group-endpoint";
 import {useDispatch} from "react-redux";
 import {promptGroupUpdateSlice} from "../prompt-group-update.slice";
+import React from "react";
 
 export default function PromptGroupCreateComponent() {
 
@@ -28,13 +28,17 @@ export default function PromptGroupCreateComponent() {
     }
 
     return (
-        <PaperDefaultComponent className={'prompt-group-create-paper'}>
+        <Box className={'prompt-group-create-box'}>
             <Snackbar/>
-            <Typography id="modal-modal-title" variant="h4">
-                Create exercise
+            <Typography id="create-prompt-group-title" variant="h4">
+                <div style={{padding: 20}}>
+                    Create Prompt Group
+                </div>
                 <Divider/>
             </Typography>
-            <PromptGroupFormComponent save={createPromptGroup}/>
-        </PaperDefaultComponent>
+            <div style={{padding: 20}}>
+                <PromptGroupFormComponent save={createPromptGroup}/>
+            </div>
+        </Box>
     )
 }

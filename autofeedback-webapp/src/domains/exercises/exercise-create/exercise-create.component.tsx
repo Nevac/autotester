@@ -1,6 +1,6 @@
 import './exercise-create.component.css';
 import ExerciseFormComponent from "../exercise-form/exercise-form.component";
-import {Divider, Typography} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
 import PaperDefaultComponent from "../../util/paper/paper-default.component";
 import ExerciseUpdate from "../exercise-update";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
@@ -8,6 +8,7 @@ import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import ExerciseEndpoint from "../exercise-endpoint";
 import {useDispatch} from "react-redux";
 import {exerciseUpdateSlice} from "../exercise-update.slice";
+import React from "react";
 
 export default function ExerciseCreateComponent() {
     const [openSnackbar, Snackbar] = useSnackbar();
@@ -29,13 +30,17 @@ export default function ExerciseCreateComponent() {
     }
 
     return(
-        <PaperDefaultComponent className={'exercise-create-paper'}>
+        <Box className={'exercise-create-box'}>
             <Snackbar/>
-            <Typography id="modal-modal-title" variant="h4">
-                Create exercise
+            <Typography id="create-exercise-title" variant="h4">
+                <div style={{padding: 20}}>
+                    Create exercise
+                </div>
                 <Divider/>
             </Typography>
-            <ExerciseFormComponent save={saveExercise}/>
-        </PaperDefaultComponent>
+            <div style={{padding: 20}}>
+                <ExerciseFormComponent save={saveExercise}/>
+            </div>
+        </Box>
     )
 }

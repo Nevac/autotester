@@ -1,11 +1,11 @@
 import './exercise-edit.component.css';
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import ExerciseEndpoint from "../exercise-endpoint";
 import {useParams} from "react-router-dom";
 import Exercise from "../exercise";
 import ExerciseFormComponent from "../exercise-form/exercise-form.component";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
-import {Divider, Typography} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
 import PaperDefaultComponent from "../../util/paper/paper-default.component";
 import ExerciseUpdate from "../exercise-update";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
@@ -40,22 +40,27 @@ export default function ExerciseEditComponent() {
     }
 
     return(
-        <PaperDefaultComponent className={'prompt-group-edit-paper'}>
+        <Box className={'exercise-edit-box'}>
             <Snackbar/>
-            <Typography id="modal-modal-title" variant="h4">
-                Edit exercise
+            <Typography id="edit-exercise-title" variant="h4">
+                <div style={{padding: 20}}>
+                    Edit exercise
+                </div>
                 <Divider/>
             </Typography>
             {exercise ?
+                <div style={{padding: 20}}>
                     <ExerciseFormComponent
                         save={saveExercise}
                         nameInit={exercise.name}
                         taskInit={exercise.task}
                         solutionInit={exercise.solution}
                         key={exercise._id}
-                    /> :
-                    "Could not load Exercise"
-                }
-        </PaperDefaultComponent>
+                    />
+                </div>
+                :
+                "Could not load Exercise"
+            }
+        </Box>
     )
 }

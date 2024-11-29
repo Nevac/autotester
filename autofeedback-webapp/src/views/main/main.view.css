@@ -11,8 +11,17 @@
     gap: 10px
 }
 
-.main-view-content {
+.main-view-content-column {
+    display: flex;
     flex: 1;
+}
+
+.main-view-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 !important;
 }
 
 .main-view-side {

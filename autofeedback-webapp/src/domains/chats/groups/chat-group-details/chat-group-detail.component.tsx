@@ -9,7 +9,6 @@ import {
     Typography
 } from "@mui/material";
 import React, {SyntheticEvent, useEffect, useState} from "react";
-import PaperDefaultComponent from "../../../util/paper/paper-default.component";
 import TabPanel from "../../../util/tab-panel/tab-panel.ts";
 import ChatGroupEndpoint from "../chat-group-endpoint";
 import {useParams} from "react-router-dom";
@@ -97,7 +96,7 @@ export default function ChatGroupDetailComponent() {
     const renderTabContent = () => {
         return chats.map((chat, index) =>
             <TabPanel value={value} index={index}>
-                <ChatDetailComponent chatId={chat._id}/>
+                <ChatDetailComponent key={chat._id} chatId={chat._id}/>
             </TabPanel>
         )
     }
@@ -117,7 +116,7 @@ export default function ChatGroupDetailComponent() {
     }
 
     return (
-        <PaperDefaultComponent className={'chat-group-detail-paper'}>
+        <Box className={'chat-group-detail-box'}>
             <Snackbar/>
             <Typography id="modal-modal-title" variant="h4">
                 <div style={{padding: 20}}>
@@ -157,7 +156,7 @@ export default function ChatGroupDetailComponent() {
                 </Box>
                 {renderTabContent()}
             </Box>
-        </PaperDefaultComponent>
+        </Box>
     )
 }
 
