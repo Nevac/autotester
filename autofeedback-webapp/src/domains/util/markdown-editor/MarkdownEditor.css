@@ -1,0 +1,27 @@
+.markdown-editor {
+    background-color: #121212 !important;
+}
+
+.markdown-editor .wmde-markdown {
+    background-color: unset !important;
+    font-family: unset !important;
+    font-size: unset !important;
+}
+
+.markdown-editor .w-md-editor-text-input {
+    font-family: unset !important;
+    font-size: unset !important;
+}
+
+.markdown-editor .wmde-markdown {
+    background-color: unset !important;
+}
+
+.markdown-editor .w-md-editor-toolbar {
+    background-color: unset !important;
+}
+
+.markdown-editor .w-md-editor-toolbar li > button > svg {
+    width: 20px !important;
+    height: 20px !important;
+}

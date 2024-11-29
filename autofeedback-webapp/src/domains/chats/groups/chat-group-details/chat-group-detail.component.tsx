@@ -1,5 +1,6 @@
 import './chat-group-detail.component.css';
 import {
+    Accordion, AccordionDetails, AccordionSummary,
     Box, CircularProgress,
     Divider,
     IconButton,
@@ -15,7 +16,7 @@ import {useParams} from "react-router-dom";
 import {ChatGroup} from "../chat-group";
 import ChatEndpoint from "../../chat-endpoint";
 import {ChatListItem} from "../../chat-list-item";
-import {Add} from "@mui/icons-material";
+import {Add, ExpandMore} from "@mui/icons-material";
 import ChatGroupDetailsModelList from "./chat-group-details-model-list/chat-group-details-model-list";
 import {Llm} from "../../../llms/llm";
 import ChatUpdate from "../../chat-update";
@@ -25,8 +26,15 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import chatUpdateSlice from "../../chat-update.slice";
 import {useDispatch} from "react-redux";
-import Paper from "@mui/material/Paper";
 import Markdown from "react-markdown";
+import rehypeHighlight from 'rehype-highlight'
+import java from 'react-syntax-highlighter/dist/esm/languages/hljs/java';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import 'highlight.js/styles/vs2015.css';
+import MarkdownX from "../../../util/markdown-x/MarkdownX";
+
+SyntaxHighlighter.registerLanguage('java', java);
 
 export default function ChatGroupDetailComponent() {
     let { id } = useParams();
@@ -117,15 +125,23 @@ export default function ChatGroupDetailComponent() {
                 </div>
                 <Divider/>
             </Typography>
+
             <Box sx={{ width: '100%', padding: '20px'}}>
-                <Typography variant="h5">
-                    Attempt
-                </Typography>
-                <Paper className={'chat-detail-paper'}>
-                    <Markdown>
-                        {chatGroup?.attempt}
-                    </Markdown>
-                </Paper>
+                <AccordionComponent
+                    title={"Task"}
+                    id={"task"}
+                    content={chatGroup?.exercise.task}
+                />
+                <AccordionComponent
+                    title={"Attempt"}
+                    id={"attempt"}
+                    content={chatGroup?.attempt}
+                />
+                <AccordionComponent
+                    title={"Solution"}
+                    id={"solution"}
+                    content={chatGroup?.exercise.solution}
+                />
             </Box>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -143,4 +159,25 @@ export default function ChatGroupDetailComponent() {
             </Box>
         </PaperDefaultComponent>
     )
+}
+
+function AccordionComponent (props: {title: string, id: string, content: string | undefined}) {
+    return (
+        <Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMore/>}
+                aria-controls={`${props.id}-accordion-content`}
+                id={`${props.id}-accordion-header`}
+            >
+                <Typography variant="h5">
+                    {props.title}
+                </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <MarkdownX>
+                    {props.content}
+                </MarkdownX>
+            </AccordionDetails>
+        </Accordion>
+    );
 }

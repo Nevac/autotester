@@ -2,7 +2,10 @@ import './exercise-form.component.css';
 import useInputValue from "../../util/forms/input-value-hook";
 import useFormValidationHook from "../../util/forms/form-validation-hook";
 import ExerciseUpdate from "../exercise-update";
-import {Button, TextField, Typography} from "@mui/material";
+import {Button, FormControl, InputLabel, TextField, Typography} from "@mui/material";
+import MDEditor from '@uiw/react-md-editor';
+import Markdown from "react-markdown";
+import MarkdownEditor from "../../util/markdown-editor/MarkdownEditor";
 
 export interface ExerciseFormProps {
     save: (update: ExerciseUpdate) => void
@@ -47,28 +50,23 @@ export default function ExerciseFormComponent(props: ExerciseFormProps) {
                 />
             </div>
             <div className={'exercise-form-text-area-container'}>
-                <TextField
-                    id="task"
-                    required
-                    label="Task"
+                <FormControl
                     className='exercise-form-text-area'
-                    multiline
-                    rows={textAreaRows}
-                    value={taskInput.value}
-                    onChange={taskInput.handleChange}
+                    required
                     error={taskInput.error}
-                />
-                <TextField
-                    id="solution"
-                    required
-                    label="Solution"
+                >
+                    <InputLabel htmlFor="task-input">Task</InputLabel>
+                    <MarkdownEditor id='task-input' input={taskInput}/>
+                </FormControl>
+
+                <FormControl
                     className='exercise-form-text-area'
-                    multiline
-                    rows={textAreaRows}
-                    value={solutionInput.value}
-                    onChange={solutionInput.handleChange}
-                    error={solutionInput.error}
-                />
+                    required
+                    error={taskInput.error}
+                >
+                    <InputLabel htmlFor="solution-input">Solution</InputLabel>
+                    <MarkdownEditor id='solution-input' input={solutionInput}/>
+                </FormControl>
             </div>
             <Button variant={"contained"} onClick={saveExercise} disabled={!isFormValid}>
                 Save
