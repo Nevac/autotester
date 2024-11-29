@@ -4,11 +4,9 @@ import ChatEndpoint from "../chat-endpoint";
 import {Chat} from "../chat";
 import Paper from "@mui/material/Paper";
 import Markdown from "react-markdown";
-import {IconButton} from "@mui/material";
 import DeleteConfirmButtonComponent from "../../util/delete-confirm-button/delete-confirm-button.component";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
-import chatGroupUpdateSlice from "../groups/chat-group-update.slice";
 import {useDispatch} from "react-redux";
 import chatUpdateSlice from "../chat-update.slice";
 

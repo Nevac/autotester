@@ -104,105 +104,70 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                     </ListSubheader>
                 }
             >
-                <ListItemButton onClick={() => setIsGptListOpen(!isGptListOpen)}>
-                    <ListItemIcon>
-                        <AutoAwesomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="GPT" />
-                    {isGptListOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={isGptListOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {Array.from(gptModelMap().entries()).map(([key, value]: [Llm, string]) =>
-                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
-                                <ListItemText primary={value} />
-                            </ListItemButton>
-                        )}
-                    </List>
-                </Collapse>
-                <ListItemButton onClick={() => setIsO1ListOpen(!isO1ListOpen)}>
-                    <ListItemIcon>
-                        <AutoAwesomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="O1" />
-                    {isO1ListOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={isO1ListOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {Array.from(o1ModelMap().entries()).map(([key, value]: [Llm, string]) =>
-                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
-                                <ListItemText primary={value} />
-                            </ListItemButton>
-                        )}
-                    </List>
-                </Collapse>
-                <ListItemButton onClick={() => setIsClaudeListOpen(!isClaudeListOpen)}>
-                    <ListItemIcon>
-                        <AutoAwesomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="Claude" />
-                    {isClaudeListOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={isClaudeListOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {Array.from(claudeModelMap().entries()).map(([key, value]: [Llm, string]) =>
-                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
-                                <ListItemText primary={value} />
-                            </ListItemButton>
-                        )}
-                    </List>
-                </Collapse>
-                <ListItemButton onClick={() => setIsLlamaListOpen(!isLlamaListOpen)}>
-                    <ListItemIcon>
-                        <AutoAwesomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="Llama" />
-                    {isLlamaListOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={isLlamaListOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {Array.from(llamaModelMap().entries()).map(([key, value]: [Llm, string]) =>
-                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
-                                <ListItemText primary={value} />
-                            </ListItemButton>
-                        )}
-                    </List>
-                </Collapse>
-                <ListItemButton onClick={() => setIsGeminiListOpen(!isGeminiListOpen)}>
-                    <ListItemIcon>
-                        <AutoAwesomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="Gemini" />
-                    {isGeminiListOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={isGeminiListOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {Array.from(geminiModelMap().entries()).map(([key, value]: [Llm, string]) =>
-                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
-                                <ListItemText primary={value} />
-                            </ListItemButton>
-                        )}
-                    </List>
-                </Collapse>
-                <ListItemButton onClick={() => setIsQwenListOpen(!isQwenListOpen)}>
-                    <ListItemIcon>
-                        <AutoAwesomeIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="QWEN" />
-                    {isQwenListOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={isQwenListOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {Array.from(qwenModelMap().entries()).map(([key, value]: [Llm, string]) =>
-                            <ListItemButton sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
-                                <ListItemText primary={value} />
-                            </ListItemButton>
-                        )}
-                    </List>
-                </Collapse>
+                <ModelCategoryListItem
+                    title={"GPT"}
+                    models={gptModelMap()}
+                    onSelected={props.onSelected}
+                />
+                <ModelCategoryListItem
+                    title={"O1"}
+                    models={o1ModelMap()}
+                    onSelected={props.onSelected}
+                />
+                <ModelCategoryListItem
+                    title={"Claude"}
+                    models={claudeModelMap()}
+                    onSelected={props.onSelected}
+                />
+                <ModelCategoryListItem
+                    title={"Llama"}
+                    models={llamaModelMap()}
+                    onSelected={props.onSelected}
+                />
+                <ModelCategoryListItem
+                    title={"Gemini"}
+                    models={geminiModelMap()}
+                    onSelected={props.onSelected}
+                />
+                <ModelCategoryListItem
+                    title={"QWEN"}
+                    models={qwenModelMap()}
+                    onSelected={props.onSelected}
+                />
             </List>
         )
     }
 
     return <></>;
+}
+
+function ModelCategoryListItem (
+    props: {
+        title: string,
+        models: Map<Llm, string>,
+        onSelected: (key: Llm) => void
+    }
+) {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    return (
+        <>
+            <ListItemButton key={props.title} onClick={() => setIsOpen(!isOpen)}>
+                <ListItemIcon>
+                    <AutoAwesomeIcon/>
+                </ListItemIcon>
+                <ListItemText primary={props.title} />
+                {isOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    {Array.from(props.models.entries()).map(([key, value]: [Llm, string]) =>
+                        <ListItemButton key={key} sx={{ pl: 4 }} onClick={() => props.onSelected(key)}>
+                            <ListItemText primary={value} />
+                        </ListItemButton>
+                    )}
+                </List>
+            </Collapse>
+        </>
+    );
 }

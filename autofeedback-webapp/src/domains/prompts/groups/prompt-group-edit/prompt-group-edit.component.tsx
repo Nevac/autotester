@@ -1,8 +1,8 @@
 import './prompt-group-edit.component.css';
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import PaperDefaultComponent from "../../../util/paper/paper-default.component";
-import {Divider, Typography} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import PromptGroupEndpoint from "../prompt-group-endpoint";
 import PromptGroup from "../prompt-group";
@@ -40,21 +40,26 @@ export default function PromptGroupEditComponent() {
     }
 
     return(
-        <PaperDefaultComponent className={'prompt-group-edit-paper'}>
+        <Box className={'prompt-group-edit-box'}>
             <Snackbar/>
-            <Typography id="modal-modal-title" variant="h4">
-                Edit exercise
+            <Typography id="edit-prompt-group-title" variant="h4">
+                <div style={{padding: 20}}>
+                    Edit Prompt Group
+                </div>
                 <Divider/>
             </Typography>
             {promptGroup ?
+                <div style={{padding: 20}}>
                     <PromptGroupFormComponent
                         save={createPromptGroup}
                         nameInit={promptGroup.name}
                         promptsInit={promptGroup.prompts}
                         key={promptGroup._id}
-                    /> :
+                    />
+                </div>
+                :
                     "Could not load Exercise"
                 }
-        </PaperDefaultComponent>
+        </Box>
     )
 }
