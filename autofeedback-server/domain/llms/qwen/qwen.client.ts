@@ -25,7 +25,8 @@ export default class QwenClient implements LlmClient {
                     this.generateSystemMessage(request),
                     ...this.generateMessages(request)
                 ],
-                model: this.model
+                model: this.model,
+                max_tokens: 2048
             })
 
 
