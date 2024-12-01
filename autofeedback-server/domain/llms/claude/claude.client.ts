@@ -19,7 +19,7 @@ export default class ClaudeClient implements LlmClient {
     public async create(request: ClientRequest): Promise<ClientResponse> {
         try {
             const message = await this.client.messages.create({
-                max_tokens: 1024,
+                max_tokens: 2048,
                 messages: [
                     this.generateSystemMessage(request),
                     ...this.generateMessages(request)
