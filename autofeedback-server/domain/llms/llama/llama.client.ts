@@ -2,6 +2,8 @@ import OpenAI from 'openai';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Llm} from "../llm";
 import dotenv from 'dotenv';
+import PromptBuilder from "../prompt-builder";
+import LlmConfig from "../llm-config";
 
 export default class LlamaClient implements LlmClient {
 
@@ -22,10 +24,14 @@ export default class LlamaClient implements LlmClient {
         try {
             const completion = await this.client.chat.completions.create({
                 messages: [
-                    this.generateSystemMessage(request),
-                    ...this.generateMessages(request)
+                    this.generateSystemMessage(request)
                 ],
-                model: this.model
+                model: this.model,
+                max_tokens: LlmConfig.MAX_TOKEN,
+                temperature: LlmConfig.TEMP,
+                top_p: LlmConfig.TOP_P,
+                frequency_penalty: LlmConfig.FREQ_PENALTY,
+                presence_penalty: LlmConfig.PRES_PENALTY
             })
 
             console.log(completion);
@@ -40,18 +46,7 @@ export default class LlamaClient implements LlmClient {
     private generateSystemMessage(request: ClientRequest): LlamaMessage {
         return LlamaMessage.of(
             LlamaRole.SYSTEM,
-            `
-            ${request.promptGroup.prompts[0]}
-                
-            Exercise:
-            ${request.exercise.task}
-            
-            Example Solution:
-            ${request.exercise.solution}
-            
-            Attempt:
-            ${request.attempt}
-            `
+            PromptBuilder.default(request)
         );
     }
 

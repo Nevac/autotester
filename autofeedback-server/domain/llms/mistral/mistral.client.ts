@@ -1,82 +1,81 @@
-import OpenAI from 'openai';
+import { Mistral } from '@mistralai/mistralai';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
-import {Llm} from "../llm";
 import dotenv from 'dotenv';
 import PromptBuilder from "../prompt-builder";
 import LlmConfig from "../llm-config";
 
-export default class QwenClient implements LlmClient {
+export default class MistralClient implements LlmClient {
 
-    private readonly client: OpenAI;
+    private readonly client: Mistral;
 
     public constructor(
         private readonly model: string
     ) {
         dotenv.config();
-        this.client = new OpenAI({
-            baseURL: "https://api-inference.huggingface.co/v1/",
-            apiKey: process.env['API_KEY_QWEN'],
+        this.client = new Mistral({
+            apiKey: process.env['API_KEY_MISTRAL'],
         });
     }
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
         console.log(this.model.toString())
         try {
-            const completion = await this.client.chat.completions.create({
+            const completion = await this.client.chat.complete({
                 messages: [
                     this.generateSystemMessage(request),
                 ],
                 model: this.model,
-                max_tokens: LlmConfig.MAX_TOKEN,
+                maxTokens: LlmConfig.MAX_TOKEN,
                 temperature: LlmConfig.TEMP,
-                top_p: LlmConfig.TOP_P,
-                frequency_penalty: LlmConfig.FREQ_PENALTY,
-                presence_penalty: LlmConfig.PRES_PENALTY
+                topP: LlmConfig.TOP_P,
+                frequencyPenalty: LlmConfig.FREQ_PENALTY,
+                presencePenalty: LlmConfig.PRES_PENALTY
             })
 
+            console.log(completion);
 
-            return ClientResponse.ofQwenCompletion(completion);
+            return ClientResponse.ofMinstralCompletion(completion);
         } catch (error) {
             console.error("Error in completion:", error);
             throw error;
         }
     }
 
-    private generateSystemMessage(request: ClientRequest): QwenMessage {
-        return QwenMessage.of(
-            QwenRole.SYSTEM,
+    private generateSystemMessage(request: ClientRequest): MinstralMessage {
+        return MinstralMessage.of(
+            MinstralRole.SYSTEM,
             PromptBuilder.default(request)
         );
     }
 
-    private generateMessages(request: ClientRequest): QwenMessage[] {
+    private generateMessages(request: ClientRequest): MinstralMessage[] {
         return request.promptGroup.prompts.slice(1).map(prompt =>
-            QwenMessage.of(
-                QwenRole.USER,
+            MinstralMessage.of(
+                MinstralRole.USER,
                 prompt
             )
         );
     }
 }
 
-class QwenMessage {
+class MinstralMessage {
     private constructor(
-        public readonly role: QwenRole,
+        public readonly role: MinstralRole,
         public readonly content: string
     ) {}
 
     public static of(
-        role: QwenRole,
+        role: MinstralRole,
         content: string
-    ): QwenMessage {
-        return new QwenMessage(
+    ): MinstralMessage {
+        return new MinstralMessage(
             role,
             content
         )
     }
 }
 
-enum QwenRole {
+enum MinstralRole {
     SYSTEM = "system",
     ASSISTANT = "assistant",
     USER = "user"

@@ -33,11 +33,13 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
     const gptModelMap = () => {
         return removeUsedFromSelection(
             new Map<Llm, string>([
-                [Llm.GPT_4, "gpt-4"],
+                // [Llm.GPT_4, "gpt-4"],
                 [Llm.GPT_4_turbo, "gpt-4-turbo"],
-                [Llm.GPT_4o, "gpt-4o"],
-                [Llm.GPT_4o_mini, "gpt-4o-mini"],
-                [Llm.GPT_3_5_turbo, "gpt-3.5-turbo"],
+                // [Llm.GPT_4o, "gpt-4o"],
+                [Llm.GPT_4o_06, "gpt-4o-06"],
+                [Llm.GPT_4o_13, "gpt-4o-13"],
+                // [Llm.GPT_4o_mini, "gpt-4o-mini"],
+                // [Llm.GPT_3_5_turbo, "gpt-3.5-turbo"],
             ])
         );
     }
@@ -54,11 +56,13 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
     const claudeModelMap = () => {
         return removeUsedFromSelection(
             new Map<Llm, string>([
-                [Llm.CLAUDE_3_HAIKU, "claude-3-haiku"],
-                [Llm.CLAUDE_3_SONNET, "claude-3-sonnet"],
-                [Llm.CLAUDE_3_OPUS, "claude-3-opus"],
-                [Llm.CLAUDE_3_5_HAIKU, "claude-3-5-haiku"],
-                [Llm.CLAUDE_3_5_SONNET, "claude-3-5-sonnet"]
+                // [Llm.CLAUDE_3_HAIKU, "claude-3-haiku"],
+                // [Llm.CLAUDE_3_SONNET, "claude-3-sonnet"],
+                // [Llm.CLAUDE_3_OPUS, "claude-3-opus"],
+                // [Llm.CLAUDE_3_5_HAIKU, "claude-3-5-haiku"],
+                // [Llm.CLAUDE_3_5_SONNET, "claude-3-5-sonnet"]
+                [Llm.CLAUDE_3_5_SONNET_20, "claude-3-5-sonnet-20"],
+                [Llm.CLAUDE_3_5_SONNET_22, "claude-3-5-sonnet-22"]
             ])
         );
     }
@@ -66,9 +70,9 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
     const llamaModelMap = () => {
         return removeUsedFromSelection(
             new Map<Llm, string>([
-                [Llm.LLAMA_3, "llama-3"],
+                // [Llm.LLAMA_3, "llama-3"],
                 [Llm.LLAMA_3_1, "llama-3.1"],
-                [Llm.LLAMA_3_2, "llama-3.2"],
+                // [Llm.LLAMA_3_2, "llama-3.2"],
             ])
         );
     }
@@ -76,8 +80,8 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
     const geminiModelMap = () => {
         return removeUsedFromSelection(
             new Map<Llm, string>([
-                [Llm.GEMINI_1_5_FLASH, "gemini-1.5-flash"],
-                [Llm.GEMINI_1_5_FLASH_8B, "gemini-1.5-flash-8b"],
+                // [Llm.GEMINI_1_5_FLASH, "gemini-1.5-flash"],
+                // [Llm.GEMINI_1_5_FLASH_8B, "gemini-1.5-flash-8b"],
                 [Llm.GEMINI_1_5_PRO, "gemini-1.5-pro"],
             ])
         );
@@ -86,11 +90,20 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
     const qwenModelMap = () => {
         return removeUsedFromSelection(
             new Map<Llm, string>([
-                [Llm.QWEN_2_5_72B_INSTRUCT, "qwen-2.5-72B-instruct"],
+                // [Llm.QWEN_2_5_72B_INSTRUCT, "qwen-2.5-72B-instruct"],
                 [Llm.QWEN_2_5_CODER_32B_INSTRUCT, "qwen-2.5-coder-32B-instruct"],
             ])
         );
     }
+
+    const minstralModelMap = () => {
+        return removeUsedFromSelection(
+            new Map<Llm, string>([
+                [Llm.MISTRAL_LARGE, "minstral-large"],
+            ])
+        );
+    }
+
     if(props.isOpen) {
         return (
             <List
@@ -132,6 +145,11 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
                 <ModelCategoryListItem
                     title={"QWEN"}
                     models={qwenModelMap()}
+                    onSelected={props.onSelected}
+                />
+                <ModelCategoryListItem
+                    title={"Minstral"}
+                    models={minstralModelMap()}
                     onSelected={props.onSelected}
                 />
             </List>

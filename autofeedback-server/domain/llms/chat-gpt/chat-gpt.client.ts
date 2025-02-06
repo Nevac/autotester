@@ -2,6 +2,8 @@ import OpenAI from 'openai';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Llm} from "../llm";
 import dotenv from 'dotenv';
+import PromptBuilder from "../prompt-builder";
+import LlmConfig from "../llm-config";
 
 export default class ChatGptClient implements LlmClient {
 
@@ -21,10 +23,14 @@ export default class ChatGptClient implements LlmClient {
         try {
             const completion = await this.client.chat.completions.create({
                 messages: [
-                    this.generateSystemMessage(request),
-                    ...this.generateMessages(request)
+                    this.generateSystemMessage(request)
                 ],
-                model: this.model
+                model: this.model,
+                max_tokens: LlmConfig.MAX_TOKEN,
+                temperature: LlmConfig.TEMP,
+                top_p: LlmConfig.TOP_P,
+                frequency_penalty: LlmConfig.FREQ_PENALTY,
+                presence_penalty: LlmConfig.PRES_PENALTY
             })
 
             console.log(completion);
@@ -38,19 +44,8 @@ export default class ChatGptClient implements LlmClient {
 
     private generateSystemMessage(request: ClientRequest): ChatGPTMessage {
         return ChatGPTMessage.of(
-            ChatGPTRole.SYSTEM,
-            `
-            ${request.promptGroup.prompts[0]}
-                
-            Exercise:
-            ${request.exercise.task}
-            
-            Example Solution:
-            ${request.exercise.solution}
-            
-            Attempt:
-            ${request.attempt}
-            `
+            ChatGPTRole.USER,
+            PromptBuilder.default(request)
         );
     }
 

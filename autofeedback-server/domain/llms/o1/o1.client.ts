@@ -2,6 +2,8 @@ import OpenAI from 'openai';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Llm} from "../llm";
 import dotenv from 'dotenv';
+import PromptBuilder from "../prompt-builder";
+import LlmConfig from "../llm-config";
 
 export default class O1Client implements LlmClient {
 
@@ -21,10 +23,9 @@ export default class O1Client implements LlmClient {
         try {
             const completion = await this.client.chat.completions.create({
                 messages: [
-                    this.generateSystemMessage(request),
-                    ...this.generateMessages(request)
+                    this.generateSystemMessage(request)
                 ],
-                model: this.model
+                model: this.model,
             })
 
             console.log(completion);
@@ -39,18 +40,7 @@ export default class O1Client implements LlmClient {
     private generateSystemMessage(request: ClientRequest): O1Message {
         return O1Message.of(
             O1Role.USER,
-            `
-            ${request.promptGroup.prompts[0]}
-                
-            Exercise:
-            ${request.exercise.task}
-            
-            Example Solution:
-            ${request.exercise.solution}
-            
-            Attempt:
-            ${request.attempt}
-            `
+            PromptBuilder.default(request)
         );
     }
 

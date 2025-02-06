@@ -81,8 +81,8 @@ export default function ChatGroupBrowserComponent() {
                                             onClick={() => navigate(Routes.chatGroupDetails(item._id))}>
                                 <div style={{display: "flex", flex: '1', flexDirection: "column"}}>
                                     <ListItemText primary={item.name}/>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>PG: {item.exercise}</Typography>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.promptGroup}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.exercise}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>PR: {item.promptGroup}</Typography>
                                 </div>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>
