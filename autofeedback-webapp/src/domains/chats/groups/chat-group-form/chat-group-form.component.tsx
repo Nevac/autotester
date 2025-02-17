@@ -115,7 +115,7 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
                         select
                         id="prompt-group-label"
                         value={promptGroupInput.value}
-                        label="Prompt Group"
+                        label="Instruction Prompt"
                         onChange={promptGroupInput.handleChange}
                         required
                         error={promptGroupInput.error}
