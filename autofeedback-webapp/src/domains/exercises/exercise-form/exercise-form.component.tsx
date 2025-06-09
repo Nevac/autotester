@@ -3,8 +3,6 @@ import useInputValue from "../../util/forms/input-value-hook";
 import useFormValidationHook from "../../util/forms/form-validation-hook";
 import ExerciseUpdate from "../exercise-update";
 import {Button, FormControl, InputLabel, TextField, Typography} from "@mui/material";
-import MDEditor from '@uiw/react-md-editor';
-import Markdown from "react-markdown";
 import MarkdownEditor from "../../util/markdown-editor/MarkdownEditor";
 
 export interface ExerciseFormProps {
@@ -17,7 +15,7 @@ export interface ExerciseFormProps {
 export default function ExerciseFormComponent(props: ExerciseFormProps) {
     const nameInput = useInputValue<string>(props.nameInit, {required: true});
     const taskInput = useInputValue<string>(props.taskInit, {required: true});
-    const solutionInput = useInputValue<string>(props.solutionInit, {required: true});
+    const solutionInput = useInputValue<string>(props.solutionInit, {required: false});
     const inputs = [
         nameInput,
         taskInput,
@@ -31,7 +29,7 @@ export default function ExerciseFormComponent(props: ExerciseFormProps) {
             new ExerciseUpdate(
                 nameInput.valueOrThrow(),
                 taskInput.valueOrThrow(),
-                solutionInput.valueOrThrow()
+                solutionInput.value ? solutionInput.value : ""
             )
         );
     }
@@ -61,7 +59,6 @@ export default function ExerciseFormComponent(props: ExerciseFormProps) {
 
                 <FormControl
                     className='exercise-form-text-area'
-                    required
                     error={taskInput.error}
                 >
                     <InputLabel htmlFor="solution-input">Solution</InputLabel>

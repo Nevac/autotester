@@ -2,6 +2,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Llm} from "../llm";
 import dotenv from 'dotenv';
+import PromptBuilder from "../prompt-builder";
+import LlmConfig from "../llm-config";
 
 export default class ClaudeClient implements LlmClient {
 
@@ -19,12 +21,13 @@ export default class ClaudeClient implements LlmClient {
     public async create(request: ClientRequest): Promise<ClientResponse> {
         try {
             const message = await this.client.messages.create({
-                max_tokens: 2048,
                 messages: [
-                    this.generateSystemMessage(request),
-                    ...this.generateMessages(request)
+                    this.generateSystemMessage(request)
                 ],
-                model: this.model
+                max_tokens: LlmConfig.MAX_TOKEN,
+                model: this.model,
+                temperature: LlmConfig.TEMP,
+                top_p: LlmConfig.TOP_P
             });
 
             console.log(message);
@@ -38,19 +41,8 @@ export default class ClaudeClient implements LlmClient {
 
     private generateSystemMessage(request: ClientRequest): ClaudeMessage {
         return ClaudeMessage.of(
-            ClaudeRole.ASSISTANT,
-            `
-            ${request.promptGroup.prompts[0]}
-                
-            Exercise:
-            ${request.exercise.task}
-            
-            Example Solution:
-            ${request.exercise.solution}
-            
-            Attempt:
-            ${request.attempt}
-            `
+            ClaudeRole.USER,
+            PromptBuilder.default(request)
         );
     }
 

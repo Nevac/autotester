@@ -3,6 +3,8 @@ import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
 import {Llm} from "../llm";
 import dotenv from 'dotenv';
 import {GoogleGenerativeAI} from "@google/generative-ai";
+import PromptBuilder from "../prompt-builder";
+import LlmConfig from "../llm-config";
 
 export default class GeminiClient implements LlmClient {
 
@@ -17,10 +19,18 @@ export default class GeminiClient implements LlmClient {
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
         try {
-            const model = this.client.getGenerativeModel({model: this.model})
+            const model = this.client.getGenerativeModel({
+                model: this.model,
+                generationConfig: {
+                    maxOutputTokens: LlmConfig.MAX_TOKEN,
+                    topP: LlmConfig.TOP_P,
+                    temperature: LlmConfig.TEMP,
+                    frequencyPenalty: LlmConfig.FREQ_PENALTY,
+                    presencePenalty: LlmConfig.PRES_PENALTY
+                }
+            })
             const contentResult = await model.startChat().sendMessage([
                 this.generateSystemMessage(request),
-                ...this.generateMessages(request)
             ]);
 
             console.log(contentResult);
@@ -33,18 +43,7 @@ export default class GeminiClient implements LlmClient {
     }
 
     private generateSystemMessage(request: ClientRequest): string {
-        return `
-            ${request.promptGroup.prompts[0]}
-                
-            Exercise:
-            ${request.exercise.task}
-            
-            Example Solution:
-            ${request.exercise.solution}
-            
-            Attempt:
-            ${request.attempt}
-            `
+        return PromptBuilder.default(request);
     }
 
     private generateMessages(request: ClientRequest): string[] {

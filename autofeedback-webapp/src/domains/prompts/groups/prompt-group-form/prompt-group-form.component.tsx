@@ -105,7 +105,7 @@ export default function PromptGroupFormComponent(props: PromptGroupFormProps) {
                     <TextField
                         style={{overflowY: "scroll", flex: 1}}
                         id="task"
-                        label="Add Prompt"
+                        label="Add to Instruction"
                         className='prompt-group-form-text-area'
                         multiline
                         value={promptInput.value}
@@ -118,7 +118,7 @@ export default function PromptGroupFormComponent(props: PromptGroupFormProps) {
                     <List
                         subheader={
                             <div style={{padding: 10, display: "flex", justifyContent: "start", background: "#121212"}}>
-                                Prompts
+                                Instruction
                             </div>
                         }
                         style={{border: "1px solid gray", flex: 1, borderRadius: 5}}

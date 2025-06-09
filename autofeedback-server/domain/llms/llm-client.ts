@@ -4,6 +4,7 @@ import {ChatCompletion} from "openai/resources";
 import {ChatGroup} from "../chats/group/chat-group";
 import Anthropic from "@anthropic-ai/sdk";
 import {GenerateContentResult} from "@google/generative-ai";
+import {ChatCompletionResponse} from "@mistralai/mistralai/models/components";
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -56,5 +57,11 @@ export class ClientResponse {
 
     public static ofQwenCompletion(completion: ChatCompletion): ClientResponse {
         return this.ofGPTChatCompletion(completion);
+    }
+
+    public static ofMinstralCompletion(completion: ChatCompletionResponse): ClientResponse {
+        return new ClientResponse(
+            completion.choices!.map(choice => choice.message.content! as string)
+        )
     }
 }
