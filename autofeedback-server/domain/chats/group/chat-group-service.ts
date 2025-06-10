@@ -1,11 +1,8 @@
 import ChatGroupRepository from "./chat-group-repository";
-import {ChatGroup, IChatGroup} from "./chat-group";
+import {ChatGroup} from "./chat-group";
 import ChatGroupUpdateDto from "./chat-group-update-dto";
 import ExerciseRepository from "../../exercises/exercise-repository";
-import ExerciseListEntry from "../../exercises/exercise-list-entry";
 import ChatGroupListEntry from "./chat-group-list-entry";
-import {Exercise} from "../../exercises/exercise";
-import PromptGroup from "../../prompts/prompt-group";
 import PromptGroupRepository from "../../prompts/prompt-group-repository";
 import ChatGroupUpdate from "./chat-group-update";
 

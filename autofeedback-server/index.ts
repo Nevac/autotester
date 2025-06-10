@@ -7,6 +7,9 @@ import ExerciseResource from "./domain/exercises/exercise-resource";
 import PromptGroupResource from "./domain/prompts/prompt-group-resource";
 import ChatResource from "./domain/chats/chat-resource";
 import * as path from "node:path";
+import EvaluationGroupResource from "./domain/evaluations/group/evaluation-group-resource";
+import AttemptResource from "./domain/attempts/attempt-resource";
+import EvaluationResource from "./domain/evaluations/evaluation-resource";
 
 //For env File
 dotenv.config();
@@ -34,6 +37,9 @@ const chatResource = new ChatResource(router);
 const chatGroupResource = new ChatGroupResource(router);
 const exerciseResource = new ExerciseResource(router);
 const promptGroupResource = new PromptGroupResource(router);
+const evaluationGroupResource = new EvaluationGroupResource(router);
+const evaluationResource = new EvaluationResource(router);
+const attemptResource = new AttemptResource(router);
 app.use('/api', router);
 
 // Serve the React app for all unknown routes
