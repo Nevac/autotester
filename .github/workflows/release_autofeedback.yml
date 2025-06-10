@@ -12,9 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      REACT_APP_API: ${{ secrets.REACT_APP_API }}
     permissions:
       contents: read #This is required for actions/checkout
-
     steps:
       - uses: actions/checkout@v4
 
