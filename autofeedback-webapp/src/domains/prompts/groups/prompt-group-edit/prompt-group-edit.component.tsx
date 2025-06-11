@@ -34,7 +34,7 @@ export default function PromptGroupEditComponent() {
             update
         ).then(state =>
             state == EndpointResponeStatus.SUCCESS ?
-                openSnackbar("Exercise created successfully", SnackbarVariant.SUCCESS) :
+                openSnackbar("Attempt created successfully", SnackbarVariant.SUCCESS) :
                 openSnackbar("Failed to create exercise", SnackbarVariant.ERROR)
         )
     }
@@ -58,7 +58,7 @@ export default function PromptGroupEditComponent() {
                     />
                 </div>
                 :
-                    "Could not load Exercise"
+                    "Could not load Attempt"
                 }
         </Box>
     )

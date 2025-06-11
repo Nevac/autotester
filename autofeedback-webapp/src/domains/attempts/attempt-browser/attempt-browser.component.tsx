@@ -1,9 +1,9 @@
-import './exercise-browser.component.css';
+import './attempt-browser.component.css';
 import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText} from "@mui/material";
 import React, {useEffect, useState} from 'react';
 import {Add} from '@mui/icons-material';
-import ExerciseEndpoint from "../exercise-endpoint";
-import ExerciseListItem from "../exercise-list-item";
+import AttemptEndpoint from "../attempt-endpoint";
+import AttemptListItem from "../attempt-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import Routes from "../../routes/routes";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
@@ -11,12 +11,12 @@ import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import DeleteConfirmButtonComponent from "../../util/delete-confirm-button/delete-confirm-button.component";
 import {useAppSelector} from "../../../app/redux-hooks";
 import {useDispatch} from "react-redux";
-import {exerciseUpdateSlice} from "../exercise-update.slice";
+import {attemptUpdateSlice} from "../attempt-update.slice";
 
 
-export default function ExerciseBrowserComponent() {
-    const endpoint = new ExerciseEndpoint();
-    const [entries, setEntries] = useState<ExerciseListItem[]>([]);
+export default function AttemptBrowserComponent() {
+    const endpoint = new AttemptEndpoint();
+    const [entries, setEntries] = useState<AttemptListItem[]>([]);
 
     const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ export default function ExerciseBrowserComponent() {
 
     const [openSnackbar, Snackbar] = useSnackbar();
 
-    const loadExercises = () => {
+    const loadAttempts = () => {
         endpoint.getListItems()
             .then(items =>
                 setEntries(items)
@@ -33,13 +33,13 @@ export default function ExerciseBrowserComponent() {
             .catch(
                 err => {
                     console.log(err);
-                    openSnackbar("Failed to load exercises", SnackbarVariant.ERROR);
+                    openSnackbar("Failed to load attempts", SnackbarVariant.ERROR);
                 }
             )
     }
 
-    useEffect(loadExercises, []);
-    useEffect(loadExercises, [exercisesChanged]);
+    useEffect(loadAttempts, []);
+    useEffect(loadAttempts, [exercisesChanged]);
 
     const location = useLocation();
     const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
@@ -54,9 +54,9 @@ export default function ExerciseBrowserComponent() {
         endpoint.delete(id)
             .then(state => {
                 if(state === EndpointResponeStatus.SUCCESS) {
-                    openSnackbar("Exercise delete successful", SnackbarVariant.SUCCESS);
-                    dispatch(exerciseUpdateSlice.actions.update());
-                } else openSnackbar("Exercise delete failed", SnackbarVariant.ERROR)
+                    openSnackbar("Attempt delete successful", SnackbarVariant.SUCCESS);
+                    dispatch(attemptUpdateSlice.actions.update());
+                } else openSnackbar("Attempt delete failed", SnackbarVariant.ERROR)
             });
     }
 
@@ -66,7 +66,7 @@ export default function ExerciseBrowserComponent() {
             <List
                 subheader={
                 <div style={{display: "flex", justifyContent: "end", background: "#121212"}}>
-                    <IconButton aria-label="add" onClick={() => navigate(Routes.EXERCISE_CREATE)}>
+                    <IconButton aria-label="add" onClick={() => navigate(Routes.ATTEMPT_CREATE)}>
                         <Add/>
                     </IconButton>
                 </div>
@@ -78,7 +78,7 @@ export default function ExerciseBrowserComponent() {
                             <Divider/>
                             <ListItemButton
                                 selected={item._id === selectedItem}
-                                onClick={() => navigate(Routes.exerciseEdit(item._id))}>
+                                onClick={() => navigate(Routes.attemptEdit(item._id))}>
                                 <ListItemText primary={item.name}/>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

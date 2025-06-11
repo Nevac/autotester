@@ -1,61 +1,62 @@
-import './exercise-edit.component.css';
+import './attempt-edit.component.css';
 import React, {useEffect, useState} from "react";
-import ExerciseEndpoint from "../exercise-endpoint";
+import AttemptEndpoint from "../attempt-endpoint";
 import {useParams} from "react-router-dom";
-import Exercise from "../exercise";
-import ExerciseFormComponent from "../exercise-form/exercise-form.component";
+import Attempt from "../attempt";
+import AttemptFormComponent from "../attempt-form/attempt-form.component";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import {Box, Divider, Typography} from "@mui/material";
 import PaperDefaultComponent from "../../util/paper/paper-default.component";
-import ExerciseUpdate from "../exercise-update";
+import AttemptUpdate from "../attempt-update";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 
-export default function ExerciseEditComponent() {
+export default function AttemptEditComponent() {
     let { id } = useParams();
-    const [exercise, setExercise] = useState<Exercise | undefined>();
+    const [attempt, setAttempt] = useState<Attempt | undefined>();
     const [openSnackbar, Snackbar] = useSnackbar();
 
-    const exerciseEndpoint = new ExerciseEndpoint();
+    const endpoint = new AttemptEndpoint();
 
     useEffect(() => {
-        exerciseEndpoint.getById(id!)
+        endpoint.getById(id!)
             .then(exercise =>
-                setExercise(exercise)
+                setAttempt(exercise)
             )
             .catch(err => {
-                openSnackbar(`Could not load Exercise with id ${id}`, SnackbarVariant.ERROR);
+                openSnackbar(`Could not load Attempt with id ${id}`, SnackbarVariant.ERROR);
                 console.error(err);
             })
     }, [id]);
 
-    const saveExercise = (update: ExerciseUpdate) => {
-        exerciseEndpoint.update(
+    const saveExercise = (update: AttemptUpdate) => {
+        endpoint.update(
             id!,
             update
         ).then(state =>
             state == EndpointResponeStatus.SUCCESS ?
                 openSnackbar("Attempt saved successfully", SnackbarVariant.SUCCESS) :
-                openSnackbar("Failed to saved exercise", SnackbarVariant.ERROR)
+                openSnackbar("Failed to save Attempt", SnackbarVariant.ERROR)
         )
     }
 
     return(
-        <Box className={'exercise-edit-box'}>
+        <Box className={'attempt-edit-box'}>
             <Snackbar/>
-            <Typography id="edit-exercise-title" variant="h4">
+            <Typography id="edit-attempt-title" variant="h4">
                 <div style={{padding: 20}}>
                     Edit exercise
                 </div>
                 <Divider/>
             </Typography>
-            {exercise ?
+            {attempt ?
                 <div style={{padding: 20}}>
-                    <ExerciseFormComponent
+                    <AttemptFormComponent
                         save={saveExercise}
-                        nameInit={exercise.name}
-                        taskInit={exercise.task}
-                        solutionInit={exercise.solution}
-                        key={exercise._id}
+                        nameInit={attempt.name}
+                        exerciseIdInit={attempt.exercise._id}
+                        attemptInit={attempt.attempt}
+                        expectedFeedbackInit={attempt.expectedFeedback}
+                        key={attempt._id}
                     />
                 </div>
                 :

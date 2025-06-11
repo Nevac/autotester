@@ -21,7 +21,7 @@ export default function PromptGroupCreateComponent() {
             update
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {
-                openSnackbar("Exercise created successfully", SnackbarVariant.SUCCESS);
+                openSnackbar("Attempt created successfully", SnackbarVariant.SUCCESS);
                 dispatch(promptGroupUpdateSlice.actions.update());
             } else openSnackbar("Failed to create exercise", SnackbarVariant.ERROR);
         });

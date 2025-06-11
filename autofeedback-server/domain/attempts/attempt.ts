@@ -8,7 +8,8 @@ import {IEvaluationGroup} from "../evaluations/group/evaluation-group";
 export interface IAttempt {
     name: string,
     exercise: Exercise,
-    attempt: string
+    attempt: string,
+    expectedFeedback: string
 }
 
 export class Attempt implements IAttempt, Entity {
@@ -17,6 +18,7 @@ export class Attempt implements IAttempt, Entity {
         public readonly name: string,
         public readonly exercise: Exercise,
         public readonly attempt: string,
+        public readonly expectedFeedback: string,
         public readonly createdAt: Date,
         public readonly updatedAt: Date
     ) {
@@ -30,6 +32,7 @@ export class Attempt implements IAttempt, Entity {
             attempt.name,
             attempt.exercise,
             attempt.attempt,
+            attempt.expectedFeedback,
             createdAt,
             updatedAt
         )
@@ -49,6 +52,7 @@ export const attemptSchema = new Schema<IAttempt>(
         name: { type: String, required: true },
         exercise: { type: exerciseSchema, required: true },
         attempt: { type: String, required: true },
+        expectedFeedback: { type: String, required: true }
     },
     {
         timestamps: true

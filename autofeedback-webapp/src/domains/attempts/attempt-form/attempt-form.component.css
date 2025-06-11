@@ -1,0 +1,17 @@
+.attempt-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    flex: 1;
+}
+
+.attempt-form-text-area-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
+.attempt-form-text-area {
+    width: 100%;
+}

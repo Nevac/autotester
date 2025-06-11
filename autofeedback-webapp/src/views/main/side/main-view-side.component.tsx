@@ -8,6 +8,7 @@ import ExerciseBrowserComponent from "../../../domains/exercises/exercise-browse
 import PromptGroupBrowserComponent
     from "../../../domains/prompts/groups/prompt-group-browser/prompt-group-browser.component";
 import {useLocation} from "react-router-dom";
+import AttemptBrowserComponent from "../../../domains/attempts/attempt-browser/attempt-browser.component";
 
 export default function MainViewSideComponent() {
     const [value, setValue] = React.useState(0);
@@ -38,6 +39,7 @@ export default function MainViewSideComponent() {
                     <Tab style={{flex: 1}} label="Chats"/>
                     <Tab style={{flex: 1}} label="Exercises"/>
                     <Tab style={{flex: 1}} label="Prompts"/>
+                    <Tab style={{flex: 1}} label="Attempt"/>
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0} padding={0}>
@@ -48,6 +50,9 @@ export default function MainViewSideComponent() {
             </TabPanel>
             <TabPanel value={value} index={2} padding={0}>
                 <PromptGroupBrowserComponent/>
+            </TabPanel>
+            <TabPanel value={value} index={3} padding={0}>
+                <AttemptBrowserComponent/>
             </TabPanel>
         </PaperDefaultComponent>
     )

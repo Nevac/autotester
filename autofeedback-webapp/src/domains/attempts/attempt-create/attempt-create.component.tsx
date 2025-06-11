@@ -1,45 +1,45 @@
-import './exercise-create.component.css';
-import ExerciseFormComponent from "../exercise-form/exercise-form.component";
+import './attempt-create.component.css';
+import AttemptFormComponent from "../attempt-form/attempt-form.component";
 import {Box, Divider, Typography} from "@mui/material";
 import PaperDefaultComponent from "../../util/paper/paper-default.component";
-import ExerciseUpdate from "../exercise-update";
+import AttemptUpdate from "../attempt-update";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
-import ExerciseEndpoint from "../exercise-endpoint";
+import AttemptEndpoint from "../attempt-endpoint";
 import {useDispatch} from "react-redux";
-import {exerciseUpdateSlice} from "../exercise-update.slice";
+import {attemptUpdateSlice} from "../attempt-update.slice";
 import React from "react";
 
-export default function ExerciseCreateComponent() {
+export default function AttemptCreateComponent() {
     const [openSnackbar, Snackbar] = useSnackbar();
-    const exerciseEndpoint = new ExerciseEndpoint();
+    const exerciseEndpoint = new AttemptEndpoint();
 
     const dispatch = useDispatch()
 
-    const saveExercise = (update: ExerciseUpdate) => {
+    const saveAttempt = (update: AttemptUpdate) => {
         exerciseEndpoint.create(
             update
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {
                 openSnackbar("Attempt saved successfully", SnackbarVariant.SUCCESS);
-                dispatch(exerciseUpdateSlice.actions.update());
+                dispatch(attemptUpdateSlice.actions.update());
             } else {
-                openSnackbar("Failed to saved exercise", SnackbarVariant.ERROR);
+                openSnackbar("Failed to saved attempt", SnackbarVariant.ERROR);
             }
         })
     }
 
     return(
-        <Box className={'exercise-create-box'}>
+        <Box className={'attempt-create-box'}>
             <Snackbar/>
-            <Typography id="create-exercise-title" variant="h4">
+            <Typography id="create-attempt-title" variant="h4">
                 <div style={{padding: 20}}>
                     Create exercise
                 </div>
                 <Divider/>
             </Typography>
             <div style={{padding: 20}}>
-                <ExerciseFormComponent save={saveExercise}/>
+                <AttemptFormComponent save={saveAttempt}/>
             </div>
         </Box>
     )

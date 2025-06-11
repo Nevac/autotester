@@ -11,6 +11,8 @@ import ExerciseEditComponent from "../../domains/exercises/exercise-edit/exercis
 import PromptGroupCreateComponent from "../../domains/prompts/groups/prompt-group-create/prompt-group-create.component";
 import PromptGroupEditComponent from "../../domains/prompts/groups/prompt-group-edit/prompt-group-edit.component";
 import PaperDefaultComponent from "../../domains/util/paper/paper-default.component";
+import AttemptCreateComponent from "../../domains/attempts/attempt-create/attempt-create.component";
+import AttemptEditComponent from "../../domains/attempts/attempt-edit/attempt-edit.component";
 
 export default function MainView() {
 
@@ -23,6 +25,8 @@ export default function MainView() {
                 <div className={'main-view-column main-view-content-column'}>
                     <PaperDefaultComponent className={'main-view-content'}>
                         <RoutesComponent>
+                            <Route path={Routes.ATTEMPT_CREATE} element={<AttemptCreateComponent/>}/>
+                            <Route path={Routes.ATTEMPT_EDIT} element={<AttemptEditComponent/>}/>
                             <Route path={Routes.CHAT_GROUP_CREATE} element={<ChatGroupCreateComponent/>}/>
                             <Route path={Routes.CHAT_GROUP_DETAILS} element={<ChatGroupDetailComponent key={":id"}/>}/>
                             <Route path={Routes.CHAT_GROUP_DETAIL} element={<ChatGroupDetailComponent/>}/>

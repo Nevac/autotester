@@ -100,7 +100,7 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
                         select
                         id="exercise-label"
                         value={exerciseInput.value}
-                        label="Exercise"
+                        label="Attempt"
                         onChange={exerciseInput.handleChange}
                         required
                         error={exerciseInput.error}
