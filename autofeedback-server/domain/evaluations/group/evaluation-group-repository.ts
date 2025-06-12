@@ -34,14 +34,12 @@ export default class EvaluationGroupRepository {
             });
     }
 
-    public async create(chatGroup: EvaluationGroupUpdate): Promise<EvaluationGroup> {
+    public async create(evaluationGroupUpdate: EvaluationGroupUpdate): Promise<EvaluationGroup> {
         return await EvaluationGroupModel.create(
-            chatGroup
+            evaluationGroupUpdate
         ).then(document =>
             EvaluationGroup.ofDocument(document)
         )
-
-        EvaluationGroupModel.create
     }
 
     public async delete(id: string): Promise<boolean> {

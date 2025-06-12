@@ -44,8 +44,8 @@ export default class EvaluationGroupService {
             new EvaluationGroupUpdate(
                 evaluationGroupUpdateDto.name,
                 promptGroup,
-                attempts,
-                evaluationGroupUpdateDto.llms,
+                Array.from(attempts.values()),
+                Array.from(evaluationGroupUpdateDto.llms),
                 EvaluationState.RUNNING
             )
         );

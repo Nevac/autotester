@@ -2,6 +2,8 @@ import AttemptListEntry from "./attempt-list-entry";
 import {Attempt, AttemptModel} from "./attempt";
 import ChatGroupUpdate from "../chats/group/chat-group-update";
 import AttemptUpdate from "./attempt-update";
+import * as mongoose from "mongoose";
+import {ObjectId} from "mongodb";
 
 
 export default class AttemptRepository {
@@ -36,7 +38,7 @@ export default class AttemptRepository {
     }
 
     public async getByIds(ids: Set<string>): Promise<Map<string, Attempt>> {
-        return await AttemptModel.find({ _id: { in: ids}})
+        return await AttemptModel.find({ _id: { $in: ids }})
             .exec()
             .then(documents => Attempt.ofDocuments(documents));
     }
