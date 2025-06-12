@@ -32,9 +32,9 @@ export default function ChatDetailComponent(props: ChatDetailComponentProps) {
         chatEndpoint.delete(chat!._id)
             .then(state => {
                 if(state === EndpointResponeStatus.SUCCESS) {
-                    openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                    openSnackbar("Evaluation delete successful", SnackbarVariant.SUCCESS);
                     dispatch(chatUpdateSlice.actions.update());
-                } else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
+                } else openSnackbar("Evaluation delete failed", SnackbarVariant.ERROR)
             });
     }
 
@@ -44,8 +44,8 @@ export default function ChatDetailComponent(props: ChatDetailComponentProps) {
             <div className={'chat-detail-button-div'}>
                 <DeleteConfirmButtonComponent delete={deleteChat}/>
             </div>
-            {chat?.feedback.map(feedback =>
-                <Paper className={'chat-detail-paper'}>
+            {chat?.feedback.map((feedback, index) =>
+                <Paper key={index} className={'chat-detail-paper'}>
                     <Markdown>
                         {feedback}
                     </Markdown>

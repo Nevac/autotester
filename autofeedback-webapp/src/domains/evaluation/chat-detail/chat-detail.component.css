@@ -1,0 +1,13 @@
+.chat-detail-main-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-detail-button-div {
+    display: flex;
+    justify-content: end;
+}
+
+.chat-detail-paper {
+    padding: 20px;
+}

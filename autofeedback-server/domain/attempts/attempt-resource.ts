@@ -28,13 +28,13 @@ export default class AttemptResource {
         });
 
         router.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
-            const exercise = await this.service.getById(req.params.id).catch(next);
-            res.json(exercise);
+            const attempt = await this.service.getById(req.params.id).catch(next);
+            res.json(attempt);
         });
 
         router.post(`/${this.RESOURCE}`, async (req, res, next) => {
-            const chatGroup = await this.service.create(req.body).catch(next);
-            res.json(chatGroup);
+            const attempt = await this.service.create(req.body).catch(next);
+            res.json(attempt);
         });
 
         router.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {

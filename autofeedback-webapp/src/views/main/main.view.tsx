@@ -13,6 +13,10 @@ import PromptGroupEditComponent from "../../domains/prompts/groups/prompt-group-
 import PaperDefaultComponent from "../../domains/util/paper/paper-default.component";
 import AttemptCreateComponent from "../../domains/attempts/attempt-create/attempt-create.component";
 import AttemptEditComponent from "../../domains/attempts/attempt-edit/attempt-edit.component";
+import EvaluationGroupCreateComponent
+    from "../../domains/evaluation/groups/evaluation-group-create/evaluation-group-create.component";
+import EvaluationGroupDetailComponent
+    from "../../domains/evaluation/groups/chat-group-details/evaluation-group-detail.component";
 
 export default function MainView() {
 
@@ -34,6 +38,8 @@ export default function MainView() {
                             <Route path={Routes.EXERCISE_EDIT} element={<ExerciseEditComponent/>}/>
                             <Route path={Routes.PROMPT_GROUP_CREATE} element={<PromptGroupCreateComponent/>}/>
                             <Route path={Routes.PROMPT_GROUP_EDIT} element={<PromptGroupEditComponent/>}/>
+                            <Route path={Routes.EVALUATION_GROUP_CREATE} element={<EvaluationGroupCreateComponent/>}/>
+                            <Route path={Routes.EVALUATION_GROUP_DETAILS} element={<EvaluationGroupDetailComponent/>}/>
                         </RoutesComponent>
                     </PaperDefaultComponent>
                 </div>

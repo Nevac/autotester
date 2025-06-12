@@ -81,21 +81,21 @@ export default function ChatGroupDetailComponent() {
         ).then(state => {
             setIsCreatingChat(false);
             if(state === EndpointResponeStatus.SUCCESS) {
-                openSnackbar("Chat create successful", SnackbarVariant.SUCCESS);
+                openSnackbar("Evaluation create successful", SnackbarVariant.SUCCESS);
                 dispatch(chatUpdateSlice.actions.update());
-            } else openSnackbar("Chat create failed", SnackbarVariant.ERROR)
+            } else openSnackbar("Evaluation create failed", SnackbarVariant.ERROR)
         });
     }
 
     const renderTabHeaders = () => {
         return chats.map((chat, index) =>
-            <Tab label={chat.model} value={index}/>
+            <Tab key={chat.name + '-' + index} label={chat.model} value={index}/>
         )
     }
 
     const renderTabContent = () => {
         return chats.map((chat, index) =>
-            <TabPanel value={value} index={index}>
+            <TabPanel key={index} value={value} index={index}>
                 <ChatDetailComponent key={chat._id} chatId={chat._id}/>
             </TabPanel>
         )
@@ -127,16 +127,19 @@ export default function ChatGroupDetailComponent() {
 
             <Box sx={{ width: '100%', padding: '20px'}}>
                 <AccordionComponent
+                    key={"task"}
                     title={"Task"}
                     id={"task"}
                     content={chatGroup?.exercise.task}
                 />
                 <AccordionComponent
+                    key={"attempt"}
                     title={"Attempt"}
                     id={"attempt"}
                     content={chatGroup?.attempt}
                 />
                 <AccordionComponent
+                    key={"solution"}
                     title={"Solution"}
                     id={"solution"}
                     content={chatGroup?.exercise.solution}

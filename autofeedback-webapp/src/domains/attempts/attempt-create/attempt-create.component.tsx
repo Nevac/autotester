@@ -34,7 +34,7 @@ export default function AttemptCreateComponent() {
             <Snackbar/>
             <Typography id="create-attempt-title" variant="h4">
                 <div style={{padding: 20}}>
-                    Create exercise
+                    Create attempt
                 </div>
                 <Divider/>
             </Typography>

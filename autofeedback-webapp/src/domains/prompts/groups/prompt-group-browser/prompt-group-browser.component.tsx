@@ -61,10 +61,10 @@ export default function PromptGroupBrowserComponent() {
         endpoint.delete(id)
             .then(state => {
                 if(state === EndpointResponeStatus.SUCCESS) {
-                    openSnackbar("Chat delete successful", SnackbarVariant.SUCCESS);
+                    openSnackbar("Evaluation delete successful", SnackbarVariant.SUCCESS);
                     dispatch(promptGroupUpdateSlice.actions.update());
                 }
-                else openSnackbar("Chat delete failed", SnackbarVariant.ERROR)
+                else openSnackbar("Evaluation delete failed", SnackbarVariant.ERROR)
             });
     }
 

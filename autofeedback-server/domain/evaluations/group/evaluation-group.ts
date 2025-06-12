@@ -5,6 +5,7 @@ import EntityUtil from "../../entities/entity";
 import {Attempt, attemptSchema} from "../../attempts/attempt";
 import {Llm} from "../../llms/llm";
 import EvaluationState from "../evaluation-state";
+import {EvaluationScore, evaluationScoreSchema} from "../evaluation-score";
 
 
 export interface IEvaluationGroup {
@@ -12,7 +13,8 @@ export interface IEvaluationGroup {
     promptGroup: PromptGroup,
     attempts: Set<Attempt>,
     llms: Set<Llm>,
-    state: EvaluationState
+    state: EvaluationState,
+    score: EvaluationScore
 }
 
 export class EvaluationGroup implements IEvaluationGroup, Entity {
@@ -23,21 +25,23 @@ export class EvaluationGroup implements IEvaluationGroup, Entity {
         public readonly attempts: Set<Attempt>,
         public readonly llms: Set<Llm>,
         public readonly state: EvaluationState,
+        public readonly score: EvaluationScore,
         public readonly createdAt: Date,
         public readonly updatedAt: Date
     ) {
     }
 
-    public static ofDocument(evaluation: EvaluationGroupDocument) {
-        const [createdAt, updatedAt] = EntityUtil.checkForProperties(evaluation);
+    public static ofDocument(evaluationGroup: EvaluationGroupDocument) {
+        const [createdAt, updatedAt] = EntityUtil.checkForProperties(evaluationGroup);
 
         return new EvaluationGroup(
-            EntityUtil.convertId(evaluation._id),
-            evaluation.name,
-            evaluation.promptGroup,
-            evaluation.attempts,
-            evaluation.llms,
-            evaluation.state,
+            EntityUtil.convertId(evaluationGroup._id),
+            evaluationGroup.name,
+            evaluationGroup.promptGroup,
+            evaluationGroup.attempts,
+            evaluationGroup.llms,
+            evaluationGroup.state,
+            evaluationGroup.score,
             createdAt,
             updatedAt
         )
@@ -49,7 +53,8 @@ export const evaluationGroupSchema = new Schema<IEvaluationGroup>(
         name: { type: String, required: true },
         promptGroup: { type: promptGroupSchema, required: true },
         attempts: [{ type: attemptSchema, required: true }],
-        llms: [{ type: String, required: true}]
+        llms: [{ type: String, required: true}],
+        score: { type: evaluationScoreSchema, required: true }
     },
     {
         timestamps: true

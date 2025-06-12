@@ -1,0 +1,53 @@
+import EvaluationGroupListItem from "./evaluation-group-list-item";
+import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
+import EvaluationGroupUpdate from "./evaluation-group-update";
+import Exercise from "../../exercises/exercise";
+import {EvaluationGroup} from "./evaluation-group";
+
+export default class EvaluationGroupEndpoint {
+
+    private readonly RESOURCE_NAME: string = 'evaluation-group'
+    private readonly ENDPOINT = `${process.env.REACT_APP_API}/${this.RESOURCE_NAME}`
+
+    constructor() {
+    }
+
+    public getListItems(): Promise<EvaluationGroupListItem[]> {
+        return fetch(this.ENDPOINT)
+            .then((res) => {
+                return res.json();
+            })
+    }
+
+    public getById(id: string): Promise<EvaluationGroup> {
+        return fetch(`${this.ENDPOINT}/${id}`)
+            .then(res => {
+                return res.json();
+            });
+    }
+
+    public create(chat: EvaluationGroupUpdate): Promise<EndpointResponeStatus> {
+        console.log(chat);
+        return fetch(this.ENDPOINT, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(chat)
+        }).then(res => {
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
+        })
+    }
+
+    public delete(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}`, {
+            method: "DELETE"
+        })
+            .then(res => {
+                if(res.ok) return EndpointResponeStatus.SUCCESS
+                return EndpointResponeStatus.FAIL;
+            });
+    }
+}

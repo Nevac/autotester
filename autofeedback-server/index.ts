@@ -22,6 +22,7 @@ connectDB().catch(err => console.log(err));
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'webapp')));
+app.set('view engine', 'html');
 
 
 app.listen(parseInt(port), '0.0.0.0', () => {
@@ -48,6 +49,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(function errorHandler (err: Error, req: Request, res: Response, next: NextFunction) {
-    res.status(500)
-    res.render('error', { error: err })
+    res.status(500);
+    console.error(err);
+    res.send({ error: err });
 })

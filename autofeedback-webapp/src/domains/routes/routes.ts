@@ -18,4 +18,9 @@ export default class Routes {
     public static readonly PROMPT_GROUP_CREATE = `${Routes.PROMPT_GROUP}/create`;
     public static readonly PROMPT_GROUP_EDIT = `${Routes.PROMPT_GROUP}/:id`;
     public static promptGroupEdit(id: string): string { return `${Routes.PROMPT_GROUP}/${id}`};
+    public static readonly EVALUATION_GROUP = `${Routes.ROOT}/evaluation-group`;
+    public static readonly EVALUATION_GROUP_CREATE = `${Routes.EVALUATION_GROUP}/create`;
+    public static readonly EVALUATION_GROUP_DETAILS = `${Routes.EVALUATION_GROUP}/:id`;
+    public static evaluationGroupDetails(id: string): string { return `${Routes.CHAT_GROUP}/${id}`};
+
 }

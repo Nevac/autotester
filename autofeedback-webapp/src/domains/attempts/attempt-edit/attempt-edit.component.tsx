@@ -44,7 +44,7 @@ export default function AttemptEditComponent() {
             <Snackbar/>
             <Typography id="edit-attempt-title" variant="h4">
                 <div style={{padding: 20}}>
-                    Edit exercise
+                    Edit attempt
                 </div>
                 <Divider/>
             </Typography>

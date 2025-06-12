@@ -1,8 +1,8 @@
-import './chat-group-browser.component.css';
+import './evaluation-group-browser.component.css';
 import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Typography} from "@mui/material";
 import React, {useEffect, useState} from 'react';
-import ChatGroupListItem from "../chat-group-list-item";
-import ChatGroupEndpoint from "../chat-group-endpoint";
+import EvaluationGroupListItem from "../evaluation-group-list-item";
+import EvaluationGroupEndpoint from "../evaluation-group-endpoint";
 import {Add} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
 import Routes from "../../../routes/routes";
@@ -10,14 +10,14 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {useDispatch} from "react-redux";
-import chatGroupUpdateSlice from "../chat-group-update.slice";
+import evaluationGroupUpdateSlice from "../evaluation-group-update.slice";
 import {useAppSelector} from "../../../../app/redux-hooks";
 
 
-export default function ChatGroupBrowserComponent() {
+export default function EvaluationGroupBrowserComponent() {
 
-    const endpoint = new ChatGroupEndpoint();
-    const [items, setItems] = useState<ChatGroupListItem[]>([])
+    const endpoint = new EvaluationGroupEndpoint();
+    const [items, setItems] = useState<EvaluationGroupListItem[]>([])
 
     const [openSnackbar, Snackbar] = useSnackbar()
 
@@ -56,7 +56,7 @@ export default function ChatGroupBrowserComponent() {
             .then(state => {
                 if(state === EndpointResponeStatus.SUCCESS) {
                     openSnackbar("Evaluation delete successful", SnackbarVariant.SUCCESS);
-                    dispatch(chatGroupUpdateSlice.actions.update());
+                    dispatch(evaluationGroupUpdateSlice.actions.update());
                 } else openSnackbar("Evaluation delete failed", SnackbarVariant.ERROR)
             });
     }
@@ -67,7 +67,7 @@ export default function ChatGroupBrowserComponent() {
             <List
                 subheader={
                 <div style={{display: "flex", justifyContent: "end", background: "#121212"}}>
-                    <IconButton aria-label="add" onClick={() => navigate(Routes.CHAT_GROUP_CREATE)}>
+                    <IconButton aria-label="add" onClick={() => navigate(Routes.EVALUATION_GROUP_CREATE)}>
                         <Add/>
                     </IconButton>
                 </div>
@@ -78,11 +78,11 @@ export default function ChatGroupBrowserComponent() {
                         <ListItem disablePadding >
                             <Divider/>
                             <ListItemButton selected={item._id === selectedItem}
-                                            onClick={() => navigate(Routes.chatGroupDetails(item._id))}>
+                                            onClick={() => navigate(Routes.evaluationGroupDetails(item._id))}>
                                 <div style={{display: "flex", flex: '1', flexDirection: "column"}}>
                                     <ListItemText primary={item.name}/>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.exercise}</Typography>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>PR: {item.promptGroup}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.state}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>PR: {item.score.totalScore}</Typography>
                                 </div>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

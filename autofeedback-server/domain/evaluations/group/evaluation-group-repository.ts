@@ -16,7 +16,7 @@ export default class EvaluationGroupRepository {
 
     public async getAllListEntries(): Promise<EvaluationGroupListEntry[]> {
         return await EvaluationGroupModel.find()
-            .select('_id name createdAt')
+            .select('_id name state score createdAt')
             .sort({createdAt: "desc"})
             .exec()
             .then(documents =>

@@ -7,6 +7,7 @@ export interface InputValue<T> {
     value: InputType<T>,
     valueOrThrow: () => T,
     setValue: Dispatch<SetStateAction<InputType<T>>>,
+    setRawValue: (value: T) => void
     error: boolean,
     setError: Dispatch<SetStateAction<boolean>>,
     handleChange: (e: InputEvent) => void
@@ -35,10 +36,15 @@ export default function useInputValue<T>(initValue: InputType<T>, options?: Inpu
         else throw "Input value is undefined";
     }
 
+    const setRawValue = (value: T): void => {
+        setValue(value);
+    }
+
     return {
         value,
         valueOrThrow,
         setValue,
+        setRawValue,
         error,
         setError,
         handleChange

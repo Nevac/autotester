@@ -35,7 +35,8 @@ export default class AttemptService {
             new AttemptUpdate(
                 attempt.name,
                 await this.exerciseRepo.getById(attempt.exerciseId),
-                attempt.attempt
+                attempt.attempt,
+                attempt.expectedFeedback
             )
         );
     }

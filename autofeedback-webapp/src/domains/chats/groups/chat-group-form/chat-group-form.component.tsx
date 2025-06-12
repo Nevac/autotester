@@ -72,7 +72,7 @@ export default function ChatGroupFormComponent(props: ChatGroupFormProps) {
             )
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {
-                openSnackbar("Chat created successfully", SnackbarVariant.SUCCESS);
+                openSnackbar("Evaluation created successfully", SnackbarVariant.SUCCESS);
                 dispatch(chatGroupUpdateSlice.actions.update());
             } else openSnackbar("Failed to create chat", SnackbarVariant.ERROR);
 

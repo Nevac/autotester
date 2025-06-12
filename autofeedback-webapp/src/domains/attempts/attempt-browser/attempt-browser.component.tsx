@@ -20,7 +20,7 @@ export default function AttemptBrowserComponent() {
 
     const navigate = useNavigate();
 
-    const exercisesChanged = useAppSelector(state => state.exercisesUpdated.value)
+    const attemptsChanged = useAppSelector(state => state.attemptsUpdated.value)
     const dispatch = useDispatch()
 
     const [openSnackbar, Snackbar] = useSnackbar();
@@ -39,7 +39,7 @@ export default function AttemptBrowserComponent() {
     }
 
     useEffect(loadAttempts, []);
-    useEffect(loadAttempts, [exercisesChanged]);
+    useEffect(loadAttempts, [attemptsChanged]);
 
     const location = useLocation();
     const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
