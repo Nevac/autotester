@@ -81,8 +81,8 @@ export default function EvaluationGroupBrowserComponent() {
                                             onClick={() => navigate(Routes.evaluationGroupDetails(item._id))}>
                                 <div style={{display: "flex", flex: '1', flexDirection: "column"}}>
                                     <ListItemText primary={item.name}/>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>EX: {item.state}</Typography>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>PR: {item.score.totalScore}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>STATE: {item.state}</Typography>
+                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>SCORE: {item.score.totalScore}</Typography>
                                 </div>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

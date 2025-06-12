@@ -53,7 +53,8 @@ export const evaluationGroupSchema = new Schema<IEvaluationGroup>(
         name: { type: String, required: true },
         promptGroup: { type: promptGroupSchema, required: true },
         attempts: [{ type: attemptSchema, required: true }],
-        llms: [{ type: String, required: true}],
+        llms: [{ type: String, required: true }],
+        state: [{ type: String, required: true }],
         score: { type: evaluationScoreSchema, required: true }
     },
     {

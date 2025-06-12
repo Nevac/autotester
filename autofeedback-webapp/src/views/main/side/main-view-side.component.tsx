@@ -27,7 +27,7 @@ export default function MainViewSideComponent() {
         ["exercise", 1],
         ["prompt-group", 2],
         ["attempt", 3],
-        ["evaluation", 4],
+        ["evaluation-group", 4],
     ]);
 
     useEffect(() => {

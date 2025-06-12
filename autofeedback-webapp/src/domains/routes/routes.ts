@@ -21,6 +21,6 @@ export default class Routes {
     public static readonly EVALUATION_GROUP = `${Routes.ROOT}/evaluation-group`;
     public static readonly EVALUATION_GROUP_CREATE = `${Routes.EVALUATION_GROUP}/create`;
     public static readonly EVALUATION_GROUP_DETAILS = `${Routes.EVALUATION_GROUP}/:id`;
-    public static evaluationGroupDetails(id: string): string { return `${Routes.CHAT_GROUP}/${id}`};
+    public static evaluationGroupDetails(id: string): string { return `${Routes.EVALUATION_GROUP}/${id}`};
 
 }
