@@ -1,5 +1,5 @@
-import {EvaluationScore} from "../evaluation-score";
 import EvaluationState from "../evaluation-state";
+import {Llm} from "../../llms/llm";
 
 export default class EvaluationGroupListItem {
 
@@ -7,8 +7,9 @@ export default class EvaluationGroupListItem {
         public readonly _id: string,
         public readonly name: string,
         public readonly state: EvaluationState,
-        public readonly score: EvaluationScore,
-        public readonly createdAt: Date
+        public readonly createdAt: Date,
+        public readonly bestScore?: number,
+        public readonly bestLlm?: Llm,
     ) {
     }
 }

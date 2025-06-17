@@ -23,7 +23,8 @@ export default class EvaluationGroupEndpoint {
         return fetch(`${this.ENDPOINT}/${id}`)
             .then(res => {
                 return res.json();
-            });
+            })
+            .then(json => EvaluationGroup.fromJSON(json));
     }
 
     public create(chat: EvaluationGroupUpdate): Promise<EndpointResponeStatus> {

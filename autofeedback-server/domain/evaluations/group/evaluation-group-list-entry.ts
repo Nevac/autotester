@@ -1,15 +1,16 @@
-import {EvaluationGroup, EvaluationGroupDocument} from "./evaluation-group";
+import {EvaluationGroupDocument} from "./evaluation-group";
 import EntityUtil from "../../entities/entity";
 import EvaluationState from "../evaluation-state";
-import {EvaluationScore} from "../evaluation-score";
+import {Llm} from "../../llms/llm";
 
 export default class EvaluationGroupListEntry {
     constructor(
         public readonly _id: string,
         public readonly name: string,
         public readonly state: EvaluationState,
-        public readonly score: EvaluationScore,
-        public readonly createdAt: Date
+        public readonly createdAt: Date,
+        public readonly bestScore?: number,
+        public readonly bestLlm?: Llm,
     ) {
     }
 
@@ -20,8 +21,9 @@ export default class EvaluationGroupListEntry {
             EntityUtil.convertId(evaluationGroup._id),
             evaluationGroup.name,
             evaluationGroup.state,
-            evaluationGroup.score,
-            createdAt
+            createdAt,
+            evaluationGroup.bestScore,
+            evaluationGroup.bestLlm,
         )
     }
 }

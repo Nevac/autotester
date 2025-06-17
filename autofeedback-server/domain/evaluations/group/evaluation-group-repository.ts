@@ -1,6 +1,6 @@
 import EvaluationGroupListEntry from "./evaluation-group-list-entry";
 import {EvaluationGroup, EvaluationGroupModel} from "./evaluation-group";
-import EvaluationGroupUpdate from "./evaluation-group-update";
+import EvaluationGroupInsert from "./evaluation-group-insert";
 
 
 export default class EvaluationGroupRepository {
@@ -16,7 +16,7 @@ export default class EvaluationGroupRepository {
 
     public async getAllListEntries(): Promise<EvaluationGroupListEntry[]> {
         return await EvaluationGroupModel.find()
-            .select('_id name state score createdAt')
+            .select('_id name state bestScore bestLlm createdAt')
             .sort({createdAt: "desc"})
             .exec()
             .then(documents =>
@@ -30,11 +30,11 @@ export default class EvaluationGroupRepository {
             .exec()
             .then(document => {
                 if (document) return EvaluationGroup.ofDocument(document);
-                throw `Exercise with id ${id} not found`
+                throw `Evaluation Group with id ${id} not found`
             });
     }
 
-    public async create(evaluationGroupUpdate: EvaluationGroupUpdate): Promise<EvaluationGroup> {
+    public async create(evaluationGroupUpdate: EvaluationGroupInsert): Promise<EvaluationGroup> {
         return await EvaluationGroupModel.create(
             evaluationGroupUpdate
         ).then(document =>

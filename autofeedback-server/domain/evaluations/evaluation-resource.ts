@@ -1,6 +1,7 @@
 import {Application, Router} from "express";
 import EvaluationService from "./evaluation-service";
 import {coerceBoolean} from "openai/core";
+import {Llm} from "../llms/llm";
 
 export default class EvaluationResource {
 
@@ -14,13 +15,15 @@ export default class EvaluationResource {
 
         router.get(`/${this.RESOURCE}`, async (req, res, next) => {
             const populate = req.query.populate ? coerceBoolean(req.query.populate as string) : false;
+            const evaluationGroupId = req.query.evaluationGroupId as string;
+            const llm = req.query.llm as Llm;
 
             if(populate) {
                 const list = await this.service.getAll().catch(next);
                 res.json(list);
             }
             else {
-                const list = await this.service.getAllListEntries().catch(next);
+                const list = await this.service.getAllListEntries(evaluationGroupId, llm).catch(next);
                 res.json(list);
             }
         });

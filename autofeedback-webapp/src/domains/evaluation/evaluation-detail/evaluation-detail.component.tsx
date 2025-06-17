@@ -1,4 +1,4 @@
-import './chat-detail.component.css';
+import './evaluation-detail.component.css';
 import {useEffect, useState} from "react";
 import EvaluationEndpoint from "../evaluation-endpoint";
 import {Evaluation} from "../evaluation";
@@ -14,7 +14,7 @@ interface ChatDetailComponentProps {
     chatId: string
 }
 
-export default function ChatDetailComponent(props: ChatDetailComponentProps) {
+export default function EvaluationDetailComponent(props: ChatDetailComponentProps) {
     // const [chat, setChat] = useState<Evaluation>();
     // const [openSnackbar, Snackbar] = useSnackbar()
     // const dispatch = useDispatch()

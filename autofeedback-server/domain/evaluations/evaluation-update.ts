@@ -10,6 +10,7 @@ export default class EvaluationUpdate {
 
     constructor(
         public name: string,
+        public evaluationGroup: string,
         public attempt: Attempt,
         public promptGroup: PromptGroup,
         public llm: Llm

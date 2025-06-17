@@ -10,6 +10,7 @@ import {Llm} from "../llms/llm";
 
 export interface IEvaluation {
     name: string,
+    evaluationGroup: string,
     attempt: Attempt,
     promptGroup: PromptGroup,
     llm: Llm,
@@ -21,6 +22,7 @@ export class Evaluation implements IEvaluation, Entity {
     constructor(
         public readonly _id: string,
         public readonly name: string,
+        public readonly evaluationGroup: string,
         public readonly attempt: Attempt,
         public readonly promptGroup: PromptGroup,
         public readonly llm: Llm,
@@ -37,6 +39,7 @@ export class Evaluation implements IEvaluation, Entity {
         return new Evaluation(
             EntityUtil.convertId(evaluation._id),
             evaluation.name,
+            evaluation.evaluationGroup,
             evaluation.attempt,
             evaluation.promptGroup,
             evaluation.llm,
@@ -59,6 +62,7 @@ export class Evaluation implements IEvaluation, Entity {
 export const evaluationSchema = new Schema<IEvaluation>(
     {
         name: { type: String, required: true },
+        evaluationGroup: { type: String, required: true },
         attempt: { type: attemptSchema, required: true },
         promptGroup: { type: promptGroupSchema, required: true },
         llm: { type: String, required: true },

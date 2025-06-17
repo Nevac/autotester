@@ -1,5 +1,6 @@
 import {EvaluationListItem} from "./evaluation-list-item";
 import {Evaluation} from "./evaluation";
+import {Llm} from "../llms/llm";
 
 export default class EvaluationEndpoint {
 
@@ -9,8 +10,8 @@ export default class EvaluationEndpoint {
     constructor() {
     }
 
-    public getListItemsByChatGroupId(chatGroupId: string): Promise<EvaluationListItem[]> {
-        return fetch(`${this.ENDPOINT}?chatGroupId=${chatGroupId}`)
+    public getListItemsByEvaluationGroupId(evaluationGroupId: string, llm: Llm): Promise<EvaluationListItem[]> {
+        return fetch(`${this.ENDPOINT}?evaluationGroupId=${evaluationGroupId}&llm=${llm}`)
             .then((res) => {
                 return res.json();
             })

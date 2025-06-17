@@ -81,7 +81,6 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
                 console.error(err);
             });
         const llms = Object.values(Llm).map(llm => SelectableLlm.of(llm));
-        console.log(selectableLlms);
         setSelectableLlms(llms);
     }, []);
 

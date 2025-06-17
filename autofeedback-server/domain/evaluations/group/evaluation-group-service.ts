@@ -2,26 +2,27 @@ import EvaluationGroupRepository from "./evaluation-group-repository";
 import EvaluationGroupUpdateDto from "./evaluation-group-update-dto";
 import EvaluationGroupListEntry from "./evaluation-group-list-entry";
 import {EvaluationGroup} from "./evaluation-group";
-import EvaluationGroupUpdate from "./evaluation-group-update";
+import EvaluationGroupInsert from "./evaluation-group-insert";
 import PromptGroupRepository from "../../prompts/prompt-group-repository";
 import AttemptRepository from "../../attempts/attempt-repository";
-import EvaluationUpdate from "../evaluation-update";
+import EvaluationService from "../evaluation-service";
+import EvaluationGroupLlm from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
-import EvaluationRepository from "../evaluation-repository";
+import {EvaluationScore} from "../evaluation-score";
 
 export default class EvaluationGroupService {
 
     private readonly evaluationGroupRepository: EvaluationGroupRepository;
     private readonly promptGroupRepo: PromptGroupRepository;
     private readonly attemptRepository: AttemptRepository;
-    private readonly evaluationRepository: EvaluationRepository;
+    private readonly evaluationService: EvaluationService;
 
     constructor(
     ) {
         this.evaluationGroupRepository = new EvaluationGroupRepository();
         this.promptGroupRepo = new PromptGroupRepository();
         this.attemptRepository = new AttemptRepository();
-        this.evaluationRepository = new EvaluationRepository();
+        this.evaluationService = new EvaluationService();
     }
 
     public async getAll(): Promise<EvaluationGroup[]> {
@@ -41,34 +42,33 @@ export default class EvaluationGroupService {
         const attempts = await this.attemptRepository.getByIds(evaluationGroupUpdateDto.attemptIds);
 
         const evalGroup = await this.evaluationGroupRepository.create(
-            new EvaluationGroupUpdate(
+            new EvaluationGroupInsert(
                 evaluationGroupUpdateDto.name,
                 promptGroup,
                 Array.from(attempts.values()),
-                Array.from(evaluationGroupUpdateDto.llms),
+                new Map(
+                    Array.from(evaluationGroupUpdateDto.llms)
+                        .map(llm =>
+                            [llm, new EvaluationGroupLlm(
+                                llm,
+                                EvaluationState.INITIATED,
+                                EvaluationScore.zero()
+                            )])),
                 EvaluationState.RUNNING
             )
         );
+        await this.evaluationService.createByGroup(evalGroup);
 
-        const evaluations = [];
-        for(const llm of evalGroup.llms) {
-            for(const attempt of attempts.values()) {
-                evaluations.push(
-                    new EvaluationUpdate(
-                        evaluationGroupUpdateDto.name + "-" + attempt.name,
-                        attempt,
-                        promptGroup,
-                        llm
-                    )
-                )
-            }
-        }
-        await this.evaluationRepository.createAll(evaluations)
+        //TODO: Kickoff evaluation process
 
         return evalGroup;
     }
 
     public async delete(id: string): Promise<boolean> {
-        return await this.evaluationGroupRepository.delete(id);
+        const isDeleteEvaluationsSuccess = this.evaluationService.deleteByGroup(id);
+        const isDeleteEvaluationGroupSuccess = this.evaluationGroupRepository.delete(id);
+        return await Promise
+            .all<boolean>([isDeleteEvaluationsSuccess, isDeleteEvaluationGroupSuccess])
+            .then(result => result[0] && result[1]);
     }
 }

@@ -33,7 +33,7 @@ export default class AttemptRepository {
             .exec()
             .then(document => {
                 if (document) return Attempt.ofDocument(document);
-                throw `Exercise with id ${id} not found`
+                throw `Attempt with id ${id} not found`
             });
     }
 

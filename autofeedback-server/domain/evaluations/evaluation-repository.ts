@@ -1,6 +1,8 @@
 import EvaluationListEntry from "./evaluation-list-entry";
 import {Evaluation, EvaluationModel} from "./evaluation";
 import EvaluationUpdate from "./evaluation-update";
+import {EvaluationGroup} from "./group/evaluation-group";
+import {Llm} from "../llms/llm";
 
 
 export default class EvaluationRepository {
@@ -14,8 +16,11 @@ export default class EvaluationRepository {
             ))
     }
 
-    public async getAllListEntries(): Promise<EvaluationListEntry[]> {
-        return await EvaluationModel.find()
+    public async getAllListEntries(evaluationGroupId: string, llm: Llm): Promise<EvaluationListEntry[]> {
+        return await EvaluationModel.find({
+            evaluationGroup: evaluationGroupId,
+            llm: llm
+        })
             .select('_id name state score createdAt')
             .sort({createdAt: "desc"})
             .exec()
@@ -30,7 +35,7 @@ export default class EvaluationRepository {
             .exec()
             .then(document => {
                 if (document) return Evaluation.ofDocument(document);
-                throw `Exercise with id ${id} not found`
+                throw `Evaluation with id ${id} not found`
             });
     }
 
@@ -53,6 +58,16 @@ export default class EvaluationRepository {
     public async delete(id: string): Promise<boolean> {
         return await EvaluationModel.deleteOne(
             {_id: id}
+        )
+            .exec()
+            .then(document => {
+                return document.acknowledged;
+            })
+    }
+
+    public async deleteAllByGroup(evaluationGroupId: string): Promise<boolean> {
+        return await EvaluationModel.deleteMany(
+            {evaluationGroup: evaluationGroupId}
         )
             .exec()
             .then(document => {

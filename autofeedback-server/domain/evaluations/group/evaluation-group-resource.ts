@@ -1,13 +1,11 @@
-import {Application, Router} from "express";
-import EvaluationGroupUpdateDto from "./evaluation-group-update-dto";
-import { Request } from 'express';
+import {Router} from "express";
 import EvaluationGroupService from "./evaluation-group-service";
 import {coerceBoolean} from "openai/core";
 
 export default class EvaluationGroupResource {
 
-    private readonly service: EvaluationGroupService
-    private readonly RESOURCE: string = 'evaluation-group'
+    private readonly service: EvaluationGroupService;
+    private readonly RESOURCE: string = 'evaluation-group';
 
     constructor(
         private readonly router: Router,
