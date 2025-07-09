@@ -6,6 +6,7 @@ import Entity from "../entities/entity";
 import EvaluationState from "./evaluation-state";
 import {EvaluationScore, evaluationScoreSchema} from "./evaluation-score";
 import {Llm} from "../llms/llm";
+import Rag, {ragSchema} from "../rag/rag";
 
 
 export interface IEvaluation {
@@ -15,7 +16,8 @@ export interface IEvaluation {
     promptGroup: PromptGroup,
     llm: Llm,
     state: EvaluationState,
-    score: EvaluationScore
+    score: EvaluationScore,
+    rag?: Rag
 }
 
 export class Evaluation implements IEvaluation, Entity {
@@ -29,7 +31,8 @@ export class Evaluation implements IEvaluation, Entity {
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
         public readonly createdAt: Date,
-        public readonly updatedAt: Date
+        public readonly updatedAt: Date,
+        public readonly rag?: Rag,
     ) {
     }
 
@@ -46,7 +49,8 @@ export class Evaluation implements IEvaluation, Entity {
             evaluation.state,
             evaluation.score,
             createdAt,
-            updatedAt
+            updatedAt,
+            evaluation.rag,
         )
     }
 
@@ -67,7 +71,8 @@ export const evaluationSchema = new Schema<IEvaluation>(
         promptGroup: { type: promptGroupSchema, required: true },
         llm: { type: String, required: true },
         state: { type: String, required: true },
-        score: { type: evaluationScoreSchema, required: true }
+        score: { type: evaluationScoreSchema, required: true },
+        rag: { type: ragSchema, required: false },
     },
     {
         timestamps: true

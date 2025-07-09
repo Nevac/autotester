@@ -22,5 +22,9 @@ export default class Routes {
     public static readonly EVALUATION_GROUP_CREATE = `${Routes.EVALUATION_GROUP}/create`;
     public static readonly EVALUATION_GROUP_DETAILS = `${Routes.EVALUATION_GROUP}/:id`;
     public static evaluationGroupDetails(id: string): string { return `${Routes.EVALUATION_GROUP}/${id}`};
+    public static readonly RAG = `${Routes.ROOT}/rag`;
+    public static readonly RAG_CREATE = `${Routes.RAG}/create`;
+    public static readonly RAG_EDIT = `${Routes.RAG}/:id`;
+    public static ragEdit(id: string): string { return `${Routes.RAG}/${id}`};
 
 }

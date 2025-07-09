@@ -1,0 +1,17 @@
+.rag-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    flex: 1;
+}
+
+.rag-form-text-area-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+}
+
+.rag-form-text-area {
+    width: 100%;
+}

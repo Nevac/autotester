@@ -17,6 +17,8 @@ import EvaluationGroupCreateComponent
     from "../../domains/evaluation/groups/evaluation-group-create/evaluation-group-create.component";
 import EvaluationGroupDetailComponent
     from "../../domains/evaluation/groups/chat-group-details/evaluation-group-detail.component";
+import RagCreateComponent from "../../domains/rag/groups/rag-create/rag-create.component";
+import RagEditComponent from "../../domains/rag/groups/rag-edit/rag-edit.component";
 
 export default function MainView() {
 
@@ -40,6 +42,8 @@ export default function MainView() {
                             <Route path={Routes.PROMPT_GROUP_EDIT} element={<PromptGroupEditComponent/>}/>
                             <Route path={Routes.EVALUATION_GROUP_CREATE} element={<EvaluationGroupCreateComponent/>}/>
                             <Route path={Routes.EVALUATION_GROUP_DETAILS} element={<EvaluationGroupDetailComponent/>}/>
+                            <Route path={Routes.RAG_CREATE} element={<RagCreateComponent/>}/>
+                            <Route path={Routes.RAG_EDIT} element={<RagEditComponent/>}/>
                         </RoutesComponent>
                     </PaperDefaultComponent>
                 </div>

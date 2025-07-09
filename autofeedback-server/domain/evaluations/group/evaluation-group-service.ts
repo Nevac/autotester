@@ -9,12 +9,14 @@ import EvaluationService from "../evaluation-service";
 import EvaluationGroupLlm from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
 import {EvaluationScore} from "../evaluation-score";
+import RagRepository from "../../rag/rag-repository";
 
 export default class EvaluationGroupService {
 
     private readonly evaluationGroupRepository: EvaluationGroupRepository;
     private readonly promptGroupRepo: PromptGroupRepository;
     private readonly attemptRepository: AttemptRepository;
+    private readonly ragRepository: RagRepository;
     private readonly evaluationService: EvaluationService;
 
     constructor(
@@ -22,6 +24,7 @@ export default class EvaluationGroupService {
         this.evaluationGroupRepository = new EvaluationGroupRepository();
         this.promptGroupRepo = new PromptGroupRepository();
         this.attemptRepository = new AttemptRepository();
+        this.ragRepository = new RagRepository();
         this.evaluationService = new EvaluationService();
     }
 
@@ -41,6 +44,11 @@ export default class EvaluationGroupService {
         const promptGroup = await this.promptGroupRepo.getById(evaluationGroupUpdateDto.promptGroupId);
         const attempts = await this.attemptRepository.getByIds(evaluationGroupUpdateDto.attemptIds);
 
+        let rag;
+        if(evaluationGroupUpdateDto.ragId) {
+            rag = await this.ragRepository.getById(evaluationGroupUpdateDto.ragId)
+        }
+
         const evalGroup = await this.evaluationGroupRepository.create(
             new EvaluationGroupInsert(
                 evaluationGroupUpdateDto.name,
@@ -54,7 +62,8 @@ export default class EvaluationGroupService {
                                 EvaluationState.INITIATED,
                                 EvaluationScore.zero()
                             )])),
-                EvaluationState.RUNNING
+                EvaluationState.RUNNING,
+                rag
             )
         );
         await this.evaluationService.createByGroup(evalGroup);

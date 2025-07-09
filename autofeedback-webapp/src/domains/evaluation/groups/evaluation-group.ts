@@ -6,6 +6,7 @@ import Attempt from "../../attempts/attempt";
 import EvaluationGroupState from "./state/evaluation-group-state";
 import EvaluationGroupLlmState from "./state/evaluation-group-llm-state";
 import EvaluationGroupLlm from "./llm/evaluation-group-llm";
+import Rag from "../../rag/groups/rag";
 
 export class EvaluationGroup {
     constructor(
@@ -17,6 +18,7 @@ export class EvaluationGroup {
         public readonly state: EvaluationState,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
+        public readonly rag?: Rag,
         public readonly bestLlm?: Llm,
         public readonly bestScore?: number
     ) {}
@@ -38,6 +40,7 @@ export class EvaluationGroup {
             json.state,
             new Date(json.createdAt),
             new Date(json.updatedAt),
+            json.rag,
             json.bestLlm,
             json.bestScore
         );

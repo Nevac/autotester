@@ -5,6 +5,7 @@ import {promptGroupUpdateSlice} from "../domains/prompts/groups/prompt-group-upd
 import chatUpdateSlice from "../domains/chats/chat-update.slice";
 import {attemptUpdateSlice} from "../domains/attempts/attempt-update.slice";
 import evaluationGroupUpdateSlice from "../domains/evaluation/groups/evaluation-group-update.slice";
+import {ragUpdateSlice} from "../domains/rag/groups/rag-update.slice";
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         chatsUpdated: chatUpdateSlice.reducer,
         attemptsUpdated: attemptUpdateSlice.reducer,
         evaluationGroupsUpdated: evaluationGroupUpdateSlice.reducer,
+        ragsUpdated: ragUpdateSlice.reducer
     }
 })
 

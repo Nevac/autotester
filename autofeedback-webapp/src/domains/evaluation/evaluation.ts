@@ -3,6 +3,7 @@ import {Llm} from "../llms/llm";
 import Attempt from "../attempts/attempt";
 import EvaluationState from "./evaluation-state";
 import {EvaluationScore} from "./evaluation-score";
+import Rag from "../rag/groups/rag";
 
 export class Evaluation {
     constructor(
@@ -15,6 +16,7 @@ export class Evaluation {
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
         public readonly createdAt: Date,
-        public readonly updatedAt: Date
+        public readonly updatedAt: Date,
+        public readonly rag?: Rag
     ) {}
 }

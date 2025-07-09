@@ -10,6 +10,7 @@ import * as path from "node:path";
 import EvaluationGroupResource from "./domain/evaluations/group/evaluation-group-resource";
 import AttemptResource from "./domain/attempts/attempt-resource";
 import EvaluationResource from "./domain/evaluations/evaluation-resource";
+import RagResource from "./domain/rag/rag-resource";
 
 //For env File
 dotenv.config();
@@ -41,6 +42,7 @@ const promptGroupResource = new PromptGroupResource(router);
 const evaluationGroupResource = new EvaluationGroupResource(router);
 const evaluationResource = new EvaluationResource(router);
 const attemptResource = new AttemptResource(router);
+const ragResource = new RagResource(router);
 app.use('/api', router);
 
 // Serve the React app for all unknown routes

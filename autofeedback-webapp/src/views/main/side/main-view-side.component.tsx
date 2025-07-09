@@ -11,6 +11,7 @@ import {useLocation} from "react-router-dom";
 import AttemptBrowserComponent from "../../../domains/attempts/attempt-browser/attempt-browser.component";
 import EvaluationGroupBrowserComponent
     from "../../../domains/evaluation/groups/evaluation-group-browser/evaluation-group-browser.component";
+import RagBrowserComponent from "../../../domains/rag/groups/rag-browser/rag-browser.component";
 
 export default function MainViewSideComponent() {
     const [value, setValue] = React.useState(0);
@@ -28,6 +29,7 @@ export default function MainViewSideComponent() {
         ["prompt-group", 2],
         ["attempt", 3],
         ["evaluation-group", 4],
+        ["rag", 5],
     ]);
 
     useEffect(() => {
@@ -53,6 +55,7 @@ export default function MainViewSideComponent() {
                     <MenuItem value={2}>Prompts</MenuItem>
                     <MenuItem value={3}>Attempt</MenuItem>
                     <MenuItem value={4}>Evaluation</MenuItem>
+                    <MenuItem value={5}>RAG</MenuItem>
                 </Select>
             </FormControl>
             <TabPanel value={value} index={0} padding={0}>
@@ -69,6 +72,9 @@ export default function MainViewSideComponent() {
             </TabPanel>
             <TabPanel value={value} index={4} padding={0}>
                 <EvaluationGroupBrowserComponent/>
+            </TabPanel>
+            <TabPanel value={value} index={5} padding={0}>
+                <RagBrowserComponent/>
             </TabPanel>
         </PaperDefaultComponent>
     )

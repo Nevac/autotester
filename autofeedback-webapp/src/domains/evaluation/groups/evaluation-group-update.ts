@@ -6,7 +6,8 @@ export default class EvaluationGroupUpdate {
         public readonly name: string,
         public readonly promptGroupId: string,
         public readonly attemptIds: string[],
-        public readonly llms: string[]
+        public readonly llms: string[],
+        public readonly ragId?: string
     ) {
     }
 }
