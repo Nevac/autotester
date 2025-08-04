@@ -5,6 +5,8 @@ import {Attempt} from "./attempt";
 import ChatGroupUpdate from "../chats/group/chat-group-update";
 import ExerciseRepository from "../exercises/exercise-repository";
 import AttemptUpdate from "./attempt-update";
+import ExerciseUpdate from "../exercises/exercise-update";
+import {Exercise} from "../exercises/exercise";
 
 export default class AttemptService {
 
@@ -37,6 +39,18 @@ export default class AttemptService {
                 await this.exerciseRepo.getById(attempt.exerciseId),
                 attempt.attempt,
                 attempt.expectedFeedback
+            )
+        );
+    }
+
+    public async update(id: string, update: AttemptUpdateDto): Promise<Attempt> {
+        return await this.attemptRepository.update(
+            id,
+            new AttemptUpdate(
+                update.name,
+                await this.exerciseRepo.getById(update.exerciseId),
+                update.attempt,
+                update.expectedFeedback
             )
         );
     }

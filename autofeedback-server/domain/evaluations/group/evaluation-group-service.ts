@@ -10,6 +10,7 @@ import EvaluationGroupLlm from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
 import {EvaluationScore} from "../evaluation-score";
 import RagRepository from "../../rag/rag-repository";
+import {Evaluation} from "../evaluation";
 
 export default class EvaluationGroupService {
 
@@ -66,11 +67,15 @@ export default class EvaluationGroupService {
                 rag
             )
         );
-        await this.evaluationService.createByGroup(evalGroup);
+        const evaluations = await this.evaluationService.createByGroup(evalGroup);
 
-        //TODO: Kickoff evaluation process
+        this.startEvaluation(evaluations);
 
         return evalGroup;
+    }
+
+    private async startEvaluation(evaluations: Map<string, Evaluation>) {
+        Array.from(evaluations.values()).forEach(evaluation => this.evaluationService.startEvaluation(evaluation));
     }
 
     public async delete(id: string): Promise<boolean> {

@@ -4,6 +4,8 @@ import ChatGroupUpdate from "../chats/group/chat-group-update";
 import AttemptUpdate from "./attempt-update";
 import * as mongoose from "mongoose";
 import {ObjectId} from "mongodb";
+import ExerciseUpdate from "../exercises/exercise-update";
+import {Exercise, ExerciseModel} from "../exercises/exercise";
 
 
 export default class AttemptRepository {
@@ -49,6 +51,17 @@ export default class AttemptRepository {
         ).then(document =>
             Attempt.ofDocument(document)
         )
+    }
+
+    public async update(id: string, exercise: AttemptUpdate): Promise<Attempt> {
+        return await AttemptModel.updateOne(
+            {_id: id},
+            exercise
+        )
+            .exec()
+            .then(document => {
+                return this.getById(id)
+            })
     }
 
     public async delete(id: string): Promise<boolean> {

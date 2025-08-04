@@ -19,8 +19,9 @@ export default function AttemptEditComponent() {
 
     useEffect(() => {
         endpoint.getById(id!)
-            .then(exercise =>
-                setAttempt(exercise)
+            .then(attempt => {
+                    setAttempt(attempt)
+                }
             )
             .catch(err => {
                 openSnackbar(`Could not load Attempt with id ${id}`, SnackbarVariant.ERROR);

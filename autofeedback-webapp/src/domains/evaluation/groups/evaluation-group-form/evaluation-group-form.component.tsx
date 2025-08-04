@@ -103,7 +103,8 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
                 nameInput.valueOrThrow(),
                 promptGroupInput.valueOrThrow(),
                 attemptsInput.valueOrThrow(),
-                llmsInput.valueOrThrow()
+                llmsInput.valueOrThrow(),
+                ragInput.valueOrUndefined()
             )
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {

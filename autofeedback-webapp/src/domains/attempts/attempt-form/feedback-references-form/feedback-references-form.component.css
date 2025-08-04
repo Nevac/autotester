@@ -1,0 +1,25 @@
+.feedback-reference-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    flex: 1;
+    padding: 20px;
+}
+
+.feedback-reference-form-text-area-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
+.feedback-reference-form-text-area {
+    width: 100%;
+}
+
+.feedback-reference-form-reference-list-item {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex: 1;
+}

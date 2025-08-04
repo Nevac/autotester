@@ -1,6 +1,4 @@
-import OpenAI from 'openai';
 import LlmClient, {ClientRequest, ClientResponse} from "../llm-client";
-import {Llm} from "../llm";
 import dotenv from 'dotenv';
 import {GoogleGenerativeAI} from "@google/generative-ai";
 import PromptBuilder from "../prompt-builder";
@@ -32,9 +30,6 @@ export default class GeminiClient implements LlmClient {
             const contentResult = await model.startChat().sendMessage([
                 this.generateSystemMessage(request),
             ]);
-
-            console.log(contentResult);
-
             return ClientResponse.ofGeminiContentResult(contentResult);
         } catch (error) {
             console.error("Error in completion:", error);

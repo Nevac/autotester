@@ -34,7 +34,6 @@ export default class ChatService {
         const chatGroup = await this.chatGroupRepo.getById(chat.chatGroupId);
 
         const client = this.llmService.resolveLlmService(chat.llm);
-        console.log("here");
         const response = await client.create(
             ClientRequest.ofChatGroup(chatGroup)
         );

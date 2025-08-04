@@ -8,20 +8,23 @@ import {useEffect, useState} from "react";
 import ExerciseListItem from "../../exercises/exercise-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import ExerciseEndpoint from "../../exercises/exercise-endpoint";
+import ExpectedFeedbackFormComponent from "./expected-feedback-form/expected-feedback-form.component";
+import ExpectedFeedback from "../expected-feedback/expected-feedback";
+import ExpectedFeedbackFormModel from "./expected-feedback-form/expected-feedback-form-model";
 
 export interface AttemptFormProps {
     save: (update: AttemptUpdate) => void
     nameInit?: string,
     exerciseIdInit?: string,
     attemptInit?: string,
-    expectedFeedbackInit?: string
+    expectedFeedbackInit?: ExpectedFeedback
 }
 
 export default function AttemptFormComponent(props: AttemptFormProps) {
     const nameInput = useInputValue<string>(props.nameInit, {required: true});
     const exerciseInput = useInputValue<string>(props.exerciseIdInit, {required: true});
     const attemptInput = useInputValue<string>(props.attemptInit, {required: false});
-    const expectedFeedbackInput = useInputValue<string>(props.expectedFeedbackInit, {required: false});
+    const expectedFeedbackInput = useInputValue<ExpectedFeedbackFormModel>(ExpectedFeedbackFormModel.create(), {required: false});
     const inputs = [
         nameInput,
         exerciseInput,
@@ -44,13 +47,21 @@ export default function AttemptFormComponent(props: AttemptFormProps) {
             });
     }, []);
 
+    useEffect(() => {
+        if(props.expectedFeedbackInit) {
+            expectedFeedbackInput.setRawValue(props.expectedFeedbackInit)
+        } else {
+            expectedFeedbackInput.setRawValue(ExpectedFeedbackFormModel.create())
+        }
+    }, [props.expectedFeedbackInit]);
+
     const saveAttempt = () => {
         props.save(
             new AttemptUpdate(
                 nameInput.valueOrThrow(),
                 exerciseInput.valueOrThrow(),
                 attemptInput.value ? attemptInput.value : "",
-                expectedFeedbackInput.value ? expectedFeedbackInput.value : ""
+                expectedFeedbackInput.valueOrThrow()
             )
         );
     }
@@ -94,13 +105,10 @@ export default function AttemptFormComponent(props: AttemptFormProps) {
                     <MarkdownEditor id='attempt-input' input={attemptInput}/>
                 </FormControl>
 
-                <FormControl
-                    className='attempt-form-text-area'
-                    error={expectedFeedbackInput.error}
-                >
-                    <InputLabel htmlFor="expected-feedback-input">Expected Feedback</InputLabel>
-                    <MarkdownEditor id='expected-feedback-input' input={expectedFeedbackInput}/>
-                </FormControl>
+                <Typography variant={'h4'}>
+                    Expected Feedback
+                </Typography>
+                <ExpectedFeedbackFormComponent expectedFeedbackInit={expectedFeedbackInput.value!}/>
             </div>
             <Button variant={"contained"} onClick={saveAttempt} disabled={!isFormValid}>
                 Save

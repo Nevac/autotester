@@ -5,6 +5,7 @@ import {ChatGroup} from "../chats/group/chat-group";
 import Anthropic from "@anthropic-ai/sdk";
 import {GenerateContentResult} from "@google/generative-ai";
 import {ChatCompletionResponse} from "@mistralai/mistralai/models/components";
+import {Evaluation} from "../evaluations/evaluation";
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -14,7 +15,8 @@ export class ClientRequest {
     constructor(
         public promptGroup: PromptGroup,
         public exercise: Exercise,
-        public attempt: string
+        public attempt: string,
+        public ragDocuments?: string[]
     ) {}
 
     public static ofChatGroup(chatGroup: ChatGroup): ClientRequest {
@@ -23,6 +25,15 @@ export class ClientRequest {
             chatGroup.exercise,
             chatGroup.attempt
         )
+    }
+
+    public static ofEvaluation(evaluation: Evaluation, ragDocuments: string[]) {
+        return new ClientRequest(
+            evaluation.promptGroup,
+            evaluation.attempt.exercise,
+            evaluation.attempt.attempt,
+            ragDocuments
+        );
     }
 }
 

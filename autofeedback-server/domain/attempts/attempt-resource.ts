@@ -37,6 +37,14 @@ export default class AttemptResource {
             res.json(attempt);
         });
 
+        router.put(`/${this.RESOURCE}/:id`, async (req: Request<{id: string}>, res, next) => {
+            const exercise = await this.service.update(
+                req.params.id,
+                req.body
+            ).catch(next);
+            res.json(exercise);
+        });
+
         router.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {
             const deleted = await this.service.delete(req.params.id).catch(next);
             if(deleted) res.sendStatus(200);

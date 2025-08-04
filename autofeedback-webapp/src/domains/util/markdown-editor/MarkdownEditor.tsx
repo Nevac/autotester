@@ -5,6 +5,7 @@ import {InputValue} from "../forms/input-value-hook";
 
 interface MarkdownEditorProps {
     id?: string,
+    height?: number,
     input: InputValue<string>,
 }
 
@@ -15,7 +16,7 @@ export default function MarkdownEditor(props: MarkdownEditorProps) {
             className='markdown-editor'
             style={{marginTop: 50}}
             value={props.input.value}
-            height={600}
+            height={props.height ? props.height : 600}
             onChange={props.input.setValue}
         />
     )

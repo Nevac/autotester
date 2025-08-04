@@ -4,12 +4,13 @@ import EntityUtil from "../entities/entity";
 import {Exercise, exerciseSchema} from "../exercises/exercise";
 import {ObjectId} from "mongodb";
 import {IEvaluationGroup} from "../evaluations/group/evaluation-group";
+import ExpectedFeedback, {expectedFeedbackSchema} from "./expected-feedback/expected-feedback";
 
 export interface IAttempt {
     name: string,
     exercise: Exercise,
     attempt: string,
-    expectedFeedback: string
+    expectedFeedback: ExpectedFeedback
 }
 
 export class Attempt implements IAttempt, Entity {
@@ -18,7 +19,7 @@ export class Attempt implements IAttempt, Entity {
         public readonly name: string,
         public readonly exercise: Exercise,
         public readonly attempt: string,
-        public readonly expectedFeedback: string,
+        public readonly expectedFeedback: ExpectedFeedback,
         public readonly createdAt: Date,
         public readonly updatedAt: Date
     ) {
@@ -52,7 +53,7 @@ export const attemptSchema = new Schema<IAttempt>(
         name: { type: String, required: true },
         exercise: { type: exerciseSchema, required: true },
         attempt: { type: String, required: true },
-        expectedFeedback: { type: String, required: true }
+        expectedFeedback: { type: expectedFeedbackSchema, required: true }
     },
     {
         timestamps: true
