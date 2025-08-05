@@ -7,6 +7,9 @@ import EvaluationState from "./evaluation-state";
 import {EvaluationScore, evaluationScoreSchema} from "./evaluation-score";
 import {Llm} from "../llms/llm";
 import Rag, {ragSchema} from "../rag/rag";
+import EvaluationSemanticStatistic, {
+    EvaluationSemanticStatisticSchema
+} from "./statistic/evaluation-semantic-statistic";
 
 
 export interface IEvaluation {
@@ -17,6 +20,7 @@ export interface IEvaluation {
     llm: Llm,
     state: EvaluationState,
     score: EvaluationScore,
+    semanticStatistic: EvaluationSemanticStatistic,
     rag?: Rag
 }
 
@@ -30,11 +34,11 @@ export class Evaluation implements IEvaluation, Entity {
         public readonly llm: Llm,
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
+        public readonly semanticStatistic: EvaluationSemanticStatistic,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag,
-    ) {
-    }
+    ) {}
 
     public static ofDocument(evaluation: EvaluationDocument) {
         const [createdAt, updatedAt] = EntityUtil.checkForProperties(evaluation);
@@ -48,6 +52,7 @@ export class Evaluation implements IEvaluation, Entity {
             evaluation.llm,
             evaluation.state,
             evaluation.score,
+            evaluation.semanticStatistic,
             createdAt,
             updatedAt,
             evaluation.rag,
@@ -72,10 +77,11 @@ export const evaluationSchema = new Schema<IEvaluation>(
         llm: { type: String, required: true },
         state: { type: String, required: true },
         score: { type: evaluationScoreSchema, required: true },
+        semanticStatistic: { type: EvaluationSemanticStatisticSchema, required: true },
         rag: { type: ragSchema, required: false },
     },
     {
-        timestamps: true
+        timestamps: true,
     }
 );
 

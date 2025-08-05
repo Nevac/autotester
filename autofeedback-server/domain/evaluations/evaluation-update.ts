@@ -4,10 +4,12 @@ import {Llm} from "../llms/llm";
 import EvaluationState from "./evaluation-state";
 import {EvaluationScore} from "./evaluation-score";
 import Rag from "../rag/rag";
+import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
 
 export default class EvaluationUpdate {
     public state: EvaluationState = EvaluationState.INITIATED;
     public score: EvaluationScore = EvaluationScore.zero();
+    public semanticStatistic = EvaluationSemanticStatistic.empty();
 
     constructor(
         public name: string,
