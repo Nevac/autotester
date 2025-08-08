@@ -2,8 +2,9 @@ import PromptGroup from "../prompts/groups/prompt-group";
 import {Llm} from "../llms/llm";
 import Attempt from "../attempts/attempt";
 import EvaluationState from "./evaluation-state";
-import {EvaluationScore} from "./evaluation-score";
 import Rag from "../rag/groups/rag";
+import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
+import EvaluationScore from "./score/evaluation-score";
 
 export class Evaluation {
     constructor(
@@ -13,8 +14,10 @@ export class Evaluation {
         public readonly attempt: Attempt,
         public readonly promptGroup: PromptGroup,
         public readonly llm: Llm,
+        public readonly generatedFeedback: string,
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
+        public readonly semanticStatistic: EvaluationSemanticStatistic,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag

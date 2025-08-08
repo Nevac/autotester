@@ -14,6 +14,13 @@ export default class GeneratedFeedbackSemanticStatistic implements IGeneratedFee
         public readonly sentence: string,
         public readonly scores: GeneratedFeedbackSemanticScore[]
     ) {}
+
+    public static emptyScores(sentence: string) {
+        return new GeneratedFeedbackSemanticStatistic(
+            sentence,
+            []
+        );
+    }
 }
 
 export const GeneratedFeedbackSemanticStatisticSchema = new Schema<IGeneratedFeedbackSemanticStatistic>(
@@ -23,6 +30,6 @@ export const GeneratedFeedbackSemanticStatisticSchema = new Schema<IGeneratedFee
     },
     {
         _id: false,
-        timestamps: true,
+        timestamps: false,
     }
 );

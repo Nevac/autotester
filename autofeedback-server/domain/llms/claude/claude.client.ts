@@ -29,9 +29,6 @@ export default class ClaudeClient implements LlmClient {
                 temperature: LlmConfig.TEMP,
                 top_p: LlmConfig.TOP_P
             });
-
-            console.log(message);
-
             return ClientResponse.ofClaudeMessage(message);
         } catch (error) {
             console.error("Error in completion:", error);

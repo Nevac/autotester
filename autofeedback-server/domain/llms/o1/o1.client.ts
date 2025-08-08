@@ -27,9 +27,6 @@ export default class O1Client implements LlmClient {
                 ],
                 model: this.model,
             })
-
-            console.log(completion);
-
             return ClientResponse.ofGPTChatCompletion(completion);
         } catch (error) {
             console.error("Error in completion:", error);

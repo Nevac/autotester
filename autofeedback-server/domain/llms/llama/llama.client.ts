@@ -33,9 +33,6 @@ export default class LlamaClient implements LlmClient {
                 frequency_penalty: LlmConfig.FREQ_PENALTY,
                 presence_penalty: LlmConfig.PRES_PENALTY
             })
-
-            console.log(completion);
-
             return ClientResponse.ofLlamaCompletion(completion);
         } catch (error) {
             console.error("Error in completion:", error);

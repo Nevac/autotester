@@ -32,6 +32,6 @@ export const EvaluationSemanticStatisticSchema = new Schema<IEvaluationSemanticS
     },
     {
         _id: false,
-        timestamps: true,
+        timestamps: false,
     }
 );

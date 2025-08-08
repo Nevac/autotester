@@ -4,7 +4,7 @@ import PromptGroup, {promptGroupSchema} from "../prompts/prompt-group";
 import EntityUtil from "../entities/entity";
 import Entity from "../entities/entity";
 import EvaluationState from "./evaluation-state";
-import {EvaluationScore, evaluationScoreSchema} from "./evaluation-score";
+import {EvaluationScore, evaluationScoreSchema} from "./score/evaluation-score";
 import {Llm} from "../llms/llm";
 import Rag, {ragSchema} from "../rag/rag";
 import EvaluationSemanticStatistic, {
@@ -18,6 +18,7 @@ export interface IEvaluation {
     attempt: Attempt,
     promptGroup: PromptGroup,
     llm: Llm,
+    generatedFeedback: string,
     state: EvaluationState,
     score: EvaluationScore,
     semanticStatistic: EvaluationSemanticStatistic,
@@ -32,6 +33,7 @@ export class Evaluation implements IEvaluation, Entity {
         public readonly attempt: Attempt,
         public readonly promptGroup: PromptGroup,
         public readonly llm: Llm,
+        public readonly generatedFeedback: string,
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
         public readonly semanticStatistic: EvaluationSemanticStatistic,
@@ -50,6 +52,7 @@ export class Evaluation implements IEvaluation, Entity {
             evaluation.attempt,
             evaluation.promptGroup,
             evaluation.llm,
+            evaluation.generatedFeedback,
             evaluation.state,
             evaluation.score,
             evaluation.semanticStatistic,
@@ -75,6 +78,7 @@ export const evaluationSchema = new Schema<IEvaluation>(
         attempt: { type: attemptSchema, required: true },
         promptGroup: { type: promptGroupSchema, required: true },
         llm: { type: String, required: true },
+        generatedFeedback: { type: String, required: true },
         state: { type: String, required: true },
         score: { type: evaluationScoreSchema, required: true },
         semanticStatistic: { type: EvaluationSemanticStatisticSchema, required: true },

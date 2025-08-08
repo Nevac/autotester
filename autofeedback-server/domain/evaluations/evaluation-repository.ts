@@ -3,6 +3,7 @@ import {Evaluation, EvaluationModel} from "./evaluation";
 import EvaluationUpdate from "./evaluation-update";
 import {EvaluationGroup} from "./group/evaluation-group";
 import {Llm} from "../llms/llm";
+import {Attempt, AttemptModel} from "../attempts/attempt";
 
 
 export default class EvaluationRepository {
@@ -53,6 +54,17 @@ export default class EvaluationRepository {
         ).then(documents =>
             Evaluation.ofDocuments(documents)
         )
+    }
+
+    public async update(id: string, evaluation: EvaluationUpdate): Promise<Evaluation> {
+        return await EvaluationModel.updateOne(
+            {_id: id},
+            evaluation
+        )
+            .exec()
+            .then(document => {
+                return this.getById(id)
+            })
     }
 
     public async delete(id: string): Promise<boolean> {

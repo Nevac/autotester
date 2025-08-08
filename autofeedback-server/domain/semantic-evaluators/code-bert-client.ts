@@ -1,6 +1,6 @@
 import {FeatureExtractionOutput, HfInference, SentenceSimilarityArgs} from "@huggingface/inference";
 import dotenv from "dotenv";
-import SemanticEvaluatorClient from "./SemanticEvaluatorClient";
+import SemanticEvaluatorClient from "./semantic-evaluator-client";
 
 export default class CodeBertClient implements SemanticEvaluatorClient {
 

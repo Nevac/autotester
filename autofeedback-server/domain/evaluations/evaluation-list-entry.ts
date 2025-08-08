@@ -19,7 +19,7 @@ export default class EvaluationListEntry {
             EntityUtil.convertId(evaluation._id),
             evaluation.name,
             evaluation.state,
-            evaluation.score.totalScore,
+            evaluation.score.total,
             createdAt
         )
     }

@@ -2,14 +2,16 @@ import PromptGroup from "../prompts/prompt-group";
 import {Attempt} from "../attempts/attempt";
 import {Llm} from "../llms/llm";
 import EvaluationState from "./evaluation-state";
-import {EvaluationScore} from "./evaluation-score";
+import {EvaluationScore} from "./score/evaluation-score";
 import Rag from "../rag/rag";
 import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
+import {Evaluation} from "./evaluation";
 
 export default class EvaluationUpdate {
     public state: EvaluationState = EvaluationState.INITIATED;
     public score: EvaluationScore = EvaluationScore.zero();
     public semanticStatistic = EvaluationSemanticStatistic.empty();
+    public generatedFeedback: string = "Not generated yet";
 
     constructor(
         public name: string,
@@ -19,4 +21,41 @@ export default class EvaluationUpdate {
         public llm: Llm,
         public rag?: Rag
     ) {}
+
+    public static ofEvaluation(
+        evaluation: Evaluation
+    ): EvaluationUpdate {
+        return new EvaluationUpdate(
+            evaluation.name,
+            evaluation.evaluationGroup,
+            evaluation.attempt,
+            evaluation.promptGroup,
+            evaluation.llm,
+            evaluation.rag
+        )
+            .setSemanticStatistic(evaluation.semanticStatistic)
+            .setScore(evaluation.score)
+            .setState(evaluation.state)
+            .setGeneratedFeedback(evaluation.generatedFeedback);
+    }
+
+    public setState(state: EvaluationState): EvaluationUpdate {
+        this.state = state;
+        return this;
+    }
+
+    public setScore(score: EvaluationScore): EvaluationUpdate {
+        this.score = score;
+        return this;
+    }
+
+    public setSemanticStatistic(statistic: EvaluationSemanticStatistic): EvaluationUpdate {
+        this.semanticStatistic = statistic;
+        return this;
+    }
+
+    public setGeneratedFeedback(generatedFeedback: string): EvaluationUpdate {
+        this.generatedFeedback = generatedFeedback;
+        return this;
+    }
 }

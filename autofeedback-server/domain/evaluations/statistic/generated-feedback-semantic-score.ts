@@ -22,6 +22,6 @@ export const GeneratedFeedbackSemanticScoreSchema = new Schema<IGeneratedFeedbac
     },
     {
         _id: false,
-        timestamps: true,
+        timestamps: false,
     }
 );

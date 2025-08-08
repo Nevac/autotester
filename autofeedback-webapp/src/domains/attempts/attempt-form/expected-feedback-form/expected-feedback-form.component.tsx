@@ -1,10 +1,11 @@
 import "./expected-feedback-form.component.css";
 import React, {useEffect, useState} from "react";
-import {Accordion, AccordionDetails, AccordionSummary, Button, FormControl, TextField, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Button, Typography} from "@mui/material";
 import {ExpandMore} from "@mui/icons-material";
 import FeedbackReferencesFormComponent from "../feedback-references-form/feedback-references-form.component";
 import FeedbackReferenceFormModel from "../feedback-references-form/feedback-reference-form-model";
 import ExpectedFeedbackFormModel from "./expected-feedback-form-model";
+import FeedbackMetric from "../../expected-feedback/feedback-metric";
 
 export interface ExpectedFeedbackForm {
     expectedFeedbackInit: ExpectedFeedbackFormModel
@@ -39,16 +40,17 @@ export default function ExpectedFeedbackFormComponent(props: ExpectedFeedbackFor
     }, [
         correctnessEntries,
         suggestionEntries,
-        correctnessEntries,
+        codeStyleEntries,
     ]);
 
     function addNewReference(
         entries: FeedbackReferenceFormModel[],
-        setEntries: (input: FeedbackReferenceFormModel[]) => void
+        setEntries: (input: FeedbackReferenceFormModel[]) => void,
+        metric: FeedbackMetric
     ): void {
         setEntries([
             ...entries,
-            FeedbackReferenceFormModel.create()
+            FeedbackReferenceFormModel.create(metric)
         ])
     }
 
@@ -65,6 +67,7 @@ export default function ExpectedFeedbackFormComponent(props: ExpectedFeedbackFor
     function FeedbackReferenceSection (
         props: {
             title: string,
+            metric: FeedbackMetric,
             feedbackReferences: FeedbackReferenceFormModel[],
             setFeedbackReferences: (input: FeedbackReferenceFormModel[]) => void,
             expandFlag: boolean,
@@ -92,7 +95,8 @@ export default function ExpectedFeedbackFormComponent(props: ExpectedFeedbackFor
                         )}
                         <Button variant={"contained"} onClick={() => addNewReference(
                             props.feedbackReferences,
-                            props.setFeedbackReferences
+                            props.setFeedbackReferences,
+                            props.metric
                         )}>
                             <Typography>
                                 Add Feedback Reference
@@ -108,6 +112,7 @@ export default function ExpectedFeedbackFormComponent(props: ExpectedFeedbackFor
         <div className={'attempt-form-container'}>
             <FeedbackReferenceSection key={"correctness"}
                                       title={"Correctness"}
+                                      metric={FeedbackMetric.CORRECTNESS}
                                       feedbackReferences={correctnessEntries}
                                       setFeedbackReferences={setCorrectnessEntries}
                                       expandFlag={correctnessSectionExpanded}
@@ -115,6 +120,7 @@ export default function ExpectedFeedbackFormComponent(props: ExpectedFeedbackFor
             />
             <FeedbackReferenceSection key={"suggestion"}
                                       title={"Suggestion"}
+                                      metric={FeedbackMetric.SUGGESTION}
                                       feedbackReferences={suggestionEntries}
                                       setFeedbackReferences={setSuggestionEntries}
                                       expandFlag={suggestionSectionExpanded}
@@ -122,6 +128,7 @@ export default function ExpectedFeedbackFormComponent(props: ExpectedFeedbackFor
             />
             <FeedbackReferenceSection key={"codeStyle"}
                                       title={"Code Style"}
+                                      metric={FeedbackMetric.CODE_STYLE}
                                       feedbackReferences={codeStyleEntries}
                                       setFeedbackReferences={setCodeStyleEntries}
                                       expandFlag={codeStyleSectionExpanded}

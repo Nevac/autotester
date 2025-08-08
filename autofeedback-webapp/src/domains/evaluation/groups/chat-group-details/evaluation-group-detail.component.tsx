@@ -2,7 +2,7 @@ import './evaluation-group-detail.component.css';
 import {
     Accordion, AccordionDetails, AccordionSummary,
     Box,
-    Divider,
+    Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
@@ -22,6 +22,11 @@ import Paper from "@mui/material/Paper";
 import EvaluationEndpoint from "../../evaluation-endpoint";
 import {EvaluationListItem} from "../../evaluation-list-item";
 import EvaluationGroupLlm from "../llm/evaluation-group-llm";
+import {Evaluation} from "../../evaluation";
+import EvaluationScore from "../../score/evaluation-score";
+import MetricScore from "../../score/metric-score";
+import MetricBestHit from "../../score/metric-best-hit";
+import EvaluationSemanticStatistic from "../../statistic/evaluation-semantic-statistic";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -43,6 +48,7 @@ class SelectableLlmState {
 export default function EvaluationGroupDetailComponent() {
     let { id } = useParams();
     const [evaluationGroup, setEvaluationGroup] = useState<EvaluationGroup>();
+    const [evaluation, setEvaluation] = useState<Evaluation>();
 
     const [selectableLlmStates, setSelectableLlmStates] = useState<SelectableLlmState[]>([]);
     const [selectedLlm, setSelectedLlm] = useState<string>()
@@ -89,10 +95,19 @@ export default function EvaluationGroupDetailComponent() {
         }
     }, [selectedLlm]);
 
+    useEffect(() => {
+        if(selectedEvaluation) {
+            evaluationEndpoint.getById(selectedEvaluation)
+                .then(evaluation =>
+                    setEvaluation(evaluation)
+                )
+        }
+    }, [selectedEvaluation]);
+
     const llmColumns: GridColDef[] = [
         { field: 'llm', headerName: 'Llm', width: 200, valueGetter: (value, row) => row.value.llm },
         { field: 'state', headerName: 'State', width: 200, valueGetter: (value, row) => row.value.state },
-        { field: 'score', headerName: 'Score', width: 200, valueGetter: (value, row) => row.value.score.totalScore },
+        { field: 'score', headerName: 'Score', width: 200, valueGetter: (value, row) => row.value.score.total },
     ];
 
     const evaluationColumns: GridColDef[] = [
@@ -110,6 +125,13 @@ export default function EvaluationGroupDetailComponent() {
                 </div>
                 <Divider/>
             </Typography>
+            <EvaluationSelection/>
+            <EvaluationDetail evaluation={evaluation}/>
+        </Box>
+    )
+
+    function EvaluationSelection() {
+        return (
             <Box className={'evaluation-group-selection-tables-box'}>
                 <Box sx={{width: 700, padding: '20px'}}>
                     <Paper sx={{height: 300}}>
@@ -137,11 +159,177 @@ export default function EvaluationGroupDetailComponent() {
                     </Paper>
                 </Box>
             </Box>
-            <Box sx={{ width: '100%', padding: '20px'}}>
-                TODO: EVALUATION
-            </Box>
-        </Box>
-    )
+        );
+    }
+
+    function EvaluationDetail(props: {evaluation?: Evaluation}) {
+        if(evaluation) {
+            return (
+                <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                    <GeneratedFeedback generatedFeedback={evaluation.generatedFeedback}/>
+                    <EvaluationScore evaluation={evaluation}/>
+                    <SemanticStatistic semanticStatistic={evaluation.semanticStatistic}/>
+                </div>
+            )
+        }
+        return <></>;
+    }
+
+    function GeneratedFeedback(props: {generatedFeedback: string}) {
+        return (
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMore/>}
+                    aria-controls={`generated-feedback-accordion-content`}
+                    id={`generated-feedback-accordion-header`}
+                >
+                    <Typography variant={"h5"}>Generated Feedback</Typography>
+                </AccordionSummary>
+                <AccordionDetails style={{maxWidth: 1500}}>
+                    <MarkdownX>
+                        {props.generatedFeedback}
+                    </MarkdownX>
+                </AccordionDetails>
+            </Accordion>
+        )
+    }
+
+    function SemanticStatistic(props: {semanticStatistic: EvaluationSemanticStatistic}) {
+        return (
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMore/>}
+                    aria-controls={`semantic-statistic-accordion-content`}
+                    id={`semantic-statistic-accordion-header`}
+                >
+                    <Typography variant={"h5"}>Semantic Statistics</Typography>
+                </AccordionSummary>
+                <AccordionDetails style={{maxWidth: 1500}}>
+                    <MarkdownX>
+                        ```json
+                        {JSON.stringify(props.semanticStatistic, null, 2)}
+                        ```
+                    </MarkdownX>
+                </AccordionDetails>
+            </Accordion>
+        )
+    }
+
+    function EvaluationScore(props: { evaluation: Evaluation }) {
+        if (evaluation?.score) {
+            return (
+                <div style={{display: "flex", gap: 10}}>
+                    <ScoreTable score={evaluation.score}/>
+                    <Accordion style={{flex: 1}}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMore/>}
+                            aria-controls={`evaluation-score-accordion-content`}
+                            id={`evaluation-score-accordion-header`}
+                        >
+                            <Typography variant="h5">
+                                Score
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <div style={{display: "flex", flexDirection: "row", gap: 20}}>
+                                <MetricScores evaluationScore={evaluation.score}/>
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                </div>
+            )
+        }
+        return <></>;
+    }
+
+    function ScoreTable(props: {score: EvaluationScore}) {
+        return(
+            <Paper elevation={3}>
+                <TableContainer>
+                    <Table size={"small"} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography align="right" fontWeight={"bold"}>Metric</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography align="right" fontWeight={"bold"}>Score</Typography>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell align="right">Correctness</TableCell>
+                                <TableCell align="right">{props.score.correctness.score}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="right">Suggestion</TableCell>
+                                <TableCell align="right">{props.score.suggestion.score}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="right">Code Style</TableCell>
+                                <TableCell align="right">{props.score.codeStyle.score}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="right">Overgeneration</TableCell>
+                                <TableCell align="right">{props.score.overgeneration}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="right">Total</TableCell>
+                                <TableCell align="right">{props.score.total}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper>
+        )
+    }
+
+    function MetricScores(props: {evaluationScore: EvaluationScore}) {
+        return (
+            <div style={{flex: 1, display: "flex", gap: 10, flexDirection: "column"}}>
+                <MetricScore title={"Correctness"} metricScore={evaluation!.score.correctness}/>
+                <MetricScore title={"Suggestion"} metricScore={evaluation!.score.suggestion}/>
+                <MetricScore title={"Code Style"} metricScore={evaluation!.score.codeStyle}/>
+            </div>
+        )
+    }
+
+    function MetricScore(props: {title: string, metricScore: MetricScore}) {
+        return (
+            <Paper elevation={3} style={{padding: 10}}>
+                <Typography variant={"h5"}>{props.title}</Typography>
+                {props.metricScore.bestHits.map(bestHit =>
+                    <BestHit key={bestHit.id} bestHit={bestHit}/>
+                )}
+            </Paper>
+        );
+    }
+
+    function BestHit(props: {bestHit: MetricBestHit}) {
+        return (
+            <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                <Paper elevation={10} style={{padding: 10}}>
+                    <Typography variant={"h6"} fontWeight={"bold"}>{props.bestHit.id}</Typography>
+                    <Typography>Semantic Similarity: {props.bestHit.similarityScore}</Typography>
+                </Paper>
+                <div style={{display: "flex", flexDirection: "row", gap: 10}}>
+                    <Paper elevation={10} style={{padding: 10, flex: 1}}>
+                        <Typography variant={"h6"}>Expected</Typography>
+                        <MarkdownX>
+                            {props.bestHit.expectedSentence}
+                        </MarkdownX>
+                    </Paper>
+                    <Paper elevation={10} style={{padding: 10, flex: 1}}>
+                        <Typography variant={"h6"}>Generated</Typography>
+                        <MarkdownX>
+                            {props.bestHit.generatedSentence}
+                        </MarkdownX>
+                    </Paper>
+                </div>
+            </div>
+        );
+    }
 }
 
 function AccordionComponent (props: {title: string, id: string, content: string | undefined}) {

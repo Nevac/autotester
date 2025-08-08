@@ -19,6 +19,6 @@ export const ExpectedFeedbackSemanticScoreSchema = new Schema<IExpectedFeedbackS
     },
     {
         _id: false,
-        timestamps: true,
+        timestamps: false,
     }
 );

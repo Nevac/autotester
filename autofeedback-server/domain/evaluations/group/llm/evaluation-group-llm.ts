@@ -1,5 +1,5 @@
 import {Llm} from "../../../llms/llm";
-import {EvaluationScore, evaluationScoreSchema} from "../../evaluation-score";
+import {EvaluationScore, evaluationScoreSchema} from "../../score/evaluation-score";
 import EvaluationState from "../../evaluation-state";
 import {Schema} from "mongoose";
 

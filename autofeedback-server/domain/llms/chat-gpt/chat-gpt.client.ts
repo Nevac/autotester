@@ -32,9 +32,6 @@ export default class ChatGptClient implements LlmClient {
                 frequency_penalty: LlmConfig.FREQ_PENALTY,
                 presence_penalty: LlmConfig.PRES_PENALTY
             })
-
-            console.log(completion);
-
             return ClientResponse.ofGPTChatCompletion(completion);
         } catch (error) {
             console.error("Error in completion:", error);

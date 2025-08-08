@@ -31,9 +31,6 @@ export default class MistralClient implements LlmClient {
                 frequencyPenalty: LlmConfig.FREQ_PENALTY,
                 presencePenalty: LlmConfig.PRES_PENALTY
             })
-
-            console.log(completion);
-
             return ClientResponse.ofMinstralCompletion(completion);
         } catch (error) {
             console.error("Error in completion:", error);

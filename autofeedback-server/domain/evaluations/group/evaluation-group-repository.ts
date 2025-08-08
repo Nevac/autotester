@@ -1,6 +1,10 @@
 import EvaluationGroupListEntry from "./evaluation-group-list-entry";
 import {EvaluationGroup, EvaluationGroupModel} from "./evaluation-group";
-import EvaluationGroupInsert from "./evaluation-group-insert";
+import EvaluationGroupUpsert from "./evaluation-group-upsert";
+import AttemptUpdate from "../../attempts/attempt-update";
+import {Attempt, AttemptModel} from "../../attempts/attempt";
+import EvaluationUpdate from "../evaluation-update";
+import {Evaluation, EvaluationModel} from "../evaluation";
 
 
 export default class EvaluationGroupRepository {
@@ -34,12 +38,23 @@ export default class EvaluationGroupRepository {
             });
     }
 
-    public async create(evaluationGroupUpdate: EvaluationGroupInsert): Promise<EvaluationGroup> {
+    public async create(upsert: EvaluationGroupUpsert): Promise<EvaluationGroup> {
         return await EvaluationGroupModel.create(
-            evaluationGroupUpdate
+            upsert
         ).then(document =>
             EvaluationGroup.ofDocument(document)
         )
+    }
+
+    public async update(id: string, upsert: EvaluationGroupUpsert): Promise<EvaluationGroup> {
+        return await EvaluationModel.updateOne(
+            {_id: id},
+            upsert
+        )
+            .exec()
+            .then(document => {
+                return this.getById(id)
+            })
     }
 
     public async delete(id: string): Promise<boolean> {

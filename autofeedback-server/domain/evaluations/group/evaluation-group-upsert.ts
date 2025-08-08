@@ -1,0 +1,33 @@
+import PromptGroup from "../../prompts/prompt-group";
+import {Attempt} from "../../attempts/attempt";
+import EvaluationGroupLlm from "./llm/evaluation-group-llm";
+import EvaluationState from "../evaluation-state";
+import Rag from "../../rag/rag";
+import {EvaluationGroup} from "./evaluation-group";
+
+export default class EvaluationGroupUpsert {
+    constructor(
+        public name: string,
+        public promptGroup: PromptGroup,
+        public attempts: Attempt[],
+        public llms: Map<string, EvaluationGroupLlm>,
+        public state: EvaluationState,
+        public rag?: Rag
+    ) {}
+
+    public static ofEvaluationGroup(evaluationGroup: EvaluationGroup): EvaluationGroupUpsert {
+        return new EvaluationGroupUpsert(
+            evaluationGroup.name,
+            evaluationGroup.promptGroup,
+            Array.from(evaluationGroup.attempts),
+            evaluationGroup.llms,
+            evaluationGroup.state,
+            evaluationGroup.rag
+        )
+    }
+
+    public setState(state: EvaluationState): EvaluationGroupUpsert {
+        this.state = state;
+        return this;
+    }
+}

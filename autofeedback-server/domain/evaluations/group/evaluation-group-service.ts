@@ -2,13 +2,13 @@ import EvaluationGroupRepository from "./evaluation-group-repository";
 import EvaluationGroupUpdateDto from "./evaluation-group-update-dto";
 import EvaluationGroupListEntry from "./evaluation-group-list-entry";
 import {EvaluationGroup} from "./evaluation-group";
-import EvaluationGroupInsert from "./evaluation-group-insert";
+import EvaluationGroupUpsert from "./evaluation-group-upsert";
 import PromptGroupRepository from "../../prompts/prompt-group-repository";
 import AttemptRepository from "../../attempts/attempt-repository";
 import EvaluationService from "../evaluation-service";
 import EvaluationGroupLlm from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
-import {EvaluationScore} from "../evaluation-score";
+import {EvaluationScore} from "../score/evaluation-score";
 import RagRepository from "../../rag/rag-repository";
 import {Evaluation} from "../evaluation";
 
@@ -51,14 +51,15 @@ export default class EvaluationGroupService {
         }
 
         const evalGroup = await this.evaluationGroupRepository.create(
-            new EvaluationGroupInsert(
+            new EvaluationGroupUpsert(
                 evaluationGroupUpdateDto.name,
                 promptGroup,
                 Array.from(attempts.values()),
                 new Map(
                     Array.from(evaluationGroupUpdateDto.llms)
                         .map(llm =>
-                            [llm, new EvaluationGroupLlm(
+                            [
+                                llm, new EvaluationGroupLlm(
                                 llm,
                                 EvaluationState.INITIATED,
                                 EvaluationScore.zero()
@@ -69,13 +70,29 @@ export default class EvaluationGroupService {
         );
         const evaluations = await this.evaluationService.createByGroup(evalGroup);
 
-        this.startEvaluation(evaluations);
+        this.evaluateAll(evalGroup, evaluations);
 
         return evalGroup;
     }
 
-    private async startEvaluation(evaluations: Map<string, Evaluation>) {
-        Array.from(evaluations.values()).forEach(evaluation => this.evaluationService.startEvaluation(evaluation));
+    private async evaluateAll(
+        evaluationGroup: EvaluationGroup,
+        evaluations: Map<string, Evaluation>
+    ): Promise<void> {
+        await Promise.all(
+            Array.from(evaluations.values()).map(evaluation =>
+                this.evaluationService.evaluate(evaluation)
+            )
+        )
+        await this.evaluationGroupRepository.update(
+            evaluationGroup._id,
+            EvaluationGroupUpsert.ofEvaluationGroup(evaluationGroup)
+                .setState(EvaluationState.DONE)
+        );
+    }
+
+    public async update(id: string, update: EvaluationGroupUpsert) {
+        return await this.evaluationGroupRepository.update(id, update);
     }
 
     public async delete(id: string): Promise<boolean> {

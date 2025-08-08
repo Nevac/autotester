@@ -9,8 +9,10 @@ import LlmService from "../llms/llm-service";
 import TextEmbedding3LargeClient from "../rag/embedding/text-embedding3-large.client";
 import PineconeClient from "../rag/client/pinecone-client";
 import RagQueryBuilder from "../rag/rag-query-builder";
-import SemanticEvaluatorClient from "../semantic-evaluators/SemanticEvaluatorClient";
-import ModernBertClient from "../semantic-evaluators/ModernBertClient";
+import SemanticEvaluatorClient from "../semantic-evaluators/semantic-evaluator-client";
+import ModernBertClient from "../semantic-evaluators/modern-bert-client";
+import EvaluationState from "./evaluation-state";
+import ScoreCalculator from "./score/score-calculator";
 
 export default class EvaluationService {
 
@@ -57,31 +59,72 @@ export default class EvaluationService {
                 )
             }
         }
-        return await this.evaluationRepository.createAll(evaluations);
+        return await this.evaluationRepository.createAll(
+            evaluations
+        );
     }
 
-    public async startEvaluation(evaluation: Evaluation) {
-        const client = this.llmService.resolveLlmService(evaluation.llm);
-
-        let ragDocuments: string[] = []
-        if(evaluation.rag) {
-            const ragClient = new PineconeClient(
-                new TextEmbedding3LargeClient(),
-                evaluation.rag.apiId
-            );
-            ragDocuments = await ragClient.retrieve(RagQueryBuilder.ofEvaluation(evaluation))
-        }
-
-        const response = await client.create(
-            ClientRequest.ofEvaluation(
-                evaluation,
-                ragDocuments
-            )
+    public async evaluate(evaluation: Evaluation): Promise<Evaluation> {
+        await this.update(
+            evaluation._id,
+            EvaluationUpdate.ofEvaluation(evaluation)
+                .setState(EvaluationState.RUNNING)
         );
 
-        let a = await this.semanticEvaluatorClient.evaluate(response.messages[0], evaluation.attempt.expectedFeedback);
+        try{
+            const client = this.llmService.resolveLlmService(evaluation.llm);
 
-        console.log(a);
+            let ragDocuments: string[] = []
+            if(evaluation.rag) {
+                const ragClient = new PineconeClient(
+                    new TextEmbedding3LargeClient(),
+                    evaluation.rag.apiId
+                );
+                ragDocuments = await ragClient.retrieve(RagQueryBuilder.ofEvaluation(evaluation))
+            }
+
+            const response = await client.create(
+                ClientRequest.ofEvaluation(
+                    evaluation,
+                    ragDocuments
+                )
+            );
+
+            const llmFeedback = response.messages[0];
+            evaluation = await this.update(
+                evaluation._id,
+                EvaluationUpdate.ofEvaluation(evaluation)
+                    .setGeneratedFeedback(llmFeedback)
+            );
+
+            const evaluationStatistic = await this.semanticEvaluatorClient.evaluate(
+                llmFeedback,
+                evaluation.attempt.expectedFeedback
+            );
+
+            const evaluationScore = ScoreCalculator.generateScore(
+                evaluation.attempt.expectedFeedback,
+                evaluationStatistic,
+            );
+
+            const evaluationUpdate = EvaluationUpdate.ofEvaluation(evaluation)
+                .setSemanticStatistic(evaluationStatistic)
+                .setState(EvaluationState.DONE)
+                .setScore(evaluationScore);
+
+            return await this.update(evaluation._id, evaluationUpdate);
+        } catch (e) {
+            console.error('Evaluation failed for ' + evaluation._id, e);
+            const evaluationUpdate = EvaluationUpdate.ofEvaluation(evaluation)
+                .setState(EvaluationState.FAILURE);
+
+            return await this.update(evaluation._id, evaluationUpdate);
+        }
+
+    }
+
+    public async update(id: string, update: EvaluationUpdate): Promise<Evaluation> {
+        return await this.evaluationRepository.update(id, update);
     }
 
     public async delete(id: string): Promise<boolean> {

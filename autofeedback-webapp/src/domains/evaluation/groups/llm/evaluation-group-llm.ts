@@ -1,6 +1,6 @@
 import {Llm} from "../../../llms/llm";
-import {EvaluationScore} from "../../evaluation-score";
 import EvaluationState from "../../evaluation-state";
+import EvaluationScore from "../../score/evaluation-score";
 
 export default class EvaluationGroupLlm {
     constructor(
