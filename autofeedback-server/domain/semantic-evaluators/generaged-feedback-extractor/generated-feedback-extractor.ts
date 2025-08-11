@@ -36,7 +36,10 @@ export default class GeneratedFeedbackExtractor {
             }
 
             if (line.startsWith('-') && currentMetric) {
-                result[currentMetric].push(line.slice(2).trim());
+                const text = line.slice(2).trim();
+                if(text !== "") {
+                    result[currentMetric].push(line.slice(2).trim());
+                }
             }
         }
 

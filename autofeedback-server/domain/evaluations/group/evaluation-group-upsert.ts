@@ -4,8 +4,12 @@ import EvaluationGroupLlm from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
 import Rag from "../../rag/rag";
 import {EvaluationGroup} from "./evaluation-group";
+import {Llm} from "../../llms/llm";
 
 export default class EvaluationGroupUpsert {
+    bestLlm?: Llm;
+    bestScore?: number;
+
     constructor(
         public name: string,
         public promptGroup: PromptGroup,
@@ -28,6 +32,21 @@ export default class EvaluationGroupUpsert {
 
     public setState(state: EvaluationState): EvaluationGroupUpsert {
         this.state = state;
+        return this;
+    }
+
+    public setLlms(llms: Map<Llm, EvaluationGroupLlm>): EvaluationGroupUpsert {
+        this.llms = llms;
+        return this;
+    }
+
+    public setBestLlm(llm?: Llm): EvaluationGroupUpsert {
+        this.bestLlm = llm;
+        return this;
+    }
+
+    public setBestScore(bestScore: number): EvaluationGroupUpsert {
+        this.bestScore = bestScore;
         return this;
     }
 }

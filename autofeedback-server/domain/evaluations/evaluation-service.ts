@@ -13,6 +13,8 @@ import SemanticEvaluatorClient from "../semantic-evaluators/semantic-evaluator-c
 import ModernBertClient from "../semantic-evaluators/modern-bert-client";
 import EvaluationState from "./evaluation-state";
 import ScoreCalculator from "./score/score-calculator";
+import {logger} from "../../logger";
+import RagDocument from "../rag/document/rag-document";
 
 export default class EvaluationService {
 
@@ -72,9 +74,11 @@ export default class EvaluationService {
         );
 
         try{
+            logger.debug(`Starting evaluation with id ${evaluation._id}`)
+            logger.debug(`Using model ${evaluation.llm}`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
-            let ragDocuments: string[] = []
+            let ragDocuments: RagDocument[] = []
             if(evaluation.rag) {
                 const ragClient = new PineconeClient(
                     new TextEmbedding3LargeClient(),
@@ -83,6 +87,7 @@ export default class EvaluationService {
                 ragDocuments = await ragClient.retrieve(RagQueryBuilder.ofEvaluation(evaluation))
             }
 
+            logger.debug(`Generating feedback`)
             const response = await client.create(
                 ClientRequest.ofEvaluation(
                     evaluation,
@@ -95,16 +100,24 @@ export default class EvaluationService {
                 evaluation._id,
                 EvaluationUpdate.ofEvaluation(evaluation)
                     .setGeneratedFeedback(llmFeedback)
+                    .setRagDocuments(ragDocuments)
             );
 
             const evaluationStatistic = await this.semanticEvaluatorClient.evaluate(
                 llmFeedback,
                 evaluation.attempt.expectedFeedback
-            );
+            ).catch(err => {
+                console.log(err);
+                undefined
+            });
+
+            if(!evaluationStatistic) {
+                throw new Error();
+            }
 
             const evaluationScore = ScoreCalculator.generateScore(
                 evaluation.attempt.expectedFeedback,
-                evaluationStatistic,
+                evaluationStatistic
             );
 
             const evaluationUpdate = EvaluationUpdate.ofEvaluation(evaluation)
@@ -112,9 +125,11 @@ export default class EvaluationService {
                 .setState(EvaluationState.DONE)
                 .setScore(evaluationScore);
 
+            logger.info(`Evaluation DONE for ${evaluation._id} with llm ${evaluation.llm}`)
             return await this.update(evaluation._id, evaluationUpdate);
+
         } catch (e) {
-            console.error('Evaluation failed for ' + evaluation._id, e);
+            console.error(`Evaluation FAILED for ${evaluation._id} with llm ${evaluation.llm}, e`);
             const evaluationUpdate = EvaluationUpdate.ofEvaluation(evaluation)
                 .setState(EvaluationState.FAILURE);
 

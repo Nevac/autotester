@@ -27,7 +27,6 @@ export default class ClaudeClient implements LlmClient {
                 max_tokens: LlmConfig.MAX_TOKEN,
                 model: this.model,
                 temperature: LlmConfig.TEMP,
-                top_p: LlmConfig.TOP_P
             });
             return ClientResponse.ofClaudeMessage(message);
         } catch (error) {

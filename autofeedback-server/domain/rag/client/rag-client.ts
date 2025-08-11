@@ -1,5 +1,5 @@
-import EmbeddingClient from "../embedding/embedding-client";
+import RagDocument from "../document/rag-document";
 
 export default interface RagClient {
-    retrieve(query: string): Promise<string[]>
+    retrieve(query: string): Promise<RagDocument[]>
 }

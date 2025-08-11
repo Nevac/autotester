@@ -47,7 +47,7 @@ export default class EvaluationGroupRepository {
     }
 
     public async update(id: string, upsert: EvaluationGroupUpsert): Promise<EvaluationGroup> {
-        return await EvaluationModel.updateOne(
+        return await EvaluationGroupModel.updateOne(
             {_id: id},
             upsert
         )

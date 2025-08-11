@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import PromptBuilder from "../prompt-builder";
 import LlmConfig from "../llm-config";
 
-export default class ChatGptClient implements LlmClient {
+export default class DeepseekClient implements LlmClient {
 
     private readonly client: OpenAI;
 
@@ -13,7 +13,8 @@ export default class ChatGptClient implements LlmClient {
     ) {
         dotenv.config();
         this.client = new OpenAI({
-            apiKey: process.env['API_KEY_CHAT_GPT'],
+            baseURL: "https://router.huggingface.co/v1",
+            apiKey: process.env['API_KEY_HUGGINGFACE'],
         });
     }
 
@@ -41,15 +42,6 @@ export default class ChatGptClient implements LlmClient {
         return ChatGPTMessage.of(
             ChatGPTRole.USER,
             PromptBuilder.default(request)
-        );
-    }
-
-    private generateMessages(request: ClientRequest): ChatGPTMessage[] {
-        return request.promptGroup.prompts.slice(1).map(prompt =>
-            ChatGPTMessage.of(
-                ChatGPTRole.USER,
-                prompt
-            )
         );
     }
 }

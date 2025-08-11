@@ -1,4 +1,5 @@
 import MetricScore from "./metric-score";
+import MetricOvergenerationScore from "./metric-overgeneration-score";
 
 export default class EvaluationScore {
     constructor(
@@ -6,7 +7,7 @@ export default class EvaluationScore {
         public readonly correctness: MetricScore,
         public readonly suggestion: MetricScore,
         public readonly codeStyle: MetricScore,
-        public readonly overgeneration: number
+        public readonly overgeneration: MetricOvergenerationScore
     ) {}
 
     public static zero(): EvaluationScore {
@@ -15,7 +16,7 @@ export default class EvaluationScore {
             MetricScore.zero(),
             MetricScore.zero(),
             MetricScore.zero(),
-            0
+            MetricOvergenerationScore.zero()
         );
     }
 }

@@ -3,9 +3,10 @@ import {Exercise} from "../exercises/exercise";
 import {ChatCompletion} from "openai/resources";
 import {ChatGroup} from "../chats/group/chat-group";
 import Anthropic from "@anthropic-ai/sdk";
-import {GenerateContentResult} from "@google/generative-ai";
 import {ChatCompletionResponse} from "@mistralai/mistralai/models/components";
 import {Evaluation} from "../evaluations/evaluation";
+import {GenerateContentResponse} from "@google/genai";
+import RagDocument from "../rag/document/rag-document";
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -27,12 +28,12 @@ export class ClientRequest {
         )
     }
 
-    public static ofEvaluation(evaluation: Evaluation, ragDocuments: string[]) {
+    public static ofEvaluation(evaluation: Evaluation, ragDocuments: RagDocument[]) {
         return new ClientRequest(
             evaluation.promptGroup,
             evaluation.attempt.exercise,
             evaluation.attempt.attempt,
-            ragDocuments
+            ragDocuments.map(ragDocument => ragDocument.text)
         );
     }
 }
@@ -60,9 +61,10 @@ export class ClientResponse {
         return this.ofGPTChatCompletion(completion);
     }
 
-    public static ofGeminiContentResult(contentResult: GenerateContentResult) {
+    public static ofGeminiContentResult(response: GenerateContentResponse) {
+        console.log(response.text!);
         return new ClientResponse(
-            [contentResult.response.text()]
+            [response.text!]
         )
     }
 

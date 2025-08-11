@@ -27,6 +27,7 @@ import EvaluationScore from "../../score/evaluation-score";
 import MetricScore from "../../score/metric-score";
 import MetricBestHit from "../../score/metric-best-hit";
 import EvaluationSemanticStatistic from "../../statistic/evaluation-semantic-statistic";
+import MetricOvergenerationScore from "../../score/metric-overgeneration-score";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -272,7 +273,7 @@ export default function EvaluationGroupDetailComponent() {
                             </TableRow>
                             <TableRow>
                                 <TableCell align="right">Overgeneration</TableCell>
-                                <TableCell align="right">{props.score.overgeneration}</TableCell>
+                                <TableCell align="right">{props.score.overgeneration.score}</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell align="right">Total</TableCell>
@@ -291,6 +292,7 @@ export default function EvaluationGroupDetailComponent() {
                 <MetricScore title={"Correctness"} metricScore={evaluation!.score.correctness}/>
                 <MetricScore title={"Suggestion"} metricScore={evaluation!.score.suggestion}/>
                 <MetricScore title={"Code Style"} metricScore={evaluation!.score.codeStyle}/>
+                <MetricOvergenerationScore metricOvergenerationScore={evaluation!.score.overgeneration}/>
             </div>
         )
     }
@@ -299,14 +301,34 @@ export default function EvaluationGroupDetailComponent() {
         return (
             <Paper elevation={3} style={{padding: 10}}>
                 <Typography variant={"h5"}>{props.title}</Typography>
-                {props.metricScore.bestHits.map(bestHit =>
-                    <BestHit key={bestHit.id} bestHit={bestHit}/>
+                {props.metricScore.bestHits.map(bestHit => {
+                    if(bestHit) {
+                        return <BestHit key={bestHit.id} bestHit={bestHit}/>
+                    } else return <></>
+                }
                 )}
             </Paper>
         );
     }
 
-    function BestHit(props: {bestHit: MetricBestHit}) {
+    function MetricOvergenerationScore(props: {metricOvergenerationScore: MetricOvergenerationScore}) {
+        return (
+            <Paper elevation={3} style={{padding: 10}}>
+                <Typography variant={"h5"}>Overgenerations</Typography>
+                <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                    {props.metricOvergenerationScore.overgenerations.map(overgenration =>
+                        <Paper elevation={10} style={{padding: 10}}>
+                            <Typography>{overgenration.sentence}</Typography>
+                        </Paper>
+                    )}
+                </div>
+            </Paper>
+    );
+    }
+
+    function BestHit(props: {
+        bestHit: MetricBestHit
+    }) {
         return (
             <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                 <Paper elevation={10} style={{padding: 10}}>

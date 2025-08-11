@@ -2,7 +2,8 @@ import RagClient from "./rag-client";
 import EmbeddingClient from "../embedding/embedding-client";
 import {Index, Pinecone} from "@pinecone-database/pinecone";
 import dotenv from "dotenv";
-import RagResponseMetadata from "../RagResponseMetadata";
+import RagResponseMetadata from "../rag-response-metadata";
+import RagDocument from "../document/rag-document";
 
 export default class PineconeClient implements RagClient {
 
@@ -20,7 +21,7 @@ export default class PineconeClient implements RagClient {
         this.index = this.client.index<RagResponseMetadata>(process.env['PINECONE_INDEX']!).namespace(namespace);
     }
 
-    public async retrieve(query: string): Promise<string[]> {
+    public async retrieve(query: string): Promise<RagDocument[]> {
         const embedding = await this.embeddingClient.embed(query);
         const results = await this.index.query({
             vector: embedding[0].embedding,
@@ -28,6 +29,6 @@ export default class PineconeClient implements RagClient {
             includeMetadata: true
         });
 
-        return results.matches.map(result => result.metadata!.text);
+        return RagDocument.ofRagResult(results);
     }
 }

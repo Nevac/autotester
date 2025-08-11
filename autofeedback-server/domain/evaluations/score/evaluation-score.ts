@@ -1,12 +1,13 @@
 import {Schema} from "mongoose";
 import MetricScore, {metricScoreSchema} from "./metric-score";
+import MetricOvergenerationScore, {metricOvergenerationScoreSchema} from "./metric-overgeneration-score";
 
 export interface IEvaluationScore {
     total: number,
     correctness: MetricScore,
     suggestion: MetricScore,
     codeStyle: MetricScore,
-    overgeneration: number
+    overgeneration: MetricOvergenerationScore
 }
 
 export class EvaluationScore implements IEvaluationScore {
@@ -15,7 +16,7 @@ export class EvaluationScore implements IEvaluationScore {
         public readonly correctness: MetricScore,
         public readonly suggestion: MetricScore,
         public readonly codeStyle: MetricScore,
-        public readonly overgeneration: number
+        public readonly overgeneration: MetricOvergenerationScore
     ) {}
 
     public static zero(): EvaluationScore {
@@ -24,7 +25,7 @@ export class EvaluationScore implements IEvaluationScore {
             MetricScore.zero(),
             MetricScore.zero(),
             MetricScore.zero(),
-            0
+            MetricOvergenerationScore.zero()
         );
     }
 }
@@ -35,7 +36,7 @@ export const evaluationScoreSchema = new Schema<IEvaluationScore>(
         correctness: { type: metricScoreSchema, required: true },
         suggestion: { type: metricScoreSchema, required: true },
         codeStyle: { type: metricScoreSchema, required: true },
-        overgeneration: { type: Number, required: true }
+        overgeneration: { type: metricOvergenerationScoreSchema, required: true }
     },
     {
         _id: false,

@@ -8,9 +8,10 @@ import AttemptRepository from "../../attempts/attempt-repository";
 import EvaluationService from "../evaluation-service";
 import EvaluationGroupLlm from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
-import {EvaluationScore} from "../score/evaluation-score";
 import RagRepository from "../../rag/rag-repository";
 import {Evaluation} from "../evaluation";
+import {Llm} from "../../llms/llm";
+import {EvaluationGroupLlmScore} from "./llm/evaluation-group-llm-score";
 
 export default class EvaluationGroupService {
 
@@ -20,8 +21,7 @@ export default class EvaluationGroupService {
     private readonly ragRepository: RagRepository;
     private readonly evaluationService: EvaluationService;
 
-    constructor(
-    ) {
+    constructor() {
         this.evaluationGroupRepository = new EvaluationGroupRepository();
         this.promptGroupRepo = new PromptGroupRepository();
         this.attemptRepository = new AttemptRepository();
@@ -46,7 +46,7 @@ export default class EvaluationGroupService {
         const attempts = await this.attemptRepository.getByIds(evaluationGroupUpdateDto.attemptIds);
 
         let rag;
-        if(evaluationGroupUpdateDto.ragId) {
+        if (evaluationGroupUpdateDto.ragId) {
             rag = await this.ragRepository.getById(evaluationGroupUpdateDto.ragId)
         }
 
@@ -59,11 +59,15 @@ export default class EvaluationGroupService {
                     Array.from(evaluationGroupUpdateDto.llms)
                         .map(llm =>
                             [
-                                llm, new EvaluationGroupLlm(
                                 llm,
-                                EvaluationState.INITIATED,
-                                EvaluationScore.zero()
-                            )])),
+                                new EvaluationGroupLlm(
+                                    llm,
+                                    EvaluationState.INITIATED,
+                                    EvaluationGroupLlmScore.zero()
+                                )
+                            ]
+                        )
+                ),
                 EvaluationState.RUNNING,
                 rag
             )
@@ -79,17 +83,85 @@ export default class EvaluationGroupService {
         evaluationGroup: EvaluationGroup,
         evaluations: Map<string, Evaluation>
     ): Promise<void> {
-        await Promise.all(
+        const scoredEvaluations = await Promise.all(
             Array.from(evaluations.values()).map(evaluation =>
                 this.evaluationService.evaluate(evaluation)
             )
         )
+
         await this.evaluationGroupRepository.update(
             evaluationGroup._id,
-            EvaluationGroupUpsert.ofEvaluationGroup(evaluationGroup)
-                .setState(EvaluationState.DONE)
+            this.calculateAndSetLlmScores(
+                scoredEvaluations,
+                evaluationGroup
+            ).setState(EvaluationState.DONE)
         );
     }
+
+    private calculateAndSetLlmScores(
+        evaluations: Evaluation[],
+        evaluationGroup: EvaluationGroup
+    ): EvaluationGroupUpsert {
+        let bestLlm: Llm | undefined = undefined;
+        let bestScore: number = 0;
+
+        const scoredEvaluationGroupLlms = new Map(
+            Array.from(evaluationGroup.llms.keys())
+                .map(llm => {
+                    const evaluationGroupLlm = this.calculateLlmScore(llm, evaluations);
+                    const llmScore = evaluationGroupLlm.score;
+                    if(llmScore.total > bestScore) {
+                        bestLlm = llm;
+                        bestScore = parseFloat(llmScore.total.toPrecision(4));
+                    }
+
+                    return [
+                        llm,
+                        evaluationGroupLlm
+                    ];
+                }
+            )
+        );
+
+        return EvaluationGroupUpsert.ofEvaluationGroup(evaluationGroup)
+            .setLlms(scoredEvaluationGroupLlms)
+            .setBestLlm(bestLlm)
+            .setBestScore(bestScore);
+    }
+
+    private calculateLlmScore(llm: Llm, evaluations: Evaluation[]) {
+
+        let averageScore = EvaluationGroupLlmScore.zero();
+
+        const llmEvaluations = evaluations.filter(evaluation => evaluation.llm === llm)
+        const total = llmEvaluations.length
+        let state = EvaluationState.DONE;
+
+        if (total != 0) {
+            for (const evaluation of llmEvaluations) {
+                if(evaluation.state === EvaluationState.FAILURE) {
+                    state = EvaluationState.FAILURE;
+                }
+
+                const score = evaluation.score;
+
+                averageScore = averageScore.add(
+                    score.total / total,
+                    score.correctness.score / total,
+                    score.suggestion.score / total,
+                    score.codeStyle.score / total,
+                    score.overgeneration.score / total
+                )
+            }
+        }
+
+        return new EvaluationGroupLlm(
+            llm,
+            state,
+            averageScore.toPrecision(4)
+        )
+    }
+
 
     public async update(id: string, update: EvaluationGroupUpsert) {
         return await this.evaluationGroupRepository.update(id, update);

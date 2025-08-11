@@ -82,7 +82,10 @@ export default function EvaluationGroupBrowserComponent() {
                                 <div style={{display: "flex", flex: '1', flexDirection: "column"}}>
                                     <ListItemText primary={item.name}/>
                                     <Typography color={'textSecondary'} fontSize={'0.7em'}>STATE: {item.state}</Typography>
-                                    <Typography color={'textSecondary'} fontSize={'0.7em'}>SCORE: {item.bestScore}</Typography>
+                                    {item.bestLlm?
+                                        <Typography color={'textSecondary'} fontSize={'0.7em'}>Best LLM: {item.bestLlm} | SCORE: {item.bestScore}</Typography> :
+                                        <></>
+                                    }
                                 </div>
                                 <DeleteConfirmButtonComponent delete={() => deleteItem(item._id)}/>
                             </ListItemButton>

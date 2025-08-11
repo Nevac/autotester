@@ -10,6 +10,7 @@ import Rag, {ragSchema} from "../rag/rag";
 import EvaluationSemanticStatistic, {
     EvaluationSemanticStatisticSchema
 } from "./statistic/evaluation-semantic-statistic";
+import RagDocument, {ragDocumentSchema} from "../rag/document/rag-document";
 
 
 export interface IEvaluation {
@@ -22,7 +23,8 @@ export interface IEvaluation {
     state: EvaluationState,
     score: EvaluationScore,
     semanticStatistic: EvaluationSemanticStatistic,
-    rag?: Rag
+    rag?: Rag,
+    ragDocuments?: RagDocument[]
 }
 
 export class Evaluation implements IEvaluation, Entity {
@@ -40,6 +42,7 @@ export class Evaluation implements IEvaluation, Entity {
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag,
+        public readonly ragDocuments?: RagDocument[]
     ) {}
 
     public static ofDocument(evaluation: EvaluationDocument) {
@@ -59,6 +62,7 @@ export class Evaluation implements IEvaluation, Entity {
             createdAt,
             updatedAt,
             evaluation.rag,
+            evaluation.ragDocuments
         )
     }
 
@@ -83,6 +87,7 @@ export const evaluationSchema = new Schema<IEvaluation>(
         score: { type: evaluationScoreSchema, required: true },
         semanticStatistic: { type: EvaluationSemanticStatisticSchema, required: true },
         rag: { type: ragSchema, required: false },
+        ragDocuments: { type: [ragDocumentSchema], required: false },
     },
     {
         timestamps: true,

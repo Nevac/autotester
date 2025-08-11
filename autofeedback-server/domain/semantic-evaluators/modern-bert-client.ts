@@ -6,20 +6,18 @@ import {
     matmul,
     pipeline,
     PretrainedModelOptions,
-    Tensor
 } from "@huggingface/transformers";
 import ExpectedFeedback from "../attempts/expected-feedback/expected-feedback";
 import EvaluationSemanticStatistic from "../evaluations/statistic/evaluation-semantic-statistic";
 import SemanticStatisticGenerator from "../evaluations/statistic/generator/semantic-statistic-generator";
-import FeedbackMetric from "../attempts/expected-feedback/feedback-metric";
 import ExpectedFeedbackEmbedding from "../evaluations/statistic/generator/expected-feedback-embedding";
 import GeneratedFeedbackEmbedding from "../evaluations/statistic/generator/generated-feedback-embedding";
 import GeneratedFeedbackExtractor from "./generaged-feedback-extractor/generated-feedback-extractor";
+import {logger} from "../../logger";
 
 export default class ModernBertClient implements SemanticEvaluatorClient {
 
     private readonly client: HfInference;
-    private readonly SCORE_THRESHOLD: number = 0.5;
     private readonly MODEL = 'lightonai/modernbert-embed-large';
     private readonly pipelineConfig: PretrainedModelOptions = {
         dtype: 'fp32'
@@ -40,8 +38,7 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
         llmFeedback: string,
         expectedFeedback: ExpectedFeedback
     ): Promise<EvaluationSemanticStatistic> {
-        console.log("Llm Feedback: ", llmFeedback);
-
+        logger.info(`Starting semantic evaluation process`)
         let extractor = await pipeline(
             'feature-extraction',
             this.MODEL,
@@ -82,6 +79,7 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
             )
         );
 
+        logger.debug(`Creating embeddings`)
         const queryEmbeddings = await extractor(
             expectedEmbeddings.map(embedding => "search_query: " + embedding.sentence),
             this.embedderConfig
@@ -98,39 +96,7 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
         return SemanticStatisticGenerator.generate(
             expectedEmbeddings,
             feedbackEmbeddings,
-            similarityScores,
-            this.SCORE_THRESHOLD
+            similarityScores
         );
-    }
-
-    private feedbackSanitizer(llmFeedback: string): string[] {
-        const feedbacks =  llmFeedback
-            .split("\n")
-            .join(". ")
-            .replace("### ", "")
-            .replace("**", "")
-            .replace("-", "")
-            .replace("Correctness", "")
-            .replace("Correctness:", "")
-            .replace("1 Correctness:", "")
-            .replace("1. Correctness", "")
-            .replace("1. Correctness:", "")
-            .replace("Suggestion", "")
-            .replace("Suggestion:", "")
-            .replace("2 Suggestion", "")
-            .replace("2. Suggestion", "")
-            .replace("2. Suggestion:", "")
-            .replace("Code Style", "")
-            .replace("Code Style:", "")
-            .replace("3 Code Style", "")
-            .replace("3. Code Style", "")
-            .replace("3. Code Style:", "")
-            .replace('"\n"', "")
-            .replace("**", "")
-            .replace("-", "")
-            .split(".")
-        return feedbacks
-            .map(feedback => feedback.trimStart().trimEnd())
-            .filter(filter => filter !== "" && filter !== " ")
     }
 }

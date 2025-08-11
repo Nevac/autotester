@@ -1,5 +1,5 @@
 import GeneratedFeedbackSemanticStatistic, {
-    GeneratedFeedbackSemanticStatisticSchema
+    generatedFeedbackSemanticStatisticSchema
 } from "./generated-feedback-semantic-statistic";
 import {Schema} from "mongoose";
 import ExpectedFeedbackSemanticStatistic, {
@@ -28,7 +28,7 @@ export default class EvaluationSemanticStatistic implements IEvaluationSemanticS
 export const EvaluationSemanticStatisticSchema = new Schema<IEvaluationSemanticStatistic>(
     {
         expectedFeedback: { type: [ExpectedFeedbackSemanticStatisticSchema], required: true },
-        generatedFeedback: { type: [GeneratedFeedbackSemanticStatisticSchema], required: true },
+        generatedFeedback: { type: [generatedFeedbackSemanticStatisticSchema], required: true },
     },
     {
         _id: false,

@@ -1,11 +1,14 @@
 import ExpectedFeedback from "../../attempts/expected-feedback/expected-feedback";
 import EvaluationSemanticStatistic from "../statistic/evaluation-semantic-statistic";
 import {EvaluationScore} from "./evaluation-score";
-import FeedbackMetric from "../../attempts/expected-feedback/feedback-metric";
 import FeedbackReference from "../../attempts/expected-feedback/feedback-reference";
-import MetricBestHit from "./metric-best-hit";
 import MetricScore from "./metric-score";
-import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
+import ScoreTracker from "./scroe-tracker";
+import ScoreAddressing from "./score-addressing";
+import FeedbackMetric from "../../attempts/expected-feedback/feedback-metric";
+import GeneratedFeedbackSemanticStatistic from "../statistic/generated-feedback-semantic-statistic";
+import SCORE_THRESHOLD from "./score-threshold";
+import MetricOvergenerationScore from "./metric-overgeneration-score";
 
 export default class ScoreCalculator {
     public static generateScore(
@@ -20,7 +23,7 @@ export default class ScoreCalculator {
 
     public generateScore(
         expectedFeedback: ExpectedFeedback,
-        evaluationStatistic: EvaluationSemanticStatistic
+        evaluationStatistic: EvaluationSemanticStatistic,
     ): EvaluationScore {
         const scoreTracker = new ScoreTracker();
         this.addExpectedReferencesToTracker(
@@ -33,10 +36,24 @@ export default class ScoreCalculator {
             scoreTracker
         );
 
-        const correctness = this.calculateMetricScore(scoreTracker.correctness);
-        const suggestion = this.calculateMetricScore(scoreTracker.suggestion);
-        const codeStyle = this.calculateMetricScore(scoreTracker.codeStyle);
-        const overgeneration = 1;
+        const correctness = this.calculateMetricScore(
+            this.calculateMetricMalus(
+                FeedbackMetric.CORRECTNESS,
+                evaluationStatistic.generatedFeedback
+            ),
+            scoreTracker.correctness
+        );
+        const suggestion = this.calculateMetricScore(
+            this.calculateMetricMalus(
+                FeedbackMetric.SUGGESTION,
+                evaluationStatistic.generatedFeedback
+            ),
+            scoreTracker.suggestion
+        );
+        const codeStyle = this.calculateMetricScore(0, scoreTracker.codeStyle);
+        const overgeneration = this.calculateOvergeneration(
+            evaluationStatistic.generatedFeedback
+        );
 
         return new EvaluationScore(
             this.calculateTotalScore(
@@ -56,22 +73,35 @@ export default class ScoreCalculator {
         correctness: MetricScore,
         suggestion: MetricScore,
         codeStyle: MetricScore,
-        overgeneration: number
+        overgeneration: MetricOvergenerationScore
     ): number {
-        return 0.5 * correctness.score +
-            0.3 * suggestion.score +
-            0.15 * codeStyle.score +
-            0.05 * overgeneration;
+        return 0.45 * correctness.score +
+            0.25 * suggestion.score +
+            0.25 * codeStyle.score +
+            0.05 * overgeneration.score;
     }
 
-    private calculateMetricScore(metricMap: Map<string, ScoreAddressing>): MetricScore {
+    private calculateMetricScore(
+        malus: number,
+        metricMap: Map<string, ScoreAddressing>
+    ): MetricScore {
         const scoreAddressings = Array.from(metricMap.values());
         const totalReferences = scoreAddressings.length;
         const addressedReferences = scoreAddressings.filter(addressing => addressing.addressed).length;
-        const score = addressedReferences / totalReferences;
+
+        let score = 1;
+        if(totalReferences !== 0) {
+            score = (addressedReferences - malus) / totalReferences;
+        } else {
+            score -= malus;
+        }
+
+        if(score < 0) {
+            score = 0;
+        }
 
         return new MetricScore(
-            score,
+            parseFloat(score.toPrecision(4)),
             scoreAddressings.map(addressing => addressing.bestHit!)
         )
     }
@@ -113,126 +143,43 @@ export default class ScoreCalculator {
             addFunction(reference.id)
         );
     }
-}
 
-class ScoreTracker {
-    public readonly correctness: Map<string, ScoreAddressing> = new Map();
-    public readonly suggestion: Map<string, ScoreAddressing> = new Map();
-    public readonly codeStyle: Map<string, ScoreAddressing> = new Map();
-
-    constructor() {}
-
-    public addCorrectnessReference(id: string) {
-        if(!this.correctness.has(id)) {
-            this.correctness.set(id, ScoreAddressing.create(id))
-        }
+    private calculateMetricMalus(
+        metric: FeedbackMetric,
+        generatedSemanticStatistics: GeneratedFeedbackSemanticStatistic[],
+    ): number {
+        return generatedSemanticStatistics.filter(statistic => this.filterOvergeneratedMetrics(
+            metric,
+            statistic
+        )).length;
     }
 
-    public addSuggestionReference(id: string) {
-        if(!this.suggestion.has(id)) {
-            this.suggestion.set(id, ScoreAddressing.create(id))
-        }
+    private filterOvergeneratedMetrics(
+        metric: FeedbackMetric,
+        statistic: GeneratedFeedbackSemanticStatistic
+    ): boolean {
+        return statistic.metric === metric && statistic.scores[0].score < SCORE_THRESHOLD;
     }
 
-    public addCodeStyleReference(id: string) {
-        if(!this.codeStyle.has(id)) {
-            this.codeStyle.set(id, ScoreAddressing.create(id))
-        }
-    }
+    private calculateOvergeneration(
+        generatedSemanticStatistics: GeneratedFeedbackSemanticStatistic[],
+    ): MetricOvergenerationScore {
+        const overgenerations =  generatedSemanticStatistics.filter(statistic => this.filterOvergeneratedMetrics(
+            FeedbackMetric.CODE_STYLE,
+            statistic
+        ));
 
-    public addressReference(
-        expectedFeedback: ExpectedFeedbackSemanticStatistic
-    ) {
-
-        let sentence = "NOT ADDRESSED";
-        let score = 0;
-        let addressed = false;
-        if(expectedFeedback.scores.length > 0) {
-            const expectedSemanticScore = expectedFeedback.scores[0];
-            sentence = expectedSemanticScore.sentence;
-            score = expectedSemanticScore.score;
-            addressed = true;
+        const overgenerationCount = overgenerations.length;
+        let score = 1;
+        if(overgenerationCount >= 2) {
+            score = 0;
+        } else if (overgenerationCount >= 1) {
+            score = 0.5;
         }
 
-        const id = expectedFeedback.id;
-        const bestHit = new MetricBestHit(
-            id,
-            expectedFeedback.sentence,
-            sentence,
-            score
+        return new MetricOvergenerationScore(
+            score,
+            overgenerations
         );
-
-        switch (expectedFeedback.metric) {
-            case FeedbackMetric.CORRECTNESS:
-                this.addressCorrectnessReference(id, addressed, bestHit);
-                break;
-            case FeedbackMetric.SUGGESTION:
-                this.addressSuggestionReference(id, addressed, bestHit);
-                break;
-            case FeedbackMetric.CODE_STYLE:
-                this.addressCodeStyleReference(id, addressed, bestHit);
-                break;
-        }
-    }
-
-    public addressCorrectnessReference(
-        id: string,
-        addressed: boolean,
-        bestHit: MetricBestHit
-    ) {
-        if(this.correctness.has(id)) {
-            this.correctness.get(id)!
-                .setAddressed(addressed)
-                .setBestHit(bestHit);
-        }
-    }
-
-    public addressSuggestionReference(
-        id: string,
-        addressed: boolean,
-        bestHit: MetricBestHit
-    ) {
-        if (this.suggestion.has(id)) {
-            this.suggestion.get(id)!
-                .setAddressed(addressed)
-                .setBestHit(bestHit);
-        }
-    }
-
-    public addressCodeStyleReference(
-        id: string,
-        addressed: boolean,
-        bestHit: MetricBestHit
-    ) {
-        if(this.codeStyle.has(id)) {
-            this.codeStyle.get(id)!
-                .setAddressed(addressed)
-                .setBestHit(bestHit)
-        }
-    }
-}
-
-class ScoreAddressing  {
-    constructor(
-        public readonly id: string,
-        public addressed: boolean,
-        public bestHit?: MetricBestHit
-    ) {}
-
-    public static create(id: string): ScoreAddressing {
-        return new ScoreAddressing(
-            id,
-            false
-        )
-    }
-
-    public setAddressed(value: boolean): ScoreAddressing {
-        this.addressed = value;
-        return this;
-    }
-
-    public setBestHit(value: MetricBestHit): ScoreAddressing {
-        this.bestHit = value;
-        return this;
     }
 }

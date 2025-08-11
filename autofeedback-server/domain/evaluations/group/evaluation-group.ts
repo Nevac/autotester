@@ -7,6 +7,7 @@ import {Llm} from "../../llms/llm";
 import EvaluationGroupLlm, {evaluationGroupLlmSchema} from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
 import Rag, {ragSchema} from "../../rag/rag";
+import {EvaluationGroupLlmScore} from "./llm/evaluation-group-llm-score";
 
 
 export interface IEvaluationGroup {
