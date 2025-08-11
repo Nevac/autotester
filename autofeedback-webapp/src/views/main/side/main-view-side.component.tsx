@@ -12,6 +12,8 @@ import AttemptBrowserComponent from "../../../domains/attempts/attempt-browser/a
 import EvaluationGroupBrowserComponent
     from "../../../domains/evaluation/groups/evaluation-group-browser/evaluation-group-browser.component";
 import RagBrowserComponent from "../../../domains/rag/groups/rag-browser/rag-browser.component";
+import RagDocumentBrowserComponent
+    from "../../../domains/rag/document/rag-document-browser/rag-document-browser.component";
 
 export default function MainViewSideComponent() {
     const [value, setValue] = React.useState(0);
@@ -30,6 +32,7 @@ export default function MainViewSideComponent() {
         ["attempt", 3],
         ["evaluation-group", 4],
         ["rag", 5],
+        ["rag-document", 6],
     ]);
 
     useEffect(() => {
@@ -56,6 +59,7 @@ export default function MainViewSideComponent() {
                     <MenuItem value={3}>Attempt</MenuItem>
                     <MenuItem value={4}>Evaluation</MenuItem>
                     <MenuItem value={5}>RAG</MenuItem>
+                    <MenuItem value={6}>RAG Documents</MenuItem>
                 </Select>
             </FormControl>
             <TabPanel value={value} index={0} padding={0}>
@@ -75,6 +79,9 @@ export default function MainViewSideComponent() {
             </TabPanel>
             <TabPanel value={value} index={5} padding={0}>
                 <RagBrowserComponent/>
+            </TabPanel>
+            <TabPanel value={value} index={6} padding={0}>
+                <RagDocumentBrowserComponent/>
             </TabPanel>
         </PaperDefaultComponent>
     )

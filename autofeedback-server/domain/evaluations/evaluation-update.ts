@@ -6,14 +6,14 @@ import {EvaluationScore} from "./score/evaluation-score";
 import Rag from "../rag/rag";
 import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
 import {Evaluation} from "./evaluation";
-import RagDocument from "../rag/document/rag-document";
+import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
 
 export default class EvaluationUpdate {
     public state: EvaluationState = EvaluationState.INITIATED;
     public score: EvaluationScore = EvaluationScore.zero();
     public semanticStatistic = EvaluationSemanticStatistic.empty();
     public generatedFeedback: string = "Not generated yet";
-    public ragDocuments?: RagDocument[] = [];
+    public ragDocuments?: EvaluationRagDocument[] = [];
 
     constructor(
         public name: string,
@@ -62,7 +62,7 @@ export default class EvaluationUpdate {
         return this;
     }
 
-    public setRagDocuments(ragDocuments?: RagDocument[]): EvaluationUpdate {
+    public setRagDocuments(ragDocuments?: EvaluationRagDocument[]): EvaluationUpdate {
         this.ragDocuments = ragDocuments;
         return this;
     }

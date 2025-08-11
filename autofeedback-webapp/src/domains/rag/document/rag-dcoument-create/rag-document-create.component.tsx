@@ -1,43 +1,43 @@
-import './rag-create.component.css';
+import './rag-document-create.component.css';
 import {Box, Divider, Typography} from "@mui/material";
-import RagFormComponent from "../rag-form/rag-form.component";
-import RagUpdate from "../rag-update";
+import RagDocumentFormComponent from "../rag-document-form/rag-document-form.component";
+import RagDocumentUpdate from "../rag-document-update";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
-import RagEndpoint from "../rag-endpoint";
+import RagDocumentEndpoint from "../rag-document-endpoint";
 import {useDispatch} from "react-redux";
-import {ragUpdateSlice} from "../rag-update.slice";
+import {ragDocumentUpdateSlice} from "../rag-document-update.slice";
 import React from "react";
 
-export default function RagCreateComponent() {
+export default function RagDocumentCreateComponent() {
 
     const [openSnackbar, Snackbar] = useSnackbar();
-    const ragEndpoint = new RagEndpoint();
+    const ragDocumentEndpoint = new RagDocumentEndpoint();
 
     const dispatch = useDispatch()
 
-    const createRag = (update: RagUpdate) => {
-        ragEndpoint.create(
+    const createRag = (update: RagDocumentUpdate) => {
+        ragDocumentEndpoint.create(
             update
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {
                 openSnackbar("RagDocument created successfully", SnackbarVariant.SUCCESS);
-                dispatch(ragUpdateSlice.actions.update());
+                dispatch(ragDocumentUpdateSlice.actions.update());
             } else openSnackbar("Failed to create RagDocument", SnackbarVariant.ERROR);
         });
     }
 
     return (
-        <Box className={'rag-create-box'}>
+        <Box className={'rag-document-create-box'}>
             <Snackbar/>
             <Typography id="create-rag-title" variant="h4">
                 <div style={{padding: 20}}>
-                    Create Prompt Group
+                    Create RAG Document
                 </div>
                 <Divider/>
             </Typography>
             <div style={{padding: 20}}>
-                <RagFormComponent save={createRag}/>
+                <RagDocumentFormComponent isIdEditEnabled={true} save={createRag}/>
             </div>
         </Box>
     )

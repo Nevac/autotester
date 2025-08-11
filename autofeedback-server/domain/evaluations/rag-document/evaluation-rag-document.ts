@@ -1,6 +1,6 @@
 import {Schema} from "mongoose";
 import {QueryResponse} from "@pinecone-database/pinecone";
-import RagResponseMetadata from "../rag-response-metadata";
+import RagResponseMetadata from "../../rag/rag-response-metadata";
 
 interface IRagDocument {
     id: string,
@@ -12,7 +12,7 @@ interface IRagDocument {
     constructs: string[]
 }
 
-export default class RagDocument implements IRagDocument {
+export default class EvaluationRagDocument implements IRagDocument {
     constructor(
         public readonly id: string,
         public readonly text: string,
@@ -23,9 +23,9 @@ export default class RagDocument implements IRagDocument {
         public readonly constructs: string[]
     ) {}
 
-    public static ofRagResult(result: QueryResponse<RagResponseMetadata>): RagDocument[] {
+    public static ofRagResult(result: QueryResponse<RagResponseMetadata>): EvaluationRagDocument[] {
         return result.matches.filter(match => match.metadata).map(match =>
-            new RagDocument(
+            new EvaluationRagDocument(
                 match.id,
                 match.metadata!.text,
                 match.metadata!.category,

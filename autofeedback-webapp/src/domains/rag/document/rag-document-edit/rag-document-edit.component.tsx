@@ -1,25 +1,25 @@
-import './rag-edit.component.css';
+import './rag-document-edit.component.css';
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {Box, Divider, Typography} from "@mui/material";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
-import RagEndpoint from "../rag-endpoint";
-import Rag from "../rag";
-import RagFormComponent from "../rag-form/rag-form.component";
-import RagUpdate from "../rag-update";
+import RagDocumentEndpoint from "../rag-document-endpoint";
+import RagDocument from "../rag-document";
+import RagDocumentFormComponent from "../rag-document-form/rag-document-form.component";
+import RagDocumentUpdate from "../rag-document-update";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 
-export default function RagEditComponent() {
+export default function RagDocumentEditComponent() {
     let { id } = useParams();
-    const [rag, setRag] = useState<Rag | undefined>();
+    const [ragDocument, setRagDocument] = useState<RagDocument | undefined>();
     const [openSnackbar, Snackbar] = useSnackbar();
 
-    const ragEndpoint = new RagEndpoint();
+    const ragEndpoint = new RagDocumentEndpoint();
 
     useEffect(() => {
         ragEndpoint.getById(id!)
             .then(exercise =>
-                setRag(exercise)
+                setRagDocument(exercise)
             )
             .catch(err => {
                 openSnackbar(`Could not load rag with id ${id}`, SnackbarVariant.ERROR);
@@ -27,7 +27,7 @@ export default function RagEditComponent() {
             })
     }, [id]);
 
-    const createRag = (update: RagUpdate) => {
+    const createRag = (update: RagDocumentUpdate) => {
         ragEndpoint.update(
             id!,
             update
@@ -43,17 +43,23 @@ export default function RagEditComponent() {
             <Snackbar/>
             <Typography id="edit-rag-title" variant="h4">
                 <div style={{padding: 20}}>
-                    Edit RAG
+                    Edit RAG Document
                 </div>
                 <Divider/>
             </Typography>
-            {rag ?
+            {ragDocument ?
                 <div style={{padding: 20}}>
-                    <RagFormComponent
+                    <RagDocumentFormComponent
+                        isIdEditEnabled={false}
                         save={createRag}
-                        nameInit={rag.name}
-                        apiIdInit={rag.apiId}
-                        key={rag._id}
+                        key={ragDocument._id}
+                        idInit={ragDocument.externalId}
+                        textInit={ragDocument.metadata.text}
+                        categoryInit={ragDocument.metadata.category}
+                        languageInit={ragDocument.metadata.language}
+                        topicInit={ragDocument.metadata.topic}
+                        typeInit={ragDocument.metadata.type}
+                        constructsInit={ragDocument.metadata.constructs}
                     />
                 </div>
                 :

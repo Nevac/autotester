@@ -14,7 +14,7 @@ import ModernBertClient from "../semantic-evaluators/modern-bert-client";
 import EvaluationState from "./evaluation-state";
 import ScoreCalculator from "./score/score-calculator";
 import {logger} from "../../logger";
-import RagDocument from "../rag/document/rag-document";
+import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
 
 export default class EvaluationService {
 
@@ -78,7 +78,7 @@ export default class EvaluationService {
             logger.debug(`Using model ${evaluation.llm}`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
-            let ragDocuments: RagDocument[] = []
+            let ragDocuments: EvaluationRagDocument[] = []
             if(evaluation.rag) {
                 const ragClient = new PineconeClient(
                     new TextEmbedding3LargeClient(),

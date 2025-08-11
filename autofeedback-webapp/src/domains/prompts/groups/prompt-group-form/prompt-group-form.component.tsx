@@ -86,9 +86,6 @@ export default function PromptGroupFormComponent(props: PromptGroupFormProps) {
 
     return (
         <div className={'prompt-group-form-container'}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Create new Prompt Group
-            </Typography>
             <div className={'prompt-group-form-text-area-container'}>
                 <TextField
                     id="name"

@@ -6,7 +6,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import {ChatCompletionResponse} from "@mistralai/mistralai/models/components";
 import {Evaluation} from "../evaluations/evaluation";
 import {GenerateContentResponse} from "@google/genai";
-import RagDocument from "../rag/document/rag-document";
+import EvaluationRagDocument from "../evaluations/rag-document/evaluation-rag-document";
 
 export default interface LlmClient {
     create(chat: ClientRequest): Promise<ClientResponse>
@@ -28,7 +28,7 @@ export class ClientRequest {
         )
     }
 
-    public static ofEvaluation(evaluation: Evaluation, ragDocuments: RagDocument[]) {
+    public static ofEvaluation(evaluation: Evaluation, ragDocuments: EvaluationRagDocument[]) {
         return new ClientRequest(
             evaluation.promptGroup,
             evaluation.attempt.exercise,
