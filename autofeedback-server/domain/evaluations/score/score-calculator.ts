@@ -158,7 +158,7 @@ export default class ScoreCalculator {
         metric: FeedbackMetric,
         statistic: GeneratedFeedbackSemanticStatistic
     ): boolean {
-        return statistic.metric === metric && statistic.scores[0].score < SCORE_THRESHOLD;
+        return statistic.metric === metric && (statistic.scores.length === 0 || statistic.scores[0].score < SCORE_THRESHOLD);
     }
 
     private calculateOvergeneration(

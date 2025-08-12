@@ -74,8 +74,7 @@ export default class EvaluationService {
         );
 
         try{
-            logger.debug(`Starting evaluation with id ${evaluation._id}`)
-            logger.debug(`Using model ${evaluation.llm}`)
+            logger.debug(`Start Evaluation [${evaluation._id}][${evaluation.llm}]`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
             let ragDocuments: EvaluationRagDocument[] = []
@@ -87,7 +86,6 @@ export default class EvaluationService {
                 ragDocuments = await ragClient.retrieve(RagQueryBuilder.ofEvaluation(evaluation))
             }
 
-            logger.debug(`Generating feedback`)
             const response = await client.create(
                 ClientRequest.ofEvaluation(
                     evaluation,
@@ -125,11 +123,11 @@ export default class EvaluationService {
                 .setState(EvaluationState.DONE)
                 .setScore(evaluationScore);
 
-            logger.info(`Evaluation DONE for ${evaluation._id} with llm ${evaluation.llm}`)
+            logger.info(`Evaluation DONE [${evaluation._id}][${evaluation.llm}]`)
             return await this.update(evaluation._id, evaluationUpdate);
 
         } catch (e) {
-            console.error(`Evaluation FAILED for ${evaluation._id} with llm ${evaluation.llm}, e`);
+            console.error(`Evaluation FAILED [${evaluation._id}][${evaluation.llm}]`, e);
             const evaluationUpdate = EvaluationUpdate.ofEvaluation(evaluation)
                 .setState(EvaluationState.FAILURE);
 

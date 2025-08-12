@@ -30,6 +30,20 @@ export default class SemanticStatisticGenerator {
         const generatedFeedbackStatistics: Map<number, GeneratedFeedbackSemanticStatistic> = new Map();
         const expectedFeedbackStatistics: ExpectedFeedbackSemanticStatistic[] = [];
 
+        for(const generatedEmbeddingIndex in generatedEmbeddings) {
+            const generatedIndex = parseInt(generatedEmbeddingIndex);
+            const generatedEmbedding = generatedEmbeddings[generatedIndex];
+
+            generatedFeedbackStatistics.set(
+                generatedIndex,
+                new GeneratedFeedbackSemanticStatistic(
+                    generatedEmbedding.sentence,
+                    generatedEmbedding.metric,
+                    []
+                )
+            );
+        }
+
         for (const expectedEmbeddingIndex in expectedEmbeddings) {
             const expectedIndex = parseInt(expectedEmbeddingIndex);
 
@@ -122,7 +136,9 @@ export default class SemanticStatisticGenerator {
         generatedStatistic: GeneratedFeedbackSemanticStatistic,
         score: number
     ): void {
-        if(score > generatedStatistic.scores[0].score) {
+        if(generatedStatistic.scores.length === 0) {
+            generatedStatistic.scores.push(this.createGeneratedSemanticWithScore(expectedEmbedding, score));
+        } else if(score > generatedStatistic.scores[0].score) {
             generatedStatistic.scores[0] = this.createGeneratedSemanticWithScore(expectedEmbedding, score);
         }
     }

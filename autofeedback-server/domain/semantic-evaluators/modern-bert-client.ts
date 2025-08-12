@@ -38,7 +38,6 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
         llmFeedback: string,
         expectedFeedback: ExpectedFeedback
     ): Promise<EvaluationSemanticStatistic> {
-        logger.info(`Starting semantic evaluation process`)
         let extractor = await pipeline(
             'feature-extraction',
             this.MODEL,
@@ -79,7 +78,6 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
             )
         );
 
-        logger.debug(`Creating embeddings`)
         const queryEmbeddings = await extractor(
             expectedEmbeddings.map(embedding => "search_query: " + embedding.sentence),
             this.embedderConfig

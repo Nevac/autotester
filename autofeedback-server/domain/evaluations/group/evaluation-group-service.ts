@@ -12,6 +12,8 @@ import RagRepository from "../../rag/rag-repository";
 import {Evaluation} from "../evaluation";
 import {Llm} from "../../llms/llm";
 import {EvaluationGroupLlmScore} from "./llm/evaluation-group-llm-score";
+import pLimit from "p-limit";
+import {logger} from "../../../logger";
 
 export default class EvaluationGroupService {
 
@@ -83,19 +85,28 @@ export default class EvaluationGroupService {
         evaluationGroup: EvaluationGroup,
         evaluations: Map<string, Evaluation>
     ): Promise<void> {
-        const scoredEvaluations = await Promise.all(
-            Array.from(evaluations.values()).map(evaluation =>
-                this.evaluationService.evaluate(evaluation)
+        const limit = pLimit(2);
+        const scoredEvaluations: Evaluation[] = [];
+        let done = 0;
+        let toDo = evaluations.size;
+
+        await Promise.all(
+            Array.from(evaluations.values()).map(ev =>
+                limit(async () => {
+                    const r = await this.evaluationService.evaluate(ev);
+
+                    scoredEvaluations.push(r);
+                    logger.debug(`EVAL PROGRESS: ${++done} / ${toDo}`);
+                })
             )
-        )
+        );
 
         await this.evaluationGroupRepository.update(
             evaluationGroup._id,
-            this.calculateAndSetLlmScores(
-                scoredEvaluations,
-                evaluationGroup
-            ).setState(EvaluationState.DONE)
+            this.calculateAndSetLlmScores(scoredEvaluations, evaluationGroup).setState(EvaluationState.DONE)
         );
+
+        logger.debug("Evaluation Group DONE");
     }
 
     private calculateAndSetLlmScores(
