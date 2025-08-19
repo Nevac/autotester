@@ -6,6 +6,7 @@ import Rag from "../rag/groups/rag";
 import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
 import EvaluationScore from "./score/evaluation-score";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
+import Ast from "../ast/ast";
 
 export class Evaluation {
     constructor(
@@ -19,6 +20,7 @@ export class Evaluation {
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
         public readonly semanticStatistic: EvaluationSemanticStatistic,
+        public readonly ast: Ast,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag,

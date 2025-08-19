@@ -1,5 +1,5 @@
 import EvaluationGroupRepository from "./evaluation-group-repository";
-import EvaluationGroupUpdateDto from "./evaluation-group-update-dto";
+import EvaluationGroupInsertDto from "./evaluation-group-insert-dto";
 import EvaluationGroupListEntry from "./evaluation-group-list-entry";
 import {EvaluationGroup} from "./evaluation-group";
 import EvaluationGroupUpsert from "./evaluation-group-upsert";
@@ -43,7 +43,7 @@ export default class EvaluationGroupService {
         return await this.evaluationGroupRepository.getById(id);
     }
 
-    public async create(evaluationGroupUpdateDto: EvaluationGroupUpdateDto): Promise<EvaluationGroup> {
+    public async create(evaluationGroupUpdateDto: EvaluationGroupInsertDto): Promise<EvaluationGroup> {
         const promptGroup = await this.promptGroupRepo.getById(evaluationGroupUpdateDto.promptGroupId);
         const attempts = await this.attemptRepository.getByIds(evaluationGroupUpdateDto.attemptIds);
 
@@ -71,6 +71,7 @@ export default class EvaluationGroupService {
                         )
                 ),
                 EvaluationState.RUNNING,
+                evaluationGroupUpdateDto.astEnabled,
                 rag
             )
         );

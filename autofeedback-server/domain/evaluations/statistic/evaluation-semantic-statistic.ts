@@ -25,7 +25,7 @@ export default class EvaluationSemanticStatistic implements IEvaluationSemanticS
     }
 }
 
-export const EvaluationSemanticStatisticSchema = new Schema<IEvaluationSemanticStatistic>(
+export const evaluationSemanticStatisticSchema = new Schema<IEvaluationSemanticStatistic>(
     {
         expectedFeedback: { type: [ExpectedFeedbackSemanticStatisticSchema], required: true },
         generatedFeedback: { type: [generatedFeedbackSemanticStatisticSchema], required: true },

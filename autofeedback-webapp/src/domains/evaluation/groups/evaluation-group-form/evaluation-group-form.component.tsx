@@ -1,5 +1,14 @@
 import './evaluation-group-form.component.css';
-import {Button, FormControl, MenuItem, TextField, TextFieldClasses, Typography} from "@mui/material";
+import {
+    Button, Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    MenuItem,
+    TextField,
+    TextFieldClasses,
+    Typography
+} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import EvaluationGroupEndpoint from "../evaluation-group-endpoint";
 import EvaluationGroupUpdate from "../evaluation-group-update";
@@ -28,6 +37,7 @@ interface ChatGroupFormProps {
     attemptsInit?: string[],
     ragInit?: string,
     llmsInit?: Llm[],
+    astInit?: boolean,
 }
 
 class SelectableLlm {
@@ -52,6 +62,7 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
     const attemptsInput = useInputValue<string[]>(props.attemptsInit, {required: true});
     const ragInput = useInputValue<string | undefined>(props.ragInit, {required: false});
     const llmsInput = useInputValue<string[]>(props.llmsInit, {required: true});
+    const astInput = useInputValue<boolean>(props.astInit ? props.astInit : true, {required: true});
     const isFormValid = useFormValidationHook([
         nameInput,
         promptGroupInput,
@@ -104,6 +115,7 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
                 promptGroupInput.valueOrThrow(),
                 attemptsInput.valueOrThrow(),
                 llmsInput.valueOrThrow(),
+                astInput.valueOrThrow(),
                 ragInput.valueOrUndefined()
             )
         ).then(state => {
@@ -148,25 +160,30 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
                     required
                     error={nameInput.error}
                 />
-                <FormControl fullWidth style={{display: "flex", flexDirection: "row"}}>
-                    <TextField
-                        fullWidth
-                        select
-                        id="rag-label"
-                        value={ragInput.value}
-                        label="RAG"
-                        onChange={ragInput.handleChange}
-                        error={ragInput.error}
-                        ref={ragSelectRef}
-                    >
-                        {selectableRags.map(rags =>
-                            <MenuItem value={rags._id}>{rags.name}</MenuItem>
-                        )}
-                    </TextField>
-                    <Button variant={"outlined"} onClick={resetRagSelection}>
-                        Reset
-                    </Button>
-                </FormControl>
+                <div>
+                    <FormControl fullWidth style={{display: "flex", flexDirection: "row"}}>
+                        <TextField
+                            fullWidth
+                            select
+                            id="rag-label"
+                            value={ragInput.value}
+                            label="RAG"
+                            onChange={ragInput.handleChange}
+                            error={ragInput.error}
+                            ref={ragSelectRef}
+                        >
+                            {selectableRags.map(rags =>
+                                <MenuItem value={rags._id}>{rags.name}</MenuItem>
+                            )}
+                        </TextField>
+                        <Button variant={"outlined"} onClick={resetRagSelection}>
+                            Reset
+                        </Button>
+                    </FormControl>
+                    <FormControl style={{width: 400}}>
+                        <FormControlLabel control={<Checkbox defaultChecked />} label="Use AST" />
+                    </FormControl>
+                </div>
                 <FormControl fullWidth>
                     <TextField
                         select

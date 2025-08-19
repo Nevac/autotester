@@ -15,6 +15,8 @@ import EvaluationState from "./evaluation-state";
 import ScoreCalculator from "./score/score-calculator";
 import {logger} from "../../logger";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
+import Ast from "../ast/ast";
+import RagResponse from "../rag/client/rag-response";
 
 export default class EvaluationService {
 
@@ -51,11 +53,12 @@ export default class EvaluationService {
             for(const attempt of evaluationGroup.attempts.values()) {
                 evaluations.push(
                     new EvaluationUpdate(
-                        evaluationGroup.name + "-" + attempt.name,
+                        llm[0] + "-" + attempt.name,
                         evaluationGroup._id,
                         attempt,
                         evaluationGroup.promptGroup,
                         llm[0],
+                        Ast.empty(evaluationGroup.astEnabled),
                         evaluationGroup.rag
                     )
                 )
@@ -77,19 +80,25 @@ export default class EvaluationService {
             logger.debug(`Start Evaluation [${evaluation._id}][${evaluation.llm}]`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
-            let ragDocuments: EvaluationRagDocument[] = []
+            let ragResponse: RagResponse = RagResponse.empty(evaluation.ast);
             if(evaluation.rag) {
                 const ragClient = new PineconeClient(
                     new TextEmbedding3LargeClient(),
                     evaluation.rag.apiId
                 );
-                ragDocuments = await ragClient.retrieve(RagQueryBuilder.ofEvaluation(evaluation))
+                ragResponse = await ragClient.retrieve(
+                    RagQueryBuilder.ofEvaluation(evaluation),
+                    evaluation.ast.enabled
+                );
             }
+
+            const document = ragResponse.documents;
+            const ast = ragResponse.ast;
 
             const response = await client.create(
                 ClientRequest.ofEvaluation(
                     evaluation,
-                    ragDocuments
+                    document
                 )
             );
 
@@ -98,7 +107,8 @@ export default class EvaluationService {
                 evaluation._id,
                 EvaluationUpdate.ofEvaluation(evaluation)
                     .setGeneratedFeedback(llmFeedback)
-                    .setRagDocuments(ragDocuments)
+                    .setRagDocuments(document)
+                    .setAst(ast)
             );
 
             const evaluationStatistic = await this.semanticEvaluatorClient.evaluate(

@@ -7,7 +7,6 @@ import {Llm} from "../../llms/llm";
 import EvaluationGroupLlm, {evaluationGroupLlmSchema} from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
 import Rag, {ragSchema} from "../../rag/rag";
-import {EvaluationGroupLlmScore} from "./llm/evaluation-group-llm-score";
 
 
 export interface IEvaluationGroup {
@@ -16,6 +15,7 @@ export interface IEvaluationGroup {
     attempts: Set<Attempt>,
     llms: Map<Llm, EvaluationGroupLlm>,
     state: EvaluationState,
+    astEnabled: boolean,
     rag?: Rag,
     bestLlm?: Llm,
     bestScore?: number
@@ -31,6 +31,7 @@ export class EvaluationGroup implements IEvaluationGroup, Entity {
         public readonly attempts: Set<Attempt>,
         public readonly llms: Map<Llm, EvaluationGroupLlm>,
         public readonly state: EvaluationState,
+        public readonly astEnabled: boolean,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag,
@@ -48,6 +49,7 @@ export class EvaluationGroup implements IEvaluationGroup, Entity {
             evaluationGroup.attempts,
             evaluationGroup.llms,
             evaluationGroup.state,
+            evaluationGroup.astEnabled,
             createdAt,
             updatedAt,
             evaluationGroup.rag,
@@ -65,6 +67,7 @@ export const evaluationGroupSchema = new Schema<IEvaluationGroup>(
         llms: { type: Map, of: evaluationGroupLlmSchema, required: true },
         state: { type: String, required: true },
         rag: { type: ragSchema, required: false },
+        astEnabled: { type: Boolean, required: true },
         bestScore: { type: Number, required: false },
         bestLlm: { type: String, required: false }
     },

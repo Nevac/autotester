@@ -1,7 +1,6 @@
 import EvaluationGroupListItem from "./evaluation-group-list-item";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import EvaluationGroupUpdate from "./evaluation-group-update";
-import Exercise from "../../exercises/exercise";
 import {EvaluationGroup} from "./evaluation-group";
 
 export default class EvaluationGroupEndpoint {

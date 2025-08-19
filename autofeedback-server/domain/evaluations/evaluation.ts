@@ -8,9 +8,10 @@ import {EvaluationScore, evaluationScoreSchema} from "./score/evaluation-score";
 import {Llm} from "../llms/llm";
 import Rag, {ragSchema} from "../rag/rag";
 import EvaluationSemanticStatistic, {
-    EvaluationSemanticStatisticSchema
+    evaluationSemanticStatisticSchema
 } from "./statistic/evaluation-semantic-statistic";
 import EvaluationRagDocument, {ragDocumentSchema} from "./rag-document/evaluation-rag-document";
+import Ast, {astSchema} from "../ast/ast";
 
 
 export interface IEvaluation {
@@ -23,6 +24,7 @@ export interface IEvaluation {
     state: EvaluationState,
     score: EvaluationScore,
     semanticStatistic: EvaluationSemanticStatistic,
+    ast: Ast,
     rag?: Rag,
     ragDocuments?: EvaluationRagDocument[]
 }
@@ -39,6 +41,7 @@ export class Evaluation implements IEvaluation, Entity {
         public readonly state: EvaluationState,
         public readonly score: EvaluationScore,
         public readonly semanticStatistic: EvaluationSemanticStatistic,
+        public readonly ast: Ast,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag,
@@ -59,6 +62,7 @@ export class Evaluation implements IEvaluation, Entity {
             evaluation.state,
             evaluation.score,
             evaluation.semanticStatistic,
+            evaluation.ast,
             createdAt,
             updatedAt,
             evaluation.rag,
@@ -85,7 +89,8 @@ export const evaluationSchema = new Schema<IEvaluation>(
         generatedFeedback: { type: String, required: true },
         state: { type: String, required: true },
         score: { type: evaluationScoreSchema, required: true },
-        semanticStatistic: { type: EvaluationSemanticStatisticSchema, required: true },
+        semanticStatistic: { type: evaluationSemanticStatisticSchema, required: true },
+        ast: { type: astSchema, required: true },
         rag: { type: ragSchema, required: false },
         ragDocuments: { type: [ragDocumentSchema], required: false },
     },

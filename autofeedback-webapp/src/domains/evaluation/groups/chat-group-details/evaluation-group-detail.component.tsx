@@ -29,6 +29,8 @@ import MetricBestHit from "../../score/metric-best-hit";
 import EvaluationSemanticStatistic from "../../statistic/evaluation-semantic-statistic";
 import MetricOvergenerationScore from "../../score/metric-overgeneration-score";
 import EvaluationRagDocument from "../../rag-document/evaluation-rag-document";
+import Attempt from "../../../attempts/attempt";
+import Ast from "../../../ast/ast";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -168,14 +170,34 @@ export default function EvaluationGroupDetailComponent() {
         if(evaluation) {
             return (
                 <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                    <AttemptDetail attempt={evaluation.attempt}/>
                     <GeneratedFeedback generatedFeedback={evaluation.generatedFeedback}/>
-                    {evaluation.ragDocuments ?  <RagDocuments ragDocuments={evaluation.ragDocuments}/> : <></>}
+                    <RagDocuments evaluation={evaluation}/>
                     <EvaluationScore evaluation={evaluation}/>
                     <SemanticStatistic semanticStatistic={evaluation.semanticStatistic}/>
                 </div>
             )
         }
         return <></>;
+    }
+
+    function AttemptDetail(props: {attempt: Attempt}) {
+        return (
+            <Accordion>
+                <AccordionSummary
+                    expandIcon={<ExpandMore/>}
+                    aria-controls={`attempt-accordion-content`}
+                    id={`attempt-accordion-header`}
+                >
+                    <Typography variant={"h5"}>Attempt</Typography>
+                </AccordionSummary>
+                <AccordionDetails style={{maxWidth: 1500}}>
+                    <MarkdownX>
+                        {props.attempt.attempt}
+                    </MarkdownX>
+                </AccordionDetails>
+            </Accordion>
+        )
     }
 
     function GeneratedFeedback(props: {generatedFeedback: string}) {
@@ -197,37 +219,66 @@ export default function EvaluationGroupDetailComponent() {
         )
     }
 
-    function RagDocuments(props: {ragDocuments: EvaluationRagDocument[]}) {
-        return (
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMore/>}
-                    aria-controls={`generated-feedback-accordion-content`}
-                    id={`generated-feedback-accordion-header`}
-                >
-                    <Typography variant={"h5"}>RagDocuments</Typography>
-                </AccordionSummary>
-                <AccordionDetails style={{maxWidth: 1500}}>
-                    <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                        {props.ragDocuments.map(ragDocument =>
-                            <Paper elevation={10} style={{padding: 10}}>
-                                <Stack direction="row" spacing={1}>
-                                    <Chip label={`id: ${ragDocument.id}`} size="small"/>
-                                    <Chip label={`language: ${ragDocument.language}`} size="small"/>
-                                    <Chip label={`category: ${ragDocument.category}`} size="small"/>
-                                    <Chip label={`topic: ${ragDocument.topic}`} size="small"/>
-                                    <Chip label={`type: ${ragDocument.type}`} size="small"/>
-                                    <Chip label={`constructs: ${ragDocument.constructs}`} size="small"/>
-                                </Stack>
-                                <MarkdownX>
-                                    {ragDocument.text.replace(/\\n/g, '\n')}
-                                </MarkdownX>
-                            </Paper>
-                        )}
+    function RagDocuments(props: {evaluation: Evaluation }) {
+        const ragDocuments = props.evaluation.ragDocuments;
+        const ast = props.evaluation.ast;
+
+        if(ragDocuments) {
+            return (
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMore/>}
+                        aria-controls={`generated-feedback-accordion-content`}
+                        id={`generated-feedback-accordion-header`}
+                    >
+                        <Typography variant={"h5"}>RagDocuments</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails style={{maxWidth: 1500}}>
+                        <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                            <Ast ast={ast}/>
+                            {ragDocuments.map(ragDocument =>
+                                <Paper elevation={10} style={{padding: 10}}>
+                                    <Stack direction="row" spacing={1}>
+                                        <Chip label={`id: ${ragDocument.id}`} size="small"/>
+                                        <Chip label={`language: ${ragDocument.language}`} size="small"/>
+                                        <Chip label={`category: ${ragDocument.category}`} size="small"/>
+                                        <Chip label={`topic: ${ragDocument.topic}`} size="small"/>
+                                        <Chip label={`type: ${ragDocument.type}`} size="small"/>
+                                        <Chip label={`constructs: ${ragDocument.constructs}`} size="small"/>
+                                    </Stack>
+                                    <MarkdownX>
+                                        {ragDocument.text.replace(/\\n/g, '\n')}
+                                    </MarkdownX>
+                                </Paper>
+                            )}
+                        </div>
+                    </AccordionDetails>
+                </Accordion>
+            );
+        } else {
+            return (<></>);
+        }
+    }
+
+    function Ast(props: {ast: Ast}) {
+        const ast = props.ast;
+
+        if(ast) {
+            return (
+                <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                    <div>
+                        <Typography fontWeight={'bold'}>Contructs</Typography>
+                        <Stack direction="row" spacing={1}>
+                            {ast.constructs.map(construct =>
+                                <Chip label={construct} size="small"/>
+                            )}
+                        </Stack>
                     </div>
-                </AccordionDetails>
-            </Accordion>
-        );
+                </div>
+            );
+        } else {
+            return (<></>);
+        }
     }
 
     function SemanticStatistic(props: { semanticStatistic: EvaluationSemanticStatistic }) {

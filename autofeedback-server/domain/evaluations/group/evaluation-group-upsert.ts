@@ -16,6 +16,7 @@ export default class EvaluationGroupUpsert {
         public attempts: Attempt[],
         public llms: Map<string, EvaluationGroupLlm>,
         public state: EvaluationState,
+        public astEnabled: boolean,
         public rag?: Rag
     ) {}
 
@@ -26,6 +27,7 @@ export default class EvaluationGroupUpsert {
             Array.from(evaluationGroup.attempts),
             evaluationGroup.llms,
             evaluationGroup.state,
+            evaluationGroup.astEnabled,
             evaluationGroup.rag
         )
     }

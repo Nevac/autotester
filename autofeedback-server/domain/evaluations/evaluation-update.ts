@@ -7,6 +7,7 @@ import Rag from "../rag/rag";
 import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
 import {Evaluation} from "./evaluation";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
+import Ast from "../ast/ast";
 
 export default class EvaluationUpdate {
     public state: EvaluationState = EvaluationState.INITIATED;
@@ -21,6 +22,7 @@ export default class EvaluationUpdate {
         public attempt: Attempt,
         public promptGroup: PromptGroup,
         public llm: Llm,
+        public ast: Ast,
         public rag?: Rag
     ) {}
 
@@ -33,6 +35,7 @@ export default class EvaluationUpdate {
             evaluation.attempt,
             evaluation.promptGroup,
             evaluation.llm,
+            evaluation.ast,
             evaluation.rag
         )
             .setSemanticStatistic(evaluation.semanticStatistic)
@@ -64,6 +67,11 @@ export default class EvaluationUpdate {
 
     public setRagDocuments(ragDocuments?: EvaluationRagDocument[]): EvaluationUpdate {
         this.ragDocuments = ragDocuments;
+        return this;
+    }
+
+    public setAst(ast: Ast): EvaluationUpdate {
+        this.ast = ast;
         return this;
     }
 }
