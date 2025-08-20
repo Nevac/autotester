@@ -1,6 +1,6 @@
 import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
 
-export default class MetricBestHit {
+export default class ReferenceHit {
     constructor(
         public readonly id: string,
         public readonly expectedSentence: string,
@@ -10,7 +10,7 @@ export default class MetricBestHit {
 
     public static ofExpectedFeedback(
         expectedFeedback: ExpectedFeedbackSemanticStatistic
-    ): MetricBestHit {
+    ): ReferenceHit {
         let sentence = "NOT ADDRESSED";
         let score = 0;
         if(expectedFeedback.scores.length > 0) {
@@ -19,7 +19,7 @@ export default class MetricBestHit {
             score = expectedSemanticScore.score;
         }
 
-        return new MetricBestHit(
+        return new ReferenceHit(
             expectedFeedback.id,
             expectedFeedback.sentence,
             sentence,

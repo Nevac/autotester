@@ -89,6 +89,25 @@ export default class EvaluationRepository {
             })
     }
 
+    public async updateAll(updates: Map<string, EvaluationUpdate>): Promise<Map<string, Evaluation>> {
+        await EvaluationModel.bulkWrite(
+            Array.from(updates.entries()).map(([id, update]) => ({
+                updateOne: {
+                    filter: { _id: id },
+                    update: { $set: update }
+                }
+            }))
+        );
+
+        const ids = Array.from(updates.keys());
+        return EvaluationModel.find({_id: { $in: ids}})
+            .exec()
+            .then(documents =>
+                Evaluation.ofDocuments(documents)
+            );
+    }
+
+
     public async delete(id: string): Promise<boolean> {
         return await EvaluationModel.deleteOne(
             {_id: id}

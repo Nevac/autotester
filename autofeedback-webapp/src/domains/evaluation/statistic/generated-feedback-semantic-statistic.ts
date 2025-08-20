@@ -1,12 +1,8 @@
 import GeneratedFeedbackSemanticScore from "./generated-feedback-semantic-score";
 
-interface IGeneratedFeedbackSemanticStatistic {
-     sentence: string,
-     scores: GeneratedFeedbackSemanticScore[]
-}
-
-export default class GeneratedFeedbackSemanticStatistic implements IGeneratedFeedbackSemanticStatistic {
+export default class GeneratedFeedbackSemanticStatistic {
     constructor(
+        public readonly index: number,
         public readonly sentence: string,
         public readonly scores: GeneratedFeedbackSemanticScore[]
     ) {}

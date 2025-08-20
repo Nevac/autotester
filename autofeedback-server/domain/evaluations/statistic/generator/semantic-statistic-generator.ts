@@ -37,6 +37,7 @@ export default class SemanticStatisticGenerator {
             generatedFeedbackStatistics.set(
                 generatedIndex,
                 new GeneratedFeedbackSemanticStatistic(
+                    generatedIndex,
                     generatedEmbedding.sentence,
                     generatedEmbedding.metric,
                     []
@@ -153,6 +154,7 @@ export default class SemanticStatisticGenerator {
         generatedFeedbackStatistics.set(
             index,
             new GeneratedFeedbackSemanticStatistic(
+                index,
                 generatedEmbedding.sentence,
                 generatedEmbedding.metric,
                 [this.createGeneratedSemanticWithScore(expectedEmbedding, score)]

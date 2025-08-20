@@ -25,7 +25,7 @@ import EvaluationGroupLlm from "../llm/evaluation-group-llm";
 import {Evaluation} from "../../evaluation";
 import EvaluationScore from "../../score/evaluation-score";
 import MetricScore from "../../score/metric-score";
-import MetricBestHit from "../../score/metric-best-hit";
+import ReferenceHit from "../../score/reference-hit";
 import EvaluationSemanticStatistic from "../../statistic/evaluation-semantic-statistic";
 import MetricOvergenerationScore from "../../score/metric-overgeneration-score";
 import Attempt from "../../../attempts/attempt";
@@ -34,6 +34,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {useDispatch} from "react-redux";
 import {evaluationGroupsUpdateSlice, evaluationGroupUpdateSlice} from "../evaluation-groups-update.slice";
+import ReferenceAddressing from "../../score/reference-addressing";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -439,9 +440,9 @@ export default function EvaluationGroupDetailComponent() {
         return (
             <Paper elevation={3} style={{padding: 10}}>
                 <Typography variant={"h5"}>{props.title}</Typography>
-                {props.metricScore.bestHits.map(bestHit => {
-                    if(bestHit) {
-                        return <BestHit key={bestHit.id} bestHit={bestHit}/>
+                {props.metricScore.referenceAddressings.map(reference => {
+                    if(reference) {
+                        return <RefAddressing key={reference.id} referenceAddressing={reference}/>
                     } else return <></>
                 }
                 )}
@@ -464,26 +465,27 @@ export default function EvaluationGroupDetailComponent() {
     );
     }
 
-    function BestHit(props: {
-        bestHit: MetricBestHit
+    function RefAddressing(props: {
+        referenceAddressing: ReferenceAddressing
     }) {
+        const refAddressing = props.referenceAddressing;
         return (
             <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                 <Paper elevation={10} style={{padding: 10}}>
-                    <Typography variant={"h6"} fontWeight={"bold"}>{props.bestHit.id}</Typography>
-                    <Typography>Semantic Similarity: {props.bestHit.similarityScore.toFixed(4)}</Typography>
+                    <Typography variant={"h6"} fontWeight={"bold"}>{refAddressing.id}</Typography>
+                    <Typography>Semantic Similarity: {refAddressing.similarityScore.toFixed(4)}</Typography>
                 </Paper>
                 <div style={{display: "flex", flexDirection: "row", gap: 10}}>
                     <Paper elevation={10} style={{padding: 10, flex: 1}}>
                         <Typography variant={"h6"}>Expected</Typography>
                         <MarkdownX>
-                            {props.bestHit.expectedSentence}
+                            {refAddressing.expectedSentence}
                         </MarkdownX>
                     </Paper>
                     <Paper elevation={10} style={{padding: 10, flex: 1}}>
                         <Typography variant={"h6"}>Generated</Typography>
                         <MarkdownX>
-                            {props.bestHit.generatedSentence}
+                            {refAddressing.addressed ? refAddressing.generatedSentence : "Not Addressed"}
                         </MarkdownX>
                     </Paper>
                 </div>

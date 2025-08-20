@@ -154,6 +154,23 @@ export default class EvaluationService {
 
     }
 
+    public async calculateScores(evaluations: Map<string, Evaluation>): Promise<Map<string, Evaluation>> {
+        const updates = new Map(
+            Array.from(evaluations.entries()).map(([id, evaluation]) => {
+                const evaluationScore = ScoreCalculator.generateScore(
+                    evaluation.attempt.expectedFeedback,
+                    evaluation.semanticStatistic
+                )
+
+                const update = EvaluationUpdate.ofEvaluation(evaluation)
+                    .setScore(evaluationScore);
+
+                return [id, update];
+        }));
+
+        return await this.evaluationRepository.updateAll(updates);
+    }
+
     public async update(id: string, update: EvaluationUpdate): Promise<Evaluation> {
         return await this.evaluationRepository.update(id, update);
     }

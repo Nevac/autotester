@@ -1,7 +1,7 @@
+import MetricBestHit from "./metric-best-hit";
 import {Schema} from "mongoose";
-import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
 
-interface IMetricBestHit {
+interface IReferenceAddressing {
     id: string,
     addressed: boolean,
     expectedSentence: string,
@@ -9,7 +9,7 @@ interface IMetricBestHit {
     similarityScore: number
 }
 
-export default class MetricBestHit implements IMetricBestHit {
+export default class ReferenceAddressing implements IReferenceAddressing {
     constructor(
         public readonly id: string,
         public readonly addressed: boolean,
@@ -19,7 +19,7 @@ export default class MetricBestHit implements IMetricBestHit {
     ) {}
 }
 
-export const metricBestHitSchema = new Schema<IMetricBestHit>(
+export const referenceAddressingSchema = new Schema<IReferenceAddressing>(
     {
         id: { type: String, required: true },
         addressed: { type: Boolean, required: true },

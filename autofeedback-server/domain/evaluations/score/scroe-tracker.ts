@@ -1,30 +1,29 @@
 import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
-import MetricBestHit from "./metric-best-hit";
 import FeedbackMetric from "../../attempts/expected-feedback/feedback-metric";
-import ScoreAddressing from "./score-addressing";
+import ReferenceAddressingUpsert from "./reference-addressing-upsert";
 
 export default class ScoreTracker {
-    public readonly correctness: Map<string, ScoreAddressing> = new Map();
-    public readonly suggestion: Map<string, ScoreAddressing> = new Map();
-    public readonly codeStyle: Map<string, ScoreAddressing> = new Map();
+    public readonly correctness: Map<string, ReferenceAddressingUpsert> = new Map();
+    public readonly suggestion: Map<string, ReferenceAddressingUpsert> = new Map();
+    public readonly codeStyle: Map<string, ReferenceAddressingUpsert> = new Map();
 
     constructor() {}
 
     public addCorrectnessReference(id: string) {
         if(!this.correctness.has(id)) {
-            this.correctness.set(id, ScoreAddressing.create(id))
+            this.correctness.set(id, ReferenceAddressingUpsert.create(id))
         }
     }
 
     public addSuggestionReference(id: string) {
         if(!this.suggestion.has(id)) {
-            this.suggestion.set(id, ScoreAddressing.create(id))
+            this.suggestion.set(id, ReferenceAddressingUpsert.create(id))
         }
     }
 
     public addCodeStyleReference(id: string) {
         if(!this.codeStyle.has(id)) {
-            this.codeStyle.set(id, ScoreAddressing.create(id))
+            this.codeStyle.set(id, ReferenceAddressingUpsert.create(id))
         }
     }
 
@@ -32,58 +31,42 @@ export default class ScoreTracker {
         expectedFeedback: ExpectedFeedbackSemanticStatistic
     ) {
 
-        let sentence = "NOT ADDRESSED";
-        let score = 0;
-        let addressed = false;
+        const id = expectedFeedback.id;
+        const referenceAddressing = ReferenceAddressingUpsert.create(id);
+
         if(expectedFeedback.scores.length > 0) {
             const expectedSemanticScore = expectedFeedback.scores[0];
-            sentence = expectedSemanticScore.sentence;
-            score = expectedSemanticScore.score;
-            addressed = true;
+            referenceAddressing
+                .setAddressed(true)
+                .setSimilarityScore(expectedSemanticScore.score)
+                .setGeneratedSentence(expectedSemanticScore.sentence)
         }
-
-        const id = expectedFeedback.id;
-        const bestHit = new MetricBestHit(
-            id,
-            expectedFeedback.sentence,
-            sentence,
-            score
-        );
+        referenceAddressing.setExpectedSentence(expectedFeedback.sentence)
 
         switch (expectedFeedback.metric) {
             case FeedbackMetric.CORRECTNESS:
-                this.addressMetricReference(id, this.correctness, addressed, bestHit);
+                this.checkAndSetReferenceIfHigherScore(id, this.correctness, referenceAddressing);
                 break;
             case FeedbackMetric.SUGGESTION:
-                this.addressMetricReference(id, this.suggestion, addressed, bestHit);
+                this.checkAndSetReferenceIfHigherScore(id, this.suggestion, referenceAddressing);
                 break;
             case FeedbackMetric.CODE_STYLE:
-                this.addressMetricReference(id, this.codeStyle, addressed, bestHit);
+                this.checkAndSetReferenceIfHigherScore(id, this.codeStyle, referenceAddressing);
                 break;
         }
     }
 
-    private addressMetricReference(
+    private checkAndSetReferenceIfHigherScore(
         id: string,
-        map: Map<string, ScoreAddressing>,
-        addressed: boolean,
-        bestHit: MetricBestHit
+        map: Map<string, ReferenceAddressingUpsert>,
+        referenceAddressing: ReferenceAddressingUpsert
     ): void {
         if(map.has(id)) {
-            this.addressMetricAndSetBestHit(
-                map.get(id)!,
-                addressed,
-                bestHit
-            );
-        }
-    }
+            const existingReference = map.get(id)!;
 
-    private addressMetricAndSetBestHit(scoreAddressing: ScoreAddressing, addressed: boolean, bestHit: MetricBestHit) {
-        if(!scoreAddressing.addressed) {
-            scoreAddressing.setAddressed(addressed);
-        }
-        if(!scoreAddressing.bestHit || scoreAddressing.bestHit.similarityScore < bestHit.similarityScore) {
-            scoreAddressing.setBestHit(bestHit);
+            if(referenceAddressing.similarityScore > existingReference.similarityScore) {
+                map.set(id, referenceAddressing);
+            }
         }
     }
 }

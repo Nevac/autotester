@@ -4,11 +4,13 @@ import {EvaluationScore} from "./evaluation-score";
 import FeedbackReference from "../../attempts/expected-feedback/feedback-reference";
 import MetricScore from "./metric-score";
 import ScoreTracker from "./scroe-tracker";
-import ScoreAddressing from "./score-addressing";
+import ReferenceAddressing from "./reference-addressing";
 import FeedbackMetric from "../../attempts/expected-feedback/feedback-metric";
 import GeneratedFeedbackSemanticStatistic from "../statistic/generated-feedback-semantic-statistic";
 import SCORE_THRESHOLD from "./score-threshold";
 import MetricOvergenerationScore from "./metric-overgeneration-score";
+import MetricWrongHit from "./metric-wrong-hit";
+import ReferenceAddressingUpsert from "./reference-addressing-upsert";
 
 export default class ScoreCalculator {
     public static generateScore(
@@ -83,7 +85,7 @@ export default class ScoreCalculator {
 
     private calculateMetricScore(
         malus: number,
-        metricMap: Map<string, ScoreAddressing>
+        metricMap: Map<string, ReferenceAddressingUpsert>
     ): MetricScore {
         const scoreAddressings = Array.from(metricMap.values());
         const totalReferences = scoreAddressings.length;
@@ -102,7 +104,35 @@ export default class ScoreCalculator {
 
         return new MetricScore(
             parseFloat(score.toPrecision(4)),
-            scoreAddressings.map(addressing => addressing.bestHit!)
+            scoreAddressings,
+            []
+        )
+    }
+
+
+    private prepareMetricScore(
+        metric: FeedbackMetric,
+        generatedSemanticStatistics: GeneratedFeedbackSemanticStatistic[],
+        metricMap: Map<string, ReferenceAddressing>
+    ): MetricScore {
+
+        const overgenerations = generatedSemanticStatistics.filter(statistic => this.filterOvergeneratedMetrics(
+            metric,
+            statistic
+        ));
+
+        const scoreAddressings = Array.from(metricMap.values());
+        const totalReferences = scoreAddressings.length;
+        const addressedReferences = scoreAddressings.filter(addressing => addressing.addressed).length;
+
+        return new MetricScore(
+            0,
+            scoreAddressings,
+            overgenerations.map(overgeneration => new MetricWrongHit(
+                overgeneration.index,
+                overgeneration.sentence,
+                false
+            ))
         )
     }
 

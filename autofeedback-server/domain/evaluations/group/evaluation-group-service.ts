@@ -93,6 +93,10 @@ export default class EvaluationGroupService {
 
     public async calculateScore(id: string): Promise<EvaluationGroup> {
         const evalGroup = await this.evaluationGroupRepository.getById(id);
+
+        const evaluations = await this.evaluationService.getByGroupId(id);
+        await this.evaluationService.calculateScores(evaluations)
+
         await this.scoreEvaluationGroup(evalGroup);
         return evalGroup;
     }

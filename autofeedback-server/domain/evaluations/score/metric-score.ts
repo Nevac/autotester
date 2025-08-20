@@ -1,20 +1,25 @@
 import MetricBestHit, {metricBestHitSchema} from "./metric-best-hit";
 import {Schema} from "mongoose";
+import MetricWrongHit, {metricWrongHitSchema} from "./metric-wrong-hit";
+import ReferenceAddressing from "./reference-addressing";
 
 interface IMetricScore {
     score: number,
-    bestHits: MetricBestHit[]
+    referenceAddressings: ReferenceAddressing[],
+    wrongHits: MetricWrongHit[]
 }
 
 export default class MetricScore implements IMetricScore {
     constructor(
         public readonly score: number,
-        public readonly bestHits: MetricBestHit[]
+        public readonly referenceAddressings: ReferenceAddressing[],
+        public readonly wrongHits: MetricWrongHit[]
     ) {}
 
     public static zero() {
         return new MetricScore(
             0,
+            [],
             []
         );
     }
@@ -23,7 +28,8 @@ export default class MetricScore implements IMetricScore {
 export const metricScoreSchema = new Schema<IMetricScore>(
     {
         score: { type: Number, required: true },
-        bestHits: { type: [metricBestHitSchema], required: true }
+        referenceAddressings: { type: [metricBestHitSchema], required: true },
+        wrongHits: { type: [metricWrongHitSchema], required: true }
     },
     {
         _id: false,
