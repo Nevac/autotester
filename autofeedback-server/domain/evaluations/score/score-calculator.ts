@@ -38,21 +38,27 @@ export default class ScoreCalculator {
             scoreTracker
         );
 
+        const unreferencedCorrectness = this.gatherUnreferencedFeedbacks(
+            FeedbackMetric.CORRECTNESS,
+            evaluationStatistic.generatedFeedback
+        );
+
         const correctness = this.calculateMetricScore(
-            this.calculateMetricMalus(
-                FeedbackMetric.CORRECTNESS,
-                evaluationStatistic.generatedFeedback
-            ),
+            unreferencedCorrectness,
             scoreTracker.correctness
         );
+
+        const unreferencedSuggestion = this.gatherUnreferencedFeedbacks(
+            FeedbackMetric.SUGGESTION,
+            evaluationStatistic.generatedFeedback
+        );
+
         const suggestion = this.calculateMetricScore(
-            this.calculateMetricMalus(
-                FeedbackMetric.SUGGESTION,
-                evaluationStatistic.generatedFeedback
-            ),
+            unreferencedSuggestion,
             scoreTracker.suggestion
         );
-        const codeStyle = this.calculateMetricScore(0, scoreTracker.codeStyle);
+
+        const codeStyle = this.calculateMetricScore([], scoreTracker.codeStyle);
         const overgeneration = this.calculateOvergeneration(
             evaluationStatistic.generatedFeedback
         );
@@ -84,12 +90,16 @@ export default class ScoreCalculator {
     }
 
     private calculateMetricScore(
-        malus: number,
+        unreferencedFeedback: UnreferencedFeedback[],
         metricMap: Map<string, ReferenceAddressingUpsert>
     ): MetricScore {
         const scoreAddressings = Array.from(metricMap.values());
         const totalReferences = scoreAddressings.length;
         const addressedReferences = scoreAddressings.filter(addressing => addressing.addressed).length;
+
+        const malus = unreferencedFeedback
+            .filter(feedback => !feedback.ignore)
+            .length;
 
         let score = 1;
         if(totalReferences !== 0) {
@@ -105,7 +115,7 @@ export default class ScoreCalculator {
         return new MetricScore(
             parseFloat(score.toPrecision(4)),
             scoreAddressings,
-            []
+            unreferencedFeedback
         )
     }
 
@@ -182,6 +192,25 @@ export default class ScoreCalculator {
             metric,
             statistic
         )).length;
+    }
+
+    private gatherUnreferencedFeedbacks(
+        metric: FeedbackMetric,
+        generatedSemanticStatistics: GeneratedFeedbackSemanticStatistic[]
+    ): UnreferencedFeedback[] {
+        return generatedSemanticStatistics
+            .filter(statistic =>
+                this.filterOvergeneratedMetrics(
+                    metric,
+                    statistic
+                )
+            ).map(statistic =>
+                new UnreferencedFeedback(
+                    statistic.index,
+                    statistic.sentence,
+                    false
+                )
+            );
     }
 
     private filterOvergeneratedMetrics(
