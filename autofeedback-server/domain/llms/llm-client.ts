@@ -62,7 +62,6 @@ export class ClientResponse {
     }
 
     public static ofGeminiContentResult(response: GenerateContentResponse) {
-        console.log(response.text!);
         return new ClientResponse(
             [response.text!]
         )

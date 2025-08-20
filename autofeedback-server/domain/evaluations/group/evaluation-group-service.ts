@@ -82,32 +82,52 @@ export default class EvaluationGroupService {
         return evalGroup;
     }
 
+    public async retryEvaluation(id: string): Promise<EvaluationGroup> {
+        const evalGroup = await this.evaluationGroupRepository.getById(id);
+        const evaluations = await this.evaluationService.getAllNotDoneByGroupId(id);
+
+        this.evaluateAll(evalGroup, evaluations);
+
+        return evalGroup;
+    }
+
+    public async calculateScore(id: string): Promise<EvaluationGroup> {
+        const evalGroup = await this.evaluationGroupRepository.getById(id);
+        await this.scoreEvaluationGroup(evalGroup);
+        return evalGroup;
+    }
+
     private async evaluateAll(
         evaluationGroup: EvaluationGroup,
         evaluations: Map<string, Evaluation>
     ): Promise<void> {
         const limit = pLimit(2);
-        const scoredEvaluations: Evaluation[] = [];
         let done = 0;
         let toDo = evaluations.size;
 
         await Promise.all(
             Array.from(evaluations.values()).map(ev =>
                 limit(async () => {
-                    const r = await this.evaluationService.evaluate(ev);
-
-                    scoredEvaluations.push(r);
+                    await this.evaluationService.evaluate(ev);
                     logger.debug(`EVAL PROGRESS: ${++done} / ${toDo}`);
                 })
             )
+        );
+
+        await this.scoreEvaluationGroup(evaluationGroup);
+
+        logger.debug("Evaluation Group DONE");
+    }
+
+    private async scoreEvaluationGroup(evaluationGroup: EvaluationGroup) {
+        const scoredEvaluations = Array.from(
+            (await this.evaluationService.getByGroupId(evaluationGroup._id)).values()
         );
 
         await this.evaluationGroupRepository.update(
             evaluationGroup._id,
             this.calculateAndSetLlmScores(scoredEvaluations, evaluationGroup).setState(EvaluationState.DONE)
         );
-
-        logger.debug("Evaluation Group DONE");
     }
 
     private calculateAndSetLlmScores(

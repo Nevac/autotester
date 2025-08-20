@@ -43,6 +43,14 @@ export default class EvaluationService {
         return await this.evaluationRepository.getById(id);
     }
 
+    public async getByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
+        return await this.evaluationRepository.getByGroupId(groupId);
+    }
+
+    public async getAllNotDoneByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
+        return await this.evaluationRepository.getAllNotDoneByGroupId(groupId);
+    }
+
     public async create(evaluationUpdate: EvaluationUpdate): Promise<Evaluation> {
         return await this.evaluationRepository.create(evaluationUpdate);
     }
@@ -77,7 +85,7 @@ export default class EvaluationService {
         );
 
         try{
-            logger.debug(`Start Evaluation [${evaluation._id}][${evaluation.llm}]`)
+            logger.debug(`Start Evaluation [${evaluation.llm}][${evaluation._id}]`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
             let ragResponse: RagResponse = RagResponse.empty(evaluation.ast);

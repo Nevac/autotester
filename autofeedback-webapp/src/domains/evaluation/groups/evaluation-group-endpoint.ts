@@ -27,7 +27,6 @@ export default class EvaluationGroupEndpoint {
     }
 
     public create(chat: EvaluationGroupUpdate): Promise<EndpointResponeStatus> {
-        console.log(chat);
         return fetch(this.ENDPOINT, {
             method: "POST",
             headers: {
@@ -35,6 +34,32 @@ export default class EvaluationGroupEndpoint {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(chat)
+        }).then(res => {
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
+        })
+    }
+
+    public retryFailed(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}/retryFailed`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(res => {
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
+        })
+    }
+
+    public calculateScore(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}/calculateScore`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
         }).then(res => {
             if(res.ok) return EndpointResponeStatus.SUCCESS
             return EndpointResponeStatus.FAIL;

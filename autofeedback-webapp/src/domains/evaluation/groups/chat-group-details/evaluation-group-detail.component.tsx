@@ -1,7 +1,7 @@
 import './evaluation-group-detail.component.css';
 import {
     Accordion, AccordionDetails, AccordionSummary,
-    Box, Chip,
+    Box, Button, Chip,
     Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Typography
 } from "@mui/material";
@@ -16,7 +16,7 @@ import java from 'react-syntax-highlighter/dist/esm/languages/hljs/java';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import 'highlight.js/styles/vs2015.css';
 import MarkdownX from "../../../util/markdown-x/MarkdownX";
-import {DataGrid, GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridSortingInitialState, GridSortModel} from "@mui/x-data-grid";
 import {Llm} from "../../../llms/llm";
 import Paper from "@mui/material/Paper";
 import EvaluationEndpoint from "../../evaluation-endpoint";
@@ -31,6 +31,10 @@ import MetricOvergenerationScore from "../../score/metric-overgeneration-score";
 import EvaluationRagDocument from "../../rag-document/evaluation-rag-document";
 import Attempt from "../../../attempts/attempt";
 import Ast from "../../../ast/ast";
+import ReplayIcon from '@mui/icons-material/Replay';
+import EvaluationGroupUpdate from "../evaluation-group-update";
+import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
+import evaluationGroupUpdateSlice from "../evaluation-group-update.slice";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -110,15 +114,24 @@ export default function EvaluationGroupDetailComponent() {
 
     const llmColumns: GridColDef[] = [
         { field: 'llm', headerName: 'Llm', width: 200, valueGetter: (value, row) => row.value.llm },
-        { field: 'state', headerName: 'State', width: 200, valueGetter: (value, row) => row.value.state },
-        { field: 'score', headerName: 'Score', width: 200, valueGetter: (value, row) => row.value.score.total },
+        { field: 'state', headerName: 'State', width: 80, valueGetter: (value, row) => row.value.state },
+        { field: 'score', headerName: 'Score', width: 100, valueGetter: (value, row) => row.value.score.total.toFixed(3) },
     ];
 
     const evaluationColumns: GridColDef[] = [
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'state', headerName: 'State', width: 200 },
-        { field: 'score', headerName: 'Score', width: 200, valueGetter: (value, row) => row.score },
+        { field: 'name', headerName: 'Name', width: 450 },
+        { field: 'state', headerName: 'State', width: 80 },
+        { field: 'score', headerName: 'Score', width: 100, valueGetter: (value, row) => row.score.toFixed(3) },
     ];
+
+    const initialSorting: GridSortingInitialState = {
+        sortModel: [
+            {
+                field: 'score',
+                sort: 'desc'
+            }
+        ]
+    }
 
     return (
         <Box className={'evaluation-group-detail-box'}>
@@ -129,15 +142,51 @@ export default function EvaluationGroupDetailComponent() {
                 </div>
                 <Divider/>
             </Typography>
+            <EvaluationActions/>
             <EvaluationSelection/>
             <EvaluationDetail evaluation={evaluation}/>
         </Box>
     )
 
+    function EvaluationActions() {
+        return (
+            <Box style={{display: "flex", flexDirection: "row", gap: 10}} sx={{padding: '10px'}}>
+                <Button color={'warning'} variant={'contained'} onClick={retryFailed}>
+                    <ReplayIcon/> <Typography>Retry Failed</Typography>
+                </Button>
+                <Button variant={'contained'} onClick={calculateScore}>
+                    <ReplayIcon/> <Typography>Recalculate Score</Typography>
+                </Button>
+            </Box>
+        )
+    }
+
+    function retryFailed(): void {
+        if(evaluationGroup) {
+            evaluationGroupEndpoint.retryFailed(evaluationGroup._id)
+                .then(state => {
+                    if(state == EndpointResponeStatus.SUCCESS) {
+                        openSnackbar("Retry for failed evaluations started", SnackbarVariant.SUCCESS);
+                    } else openSnackbar("Failed to perform retry", SnackbarVariant.ERROR);
+                });
+        }
+    }
+
+    function calculateScore(): void {
+        if(evaluationGroup) {
+            evaluationGroupEndpoint.calculateScore(evaluationGroup._id)
+                .then(state => {
+                    if(state == EndpointResponeStatus.SUCCESS) {
+                        openSnackbar("Recalculation Successful", SnackbarVariant.SUCCESS);
+                    } else openSnackbar("Failed to perform retry", SnackbarVariant.ERROR);
+                });
+        }
+    }
+
     function EvaluationSelection() {
         return (
             <Box className={'evaluation-group-selection-tables-box'}>
-                <Box sx={{width: 700, padding: '20px'}}>
+                <Box sx={{width: 500, padding: '20px'}}>
                     <Paper sx={{height: 300}}>
                         <DataGrid
                             disableMultipleRowSelection
@@ -146,6 +195,8 @@ export default function EvaluationGroupDetailComponent() {
                             onRowSelectionModelChange={selection => setSelectedLlm(selection[0] as string)}
                             rowSelectionModel={selectedLlm}
                             sx={{border: 0}}
+                            initialState={{sorting: initialSorting}}
+                            hideFooterSelectedRowCount
                         />
                     </Paper>
                 </Box>
@@ -159,6 +210,8 @@ export default function EvaluationGroupDetailComponent() {
                             onRowSelectionModelChange={selection => setSelectedEvaluation(selection[0] as string)}
                             rowSelectionModel={selectedEvaluation}
                             sx={{border: 0}}
+                            initialState={{sorting: initialSorting}}
+                            hideFooterSelectedRowCount
                         />
                     </Paper>
                 </Box>
@@ -363,7 +416,7 @@ export default function EvaluationGroupDetailComponent() {
                             </TableRow>
                             <TableRow>
                                 <TableCell align="right">Total</TableCell>
-                                <TableCell align="right">{props.score.total}</TableCell>
+                                <TableCell align="right">{props.score.total.toFixed(3)}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -419,7 +472,7 @@ export default function EvaluationGroupDetailComponent() {
             <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                 <Paper elevation={10} style={{padding: 10}}>
                     <Typography variant={"h6"} fontWeight={"bold"}>{props.bestHit.id}</Typography>
-                    <Typography>Semantic Similarity: {props.bestHit.similarityScore}</Typography>
+                    <Typography>Semantic Similarity: {props.bestHit.similarityScore.toFixed(4)}</Typography>
                 </Paper>
                 <div style={{display: "flex", flexDirection: "row", gap: 10}}>
                     <Paper elevation={10} style={{padding: 10, flex: 1}}>

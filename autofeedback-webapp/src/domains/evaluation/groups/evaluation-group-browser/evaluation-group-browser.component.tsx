@@ -83,7 +83,7 @@ export default function EvaluationGroupBrowserComponent() {
                                     <ListItemText primary={item.name}/>
                                     <Typography color={'textSecondary'} fontSize={'0.7em'}>STATE: {item.state}</Typography>
                                     {item.bestLlm?
-                                        <Typography color={'textSecondary'} fontSize={'0.7em'}>Best LLM: {item.bestLlm} | SCORE: {item.bestScore}</Typography> :
+                                        <Typography color={'textSecondary'} fontSize={'0.7em'}>Best LLM: {item.bestLlm} | SCORE: {item.bestScore?.toFixed(3)}</Typography> :
                                         <></>
                                     }
                                 </div>

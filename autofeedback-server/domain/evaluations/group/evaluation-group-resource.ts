@@ -26,13 +26,23 @@ export default class EvaluationGroupResource {
         });
 
         router.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
-            const exercise = await this.service.getById(req.params.id).catch(next);
-            res.json(exercise);
+            const evaluationGroup = await this.service.getById(req.params.id).catch(next);
+            res.json(evaluationGroup);
         });
 
         router.post(`/${this.RESOURCE}`, async (req, res, next) => {
-            const chatGroup = await this.service.create(req.body).catch(next);
-            res.json(chatGroup);
+            const evaluationGroup = await this.service.create(req.body).catch(next);
+            res.json(evaluationGroup);
+        });
+
+        router.post(`/${this.RESOURCE}/:id/retryFailed`, async (req, res, next) => {
+            const evaluationGroup = await this.service.retryEvaluation(req.params.id).catch(next);
+            res.json(evaluationGroup);
+        });
+
+        router.post(`/${this.RESOURCE}/:id/calculateScore`, async (req, res, next) => {
+            const evaluationGroup = await this.service.calculateScore(req.params.id).catch(next);
+            res.json(evaluationGroup);
         });
 
         router.delete(`/${this.RESOURCE}/:id`, async (req, res, next) => {

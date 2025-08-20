@@ -18,7 +18,6 @@ export default class MistralClient implements LlmClient {
     }
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
-        console.log(this.model.toString())
         try {
             const completion = await this.client.chat.complete({
                 messages: [

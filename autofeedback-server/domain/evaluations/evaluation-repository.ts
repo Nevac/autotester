@@ -4,6 +4,7 @@ import EvaluationUpdate from "./evaluation-update";
 import {EvaluationGroup} from "./group/evaluation-group";
 import {Llm} from "../llms/llm";
 import {Attempt, AttemptModel} from "../attempts/attempt";
+import EvaluationState from "./evaluation-state";
 
 
 export default class EvaluationRepository {
@@ -28,7 +29,7 @@ export default class EvaluationRepository {
             .then(documents =>
                 documents.map(document =>
                     EvaluationListEntry.ofDocument(document)
-                ))
+                ));
     }
 
     public async getById(id: string): Promise<Evaluation> {
@@ -38,6 +39,27 @@ export default class EvaluationRepository {
                 if (document) return Evaluation.ofDocument(document);
                 throw `Evaluation with id ${id} not found`
             });
+    }
+
+    public async getByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
+        return await EvaluationModel.find({
+            evaluationGroup: groupId
+        })
+            .exec()
+            .then(documents =>
+                Evaluation.ofDocuments(documents)
+            );
+    }
+
+    public async getAllNotDoneByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
+        return await EvaluationModel.find({
+            state: { "$ne": EvaluationState.DONE },
+            evaluationGroup: groupId
+        })
+            .exec()
+            .then(documents =>
+                Evaluation.ofDocuments(documents)
+            );
     }
 
     public async create(evaluation: EvaluationUpdate): Promise<Evaluation> {

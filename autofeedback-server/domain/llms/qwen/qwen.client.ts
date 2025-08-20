@@ -20,7 +20,6 @@ export default class QwenClient implements LlmClient {
     }
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
-        console.log(this.model.toString())
         try {
             const completion = await this.client.chat.completions.create({
                 messages: [
