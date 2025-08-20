@@ -10,8 +10,8 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import DeleteConfirmButtonComponent from "../../../util/delete-confirm-button/delete-confirm-button.component";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {useDispatch} from "react-redux";
-import evaluationGroupUpdateSlice from "../evaluation-group-update.slice";
 import {useAppSelector} from "../../../../app/redux-hooks";
+import {evaluationGroupsUpdateSlice} from "../evaluation-groups-update.slice";
 
 
 export default function EvaluationGroupBrowserComponent() {
@@ -23,10 +23,10 @@ export default function EvaluationGroupBrowserComponent() {
 
     const navigate = useNavigate();
 
-    const exercisesChanged = useAppSelector(state => state.chatGroupsUpdated.value)
+    const evaluationGroupsChanged = useAppSelector(state => state.evaluationGroupsUpdated.value)
     const dispatch = useDispatch()
 
-    const loadChatGroups = () => {
+    const loadEvaluationGroups = () => {
         endpoint.getListItems()
             .then(items =>
                 setItems(items)
@@ -39,8 +39,8 @@ export default function EvaluationGroupBrowserComponent() {
             );
     }
 
-    useEffect(loadChatGroups, []);
-    useEffect(loadChatGroups, [exercisesChanged]);
+    useEffect(loadEvaluationGroups, []);
+    useEffect(loadEvaluationGroups, [evaluationGroupsChanged]);
 
     const location = useLocation();
     const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
@@ -56,7 +56,7 @@ export default function EvaluationGroupBrowserComponent() {
             .then(state => {
                 if(state === EndpointResponeStatus.SUCCESS) {
                     openSnackbar("Evaluation delete successful", SnackbarVariant.SUCCESS);
-                    dispatch(evaluationGroupUpdateSlice.actions.update());
+                    dispatch(evaluationGroupsUpdateSlice.actions.update());
                 } else openSnackbar("Evaluation delete failed", SnackbarVariant.ERROR)
             });
     }

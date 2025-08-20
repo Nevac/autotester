@@ -4,7 +4,10 @@ import chatGroupUpdateSlice from "../domains/chats/groups/chat-group-update.slic
 import {promptGroupUpdateSlice} from "../domains/prompts/groups/prompt-group-update.slice";
 import chatUpdateSlice from "../domains/chats/chat-update.slice";
 import {attemptUpdateSlice} from "../domains/attempts/attempt-update.slice";
-import evaluationGroupUpdateSlice from "../domains/evaluation/groups/evaluation-group-update.slice";
+import {
+    evaluationGroupsUpdateSlice,
+    evaluationGroupUpdateSlice
+} from "../domains/evaluation/groups/evaluation-groups-update.slice";
 import {ragUpdateSlice} from "../domains/rag/groups/rag-update.slice";
 
 export const store = configureStore({
@@ -14,7 +17,8 @@ export const store = configureStore({
         promptGroupsUpdated: promptGroupUpdateSlice.reducer,
         chatsUpdated: chatUpdateSlice.reducer,
         attemptsUpdated: attemptUpdateSlice.reducer,
-        evaluationGroupsUpdated: evaluationGroupUpdateSlice.reducer,
+        evaluationGroupsUpdated: evaluationGroupsUpdateSlice.reducer,
+        evaluationGroupUpdated: evaluationGroupUpdateSlice.reducer,
         ragsUpdated: ragUpdateSlice.reducer
     }
 })

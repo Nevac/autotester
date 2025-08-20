@@ -20,7 +20,6 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import useInputValue from "../../../util/forms/input-value-hook";
 import useFormValidationHook from "../../../util/forms/form-validation-hook";
 import {useDispatch} from "react-redux";
-import evaluationGroupUpdateSlice from "../evaluation-group-update.slice";
 import {Llm} from "../../../llms/llm";
 import AttemptEndpoint from "../../../attempts/attempt-endpoint";
 import AttemptListItem from "../../../attempts/attempt-list-item";
@@ -29,6 +28,7 @@ import {DataGrid, GridColDef} from "@mui/x-data-grid";
 import EnumUtil from "../../../util/enum/EnumUtil";
 import RagListItem from "../../../rag/groups/rag-list-item";
 import RagEndpoint from "../../../rag/groups/rag-endpoint";
+import {evaluationGroupsUpdateSlice} from "../evaluation-groups-update.slice";
 
 interface ChatGroupFormProps {
     nameInit?: string,
@@ -121,7 +121,7 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {
                 openSnackbar("Evaluation created successfully", SnackbarVariant.SUCCESS);
-                dispatch(evaluationGroupUpdateSlice.actions.update());
+                dispatch(evaluationGroupsUpdateSlice.actions.update());
             } else openSnackbar("Failed to create chat", SnackbarVariant.ERROR);
 
         });

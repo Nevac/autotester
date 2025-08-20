@@ -28,13 +28,12 @@ import MetricScore from "../../score/metric-score";
 import MetricBestHit from "../../score/metric-best-hit";
 import EvaluationSemanticStatistic from "../../statistic/evaluation-semantic-statistic";
 import MetricOvergenerationScore from "../../score/metric-overgeneration-score";
-import EvaluationRagDocument from "../../rag-document/evaluation-rag-document";
 import Attempt from "../../../attempts/attempt";
 import Ast from "../../../ast/ast";
 import ReplayIcon from '@mui/icons-material/Replay';
-import EvaluationGroupUpdate from "../evaluation-group-update";
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
-import evaluationGroupUpdateSlice from "../evaluation-group-update.slice";
+import {useDispatch} from "react-redux";
+import {evaluationGroupsUpdateSlice, evaluationGroupUpdateSlice} from "../evaluation-groups-update.slice";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -64,24 +63,23 @@ export default function EvaluationGroupDetailComponent() {
     const [selectedEvaluation, setSelectedEvaluation] = useState<string>();
 
     const [openSnackbar, Snackbar] = useSnackbar()
-    const chatsChanged = useAppSelector(state => state.chatsUpdated.value)
+    const evaluationGroupChanged = useAppSelector(state => state.evaluationGroupUpdated.value)
+    const dispatch = useDispatch()
 
     const evaluationGroupEndpoint = new EvaluationGroupEndpoint();
     const evaluationEndpoint = new EvaluationEndpoint();
 
-
-    const loadChatGroup = () => {
+    const loadEvaluationGroup = () => {
         evaluationGroupEndpoint.getById(id!).then(evaluationGroup =>
             setEvaluationGroup(evaluationGroup)
         );
     }
 
-    useEffect(loadChatGroup, [id]);
-    useEffect(loadChatGroup, [chatsChanged]);
+    useEffect(loadEvaluationGroup, [id]);
+    useEffect(loadEvaluationGroup, [evaluationGroupChanged]);
 
     useEffect(() => {
         if(evaluationGroup) {
-            console.log(evaluationGroup.llms)
             setSelectableLlmStates(
                 Array.from(evaluationGroup.llms.values())
                     .map(state => SelectableLlmState.of(state))
@@ -178,6 +176,7 @@ export default function EvaluationGroupDetailComponent() {
                 .then(state => {
                     if(state == EndpointResponeStatus.SUCCESS) {
                         openSnackbar("Recalculation Successful", SnackbarVariant.SUCCESS);
+                        dispatch(evaluationGroupUpdateSlice.actions.update())
                     } else openSnackbar("Failed to perform retry", SnackbarVariant.ERROR);
                 });
         }
@@ -491,25 +490,4 @@ export default function EvaluationGroupDetailComponent() {
             </div>
         );
     }
-}
-
-function AccordionComponent (props: {title: string, id: string, content: string | undefined}) {
-    return (
-        <Accordion>
-            <AccordionSummary
-                expandIcon={<ExpandMore/>}
-                aria-controls={`${props.id}-accordion-content`}
-                id={`${props.id}-accordion-header`}
-            >
-                <Typography variant="h5">
-                    {props.title}
-                </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-                <MarkdownX>
-                    {props.content}
-                </MarkdownX>
-            </AccordionDetails>
-        </Accordion>
-    );
 }
