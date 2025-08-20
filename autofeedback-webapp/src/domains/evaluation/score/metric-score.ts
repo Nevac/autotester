@@ -1,11 +1,11 @@
-import MetricWrongHit from "./metric-wrong-hit";
+import UnreferencedFeedback from "./unreferenced-feedback";
 import ReferenceAddressing from "./reference-addressing";
 
 export default class MetricScore {
     constructor(
         public readonly score: number,
         public readonly referenceAddressings: ReferenceAddressing[],
-        public readonly unreferencedFeedback: MetricWrongHit[]
+        public readonly unreferencedFeedback: UnreferencedFeedback[]
     ) {}
 
     public static zero() {

@@ -1,4 +1,4 @@
-export default class MetricWrongHit {
+export default class UnreferencedFeedback {
     constructor(
         public readonly index: number,
         public readonly generatedSentence: string,

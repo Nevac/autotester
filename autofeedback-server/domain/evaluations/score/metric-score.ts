@@ -1,18 +1,18 @@
 import {Schema} from "mongoose";
-import MetricWrongHit, {metricWrongHitSchema} from "./metric-wrong-hit";
+import UnreferencedFeedback, {unassignedFeedbackSchema} from "./unreferenced-feedback";
 import ReferenceAddressing, {referenceAddressingSchema} from "./reference-addressing";
 
 interface IMetricScore {
     score: number,
     referenceAddressings: ReferenceAddressing[],
-    wrongHits: MetricWrongHit[]
+    unreferencedFeedbacks: UnreferencedFeedback[]
 }
 
 export default class MetricScore implements IMetricScore {
     constructor(
         public readonly score: number,
         public readonly referenceAddressings: ReferenceAddressing[],
-        public readonly wrongHits: MetricWrongHit[]
+        public readonly unreferencedFeedbacks: UnreferencedFeedback[]
     ) {}
 
     public static zero() {
@@ -28,7 +28,7 @@ export const metricScoreSchema = new Schema<IMetricScore>(
     {
         score: { type: Number, required: true },
         referenceAddressings: { type: [referenceAddressingSchema], required: true },
-        wrongHits: { type: [metricWrongHitSchema], required: true }
+        unreferencedFeedbacks: { type: [unassignedFeedbackSchema], required: true }
     },
     {
         _id: false,

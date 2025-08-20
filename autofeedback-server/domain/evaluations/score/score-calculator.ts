@@ -9,7 +9,7 @@ import FeedbackMetric from "../../attempts/expected-feedback/feedback-metric";
 import GeneratedFeedbackSemanticStatistic from "../statistic/generated-feedback-semantic-statistic";
 import SCORE_THRESHOLD from "./score-threshold";
 import MetricOvergenerationScore from "./metric-overgeneration-score";
-import MetricWrongHit from "./metric-wrong-hit";
+import UnreferencedFeedback from "./unreferenced-feedback";
 import ReferenceAddressingUpsert from "./reference-addressing-upsert";
 
 export default class ScoreCalculator {
@@ -128,7 +128,7 @@ export default class ScoreCalculator {
         return new MetricScore(
             0,
             scoreAddressings,
-            overgenerations.map(overgeneration => new MetricWrongHit(
+            overgenerations.map(overgeneration => new UnreferencedFeedback(
                 overgeneration.index,
                 overgeneration.sentence,
                 false

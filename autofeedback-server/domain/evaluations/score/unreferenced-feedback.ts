@@ -1,23 +1,23 @@
 import {Schema} from "mongoose";
 import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
 
-interface IMetricWrongHit {
-    index: number,
+interface IUnreferencedFeedback {
+    generatedFeedbackIndex: number,
     generatedSentence: string,
     ignore: boolean,
 }
 
-export default class MetricWrongHit implements IMetricWrongHit {
+export default class UnreferencedFeedback implements IUnreferencedFeedback {
     constructor(
-        public readonly index: number,
+        public readonly generatedFeedbackIndex: number,
         public readonly generatedSentence: string,
         public readonly ignore: boolean
     ) {}
 }
 
-export const metricWrongHitSchema = new Schema<IMetricWrongHit>(
+export const unassignedFeedbackSchema = new Schema<IUnreferencedFeedback>(
     {
-        index: { type: Number, required: true },
+        generatedFeedbackIndex: { type: Number, required: true },
         generatedSentence: { type: String, required: true },
         ignore: { type: Boolean, required: true }
     },
