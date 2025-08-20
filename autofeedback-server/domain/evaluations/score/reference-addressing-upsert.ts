@@ -2,6 +2,7 @@
 export default class ReferenceAddressingUpsert {
     constructor(
         public readonly id: string,
+        public ignore: boolean,
         public addressed: boolean,
         public expectedSentence: string,
         public generatedSentence: string,
@@ -11,6 +12,7 @@ export default class ReferenceAddressingUpsert {
     public static create(id: string): ReferenceAddressingUpsert {
         return new ReferenceAddressingUpsert(
             id,
+            false,
             false,
             "",
             "",
@@ -35,6 +37,11 @@ export default class ReferenceAddressingUpsert {
 
     public setGeneratedSentence(value: string): ReferenceAddressingUpsert {
         this.generatedSentence = value;
+        return this;
+    }
+
+    public setIgnore(value: boolean): ReferenceAddressingUpsert {
+        this.ignore = value;
         return this;
     }
 }
