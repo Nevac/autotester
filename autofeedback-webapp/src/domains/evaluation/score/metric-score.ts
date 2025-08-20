@@ -5,7 +5,7 @@ export default class MetricScore {
     constructor(
         public readonly score: number,
         public readonly referenceAddressings: ReferenceAddressing[],
-        public readonly unreferencedFeedback: UnreferencedFeedback[]
+        public readonly unreferencedFeedbacks: UnreferencedFeedback[]
     ) {}
 
     public static zero() {

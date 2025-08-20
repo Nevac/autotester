@@ -35,6 +35,7 @@ import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {useDispatch} from "react-redux";
 import {evaluationGroupsUpdateSlice, evaluationGroupUpdateSlice} from "../evaluation-groups-update.slice";
 import ReferenceAddressing from "../../score/reference-addressing";
+import UnreferencedFeedback from "../../score/unreferenced-feedback";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -446,6 +447,15 @@ export default function EvaluationGroupDetailComponent() {
                     } else return <></>
                 }
                 )}
+                {props.metricScore.unreferencedFeedbacks.length === 0 ? <></> :
+                    <Typography style={{marginTop: 20}} fontWeight={"bold"}>Wrong Feedback</Typography>
+                }
+                {props.metricScore.unreferencedFeedbacks.map(unrefFeedback => {
+                        if(unrefFeedback) {
+                            return <UnrefFeedback key={unrefFeedback.index} unreferencedFeedback={unrefFeedback}/>
+                        } else return <></>
+                    }
+                )}
             </Paper>
         );
     }
@@ -489,6 +499,20 @@ export default function EvaluationGroupDetailComponent() {
                         </MarkdownX>
                     </Paper>
                 </div>
+            </div>
+        );
+    }
+
+    function UnrefFeedback(props: {
+        unreferencedFeedback: UnreferencedFeedback
+    }) {
+        const unreferencedFeedback = props.unreferencedFeedback;
+        return (
+            <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
+                <Paper elevation={10} style={{padding: 10}}>
+                    <Typography variant={"h6"} fontWeight={"bold"}>{unreferencedFeedback.index}</Typography>
+                    <MarkdownX>{unreferencedFeedback.generatedSentence}</MarkdownX>
+                </Paper>
             </div>
         );
     }

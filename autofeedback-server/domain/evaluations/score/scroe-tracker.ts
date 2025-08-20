@@ -64,7 +64,7 @@ export default class ScoreTracker {
         if(map.has(id)) {
             const existingReference = map.get(id)!;
 
-            if(referenceAddressing.similarityScore > existingReference.similarityScore) {
+            if(!existingReference.addressed || referenceAddressing.similarityScore > existingReference.similarityScore) {
                 map.set(id, referenceAddressing);
             }
         }
