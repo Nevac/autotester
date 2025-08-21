@@ -11,6 +11,8 @@ import SCORE_THRESHOLD from "./score-threshold";
 import MetricOvergenerationScore from "./metric-overgeneration-score";
 import UnreferencedFeedback from "./unreferenced-feedback";
 import ReferenceAddressingUpsert from "./reference-addressing-upsert";
+import Overgeneration from "./overgeneration";
+import OvergenerationValidity from "./overgeneration-validity";
 
 export default class ScoreCalculator {
     public static generateScore(
@@ -45,7 +47,7 @@ export default class ScoreCalculator {
 
         const correctness = this.calculateMetricScore(
             unreferencedCorrectness,
-            scoreTracker.correctness
+            Array.from(scoreTracker.correctness.values())
         );
 
         const unreferencedSuggestion = this.gatherUnreferencedFeedbacks(
@@ -55,12 +57,28 @@ export default class ScoreCalculator {
 
         const suggestion = this.calculateMetricScore(
             unreferencedSuggestion,
-            scoreTracker.suggestion
+            Array.from(scoreTracker.suggestion.values())
         );
 
-        const codeStyle = this.calculateMetricScore([], scoreTracker.codeStyle);
+        const codeStyle = this.calculateMetricScore(
+            [],
+            Array.from(scoreTracker.codeStyle.values())
+        )
+
+        const overgenerations = evaluationStatistic.generatedFeedback
+            .filter(statistic => this.filterOvergeneratedMetrics(
+                FeedbackMetric.CODE_STYLE,
+                statistic
+            )).map(semantic =>
+                new Overgeneration(
+                    semantic.index,
+                    semantic.sentence,
+                    OvergenerationValidity.VALID
+                )
+            );
+
         const overgeneration = this.calculateOvergeneration(
-            evaluationStatistic.generatedFeedback
+            overgenerations
         );
 
         return new EvaluationScore(
@@ -91,11 +109,13 @@ export default class ScoreCalculator {
 
     private calculateMetricScore(
         unreferencedFeedback: UnreferencedFeedback[],
-        metricMap: Map<string, ReferenceAddressingUpsert>
+        referenceAddressings: ReferenceAddressingUpsert[]
     ): MetricScore {
-        const scoreAddressings = Array.from(metricMap.values());
-        const totalReferences = scoreAddressings.length;
-        const addressedReferences = scoreAddressings.filter(addressing => addressing.addressed).length;
+        const totalReferences = referenceAddressings.length;
+
+        const addressedReferences = referenceAddressings
+            .filter(addressing => addressing.addressed && !addressing.ignore)
+            .length;
 
         const malus = unreferencedFeedback
             .filter(feedback => !feedback.ignore)
@@ -114,7 +134,7 @@ export default class ScoreCalculator {
 
         return new MetricScore(
             parseFloat(score.toPrecision(4)),
-            scoreAddressings,
+            referenceAddressings,
             unreferencedFeedback
         )
     }
@@ -221,14 +241,12 @@ export default class ScoreCalculator {
     }
 
     private calculateOvergeneration(
-        generatedSemanticStatistics: GeneratedFeedbackSemanticStatistic[],
+        overgenerations: Overgeneration[],
     ): MetricOvergenerationScore {
-        const overgenerations =  generatedSemanticStatistics.filter(statistic => this.filterOvergeneratedMetrics(
-            FeedbackMetric.CODE_STYLE,
-            statistic
-        ));
+        const overgenerationCount = overgenerations.filter(overgeneration =>
+            overgeneration.validity === OvergenerationValidity.VALID
+        ).length;
 
-        const overgenerationCount = overgenerations.length;
         let score = 1;
         if(overgenerationCount >= 2) {
             score = 0;

@@ -467,6 +467,10 @@ export default function EvaluationGroupDetailComponent() {
                 <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                     {props.metricOvergenerationScore.overgenerations.map(overgenration =>
                         <Paper elevation={10} style={{padding: 10}}>
+                            <Stack direction="row" spacing={1}>
+                                <Chip label={`index: ${overgenration.generatedFeedbackIndex}`} size="small"/>
+                                <Chip label={`validity: ${overgenration.validity}`} size="small"/>
+                            </Stack>
                             <Typography>{overgenration.sentence}</Typography>
                         </Paper>
                     )}

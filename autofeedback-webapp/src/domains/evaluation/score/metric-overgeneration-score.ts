@@ -1,9 +1,9 @@
-import GeneratedFeedbackSemanticStatistic from "../statistic/generated-feedback-semantic-statistic";
+import Overgeneration from "./overgeneration";
 
 export default class MetricOvergenerationScore {
     constructor(
         public readonly score: number,
-        public readonly overgenerations: GeneratedFeedbackSemanticStatistic[]
+        public readonly overgenerations: Overgeneration[]
     ) {}
 
     public static zero(): MetricOvergenerationScore {

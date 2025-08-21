@@ -1,17 +1,15 @@
 import {Schema} from "mongoose";
-import GeneratedFeedbackSemanticStatistic, {
-    generatedFeedbackSemanticStatisticSchema
-} from "../statistic/generated-feedback-semantic-statistic";
+import Overgeneration, {overgenerationSchema} from "./overgeneration";
 
 interface IMetricOvergenerationScore {
     score: number,
-    overgenerations: GeneratedFeedbackSemanticStatistic[]
+    overgenerations: Overgeneration[]
 }
 
 export default class MetricOvergenerationScore implements IMetricOvergenerationScore{
     constructor(
         public readonly score: number,
-        public readonly overgenerations: GeneratedFeedbackSemanticStatistic[]
+        public readonly overgenerations: Overgeneration[]
     ) {}
 
     public static zero(): MetricOvergenerationScore {
@@ -25,7 +23,7 @@ export default class MetricOvergenerationScore implements IMetricOvergenerationS
 export const metricOvergenerationScoreSchema = new Schema<IMetricOvergenerationScore>(
     {
         score: { type: Number, required: true },
-        overgenerations: { type: [generatedFeedbackSemanticStatisticSchema], required: true }
+        overgenerations: { type: [overgenerationSchema], required: true }
     },
     {
         _id: false,
