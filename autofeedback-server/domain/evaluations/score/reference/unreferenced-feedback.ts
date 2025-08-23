@@ -1,5 +1,5 @@
 import {Schema} from "mongoose";
-import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
+import ExpectedFeedbackSemanticStatistic from "../../statistic/expected-feedback-semantic-statistic";
 
 interface IUnreferencedFeedback {
     generatedFeedbackIndex: number,

@@ -5,7 +5,7 @@ import ExpectedFeedbackSemanticScore from "../expected-feedback-semantic-score";
 import GeneratedFeedbackSemanticScore from "../generated-feedback-semantic-score";
 import ExpectedFeedbackEmbedding from "./expected-feedback-embedding";
 import GeneratedFeedbackEmbedding from "./generated-feedback-embedding";
-import SCORE_THRESHOLD from "../../score/score-threshold";
+import SCORE_THRESHOLD from "../../score/calculation/score-threshold";
 
 export default class SemanticStatisticGenerator {
 

@@ -1,6 +1,6 @@
 import {Schema} from "mongoose";
-import UnreferencedFeedback, {unassignedFeedbackSchema} from "./unreferenced-feedback";
-import ReferenceAddressing, {referenceAddressingSchema} from "./reference-addressing";
+import UnreferencedFeedback, {unassignedFeedbackSchema} from "../reference/unreferenced-feedback";
+import ReferenceAddressing, {referenceAddressingSchema} from "../reference/reference-addressing";
 
 interface IMetricScore {
     score: number,
@@ -15,11 +15,22 @@ export default class MetricScore implements IMetricScore {
         public readonly unreferencedFeedbacks: UnreferencedFeedback[]
     ) {}
 
-    public static zero() {
+    public static zero(): MetricScore {
         return new MetricScore(
             0,
             [],
             []
+        );
+    }
+
+    public static uncalculated(
+        referenceAddressings: ReferenceAddressing[],
+        unreferencedFeedbacks: UnreferencedFeedback[]
+    ): MetricScore {
+        return new MetricScore(
+            0,
+            referenceAddressings,
+            unreferencedFeedbacks
         );
     }
 }

@@ -1,6 +1,6 @@
-import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
-import FeedbackMetric from "../../attempts/expected-feedback/feedback-metric";
-import ReferenceAddressingUpsert from "./reference-addressing-upsert";
+import ExpectedFeedbackSemanticStatistic from "../../statistic/expected-feedback-semantic-statistic";
+import FeedbackMetric from "../../../attempts/expected-feedback/feedback-metric";
+import ReferenceAddressingUpsert from "../reference/reference-addressing-upsert";
 
 export default class ScoreTracker {
     public readonly correctness: Map<string, ReferenceAddressingUpsert> = new Map();

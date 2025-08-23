@@ -12,11 +12,14 @@ import RagQueryBuilder from "../rag/rag-query-builder";
 import SemanticEvaluatorClient from "../semantic-evaluators/semantic-evaluator-client";
 import ModernBertClient from "../semantic-evaluators/modern-bert-client";
 import EvaluationState from "./evaluation-state";
-import ScoreCalculator from "./score/score-calculator";
+import ScoreCalculator from "./score/calculation/score-calculator";
 import {logger} from "../../logger";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
 import Ast from "../ast/ast";
 import RagResponse from "../rag/client/rag-response";
+import {EvaluationScore} from "./score/evaluation-score";
+import {EvaluationScoreCorrection} from "./score/correction/evaluation-score-correction";
+import ScoreCorrector from "./score/correction/score-corrector";
 
 export default class EvaluationService {
 
@@ -131,7 +134,7 @@ export default class EvaluationService {
                 throw new Error();
             }
 
-            const evaluationScore = ScoreCalculator.generateScore(
+            const evaluationScore = ScoreCalculator.calculateFromStatistic(
                 evaluation.attempt.expectedFeedback,
                 evaluationStatistic
             );
@@ -157,7 +160,7 @@ export default class EvaluationService {
     public async calculateScores(evaluations: Map<string, Evaluation>): Promise<Map<string, Evaluation>> {
         const updates = new Map(
             Array.from(evaluations.entries()).map(([id, evaluation]) => {
-                const evaluationScore = ScoreCalculator.generateScore(
+                const evaluationScore = ScoreCalculator.calculateFromStatistic(
                     evaluation.attempt.expectedFeedback,
                     evaluation.semanticStatistic
                 )
@@ -169,6 +172,28 @@ export default class EvaluationService {
         }));
 
         return await this.evaluationRepository.updateAll(updates);
+    }
+
+    public async correctScore(id: string, correction: EvaluationScoreCorrection): Promise<Evaluation> {
+        const evaluationUpdate = EvaluationUpdate.ofEvaluation(
+            await this.evaluationRepository.getById(id)
+        );
+
+        const score = ScoreCorrector.correct(
+            evaluationUpdate.score,
+            correction
+        );
+
+        evaluationUpdate.setScore(
+            ScoreCalculator.calculate(
+                score.correctness,
+                score.suggestion,
+                score.codeStyle,
+                score.overgeneration
+            )
+        );
+
+        return await this.evaluationRepository.update(id, evaluationUpdate);
     }
 
     public async update(id: string, update: EvaluationUpdate): Promise<Evaluation> {

@@ -1,3 +1,4 @@
+import ReferenceAddressing from "./reference-addressing";
 
 export default class ReferenceAddressingUpsert {
     constructor(
@@ -8,6 +9,23 @@ export default class ReferenceAddressingUpsert {
         public generatedSentence: string,
         public similarityScore: number,
     ) {}
+
+    public static ofReferenceAddressing(referenceAddressing: ReferenceAddressing): ReferenceAddressingUpsert {
+        return new ReferenceAddressingUpsert(
+            referenceAddressing.id,
+            referenceAddressing.ignore,
+            referenceAddressing.addressed,
+            referenceAddressing.expectedSentence,
+            referenceAddressing.generatedSentence,
+            referenceAddressing.similarityScore
+        )
+    }
+
+    public static ofReferenceAddressings(referenceAddressing: ReferenceAddressing[]): ReferenceAddressingUpsert[] {
+        return referenceAddressing.map(referenceAddressing =>
+            ReferenceAddressingUpsert.ofReferenceAddressing(referenceAddressing)
+        );
+    }
 
     public static create(id: string): ReferenceAddressingUpsert {
         return new ReferenceAddressingUpsert(

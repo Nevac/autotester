@@ -1,6 +1,6 @@
 import {Schema} from "mongoose";
-import MetricScore, {metricScoreSchema} from "./metric-score";
-import MetricOvergenerationScore, {metricOvergenerationScoreSchema} from "./metric-overgeneration-score";
+import MetricScore, {metricScoreSchema} from "./metric/metric-score";
+import MetricOvergenerationScore, {metricOvergenerationScoreSchema} from "./metric/metric-overgeneration-score";
 
 export interface IEvaluationScore {
     total: number,

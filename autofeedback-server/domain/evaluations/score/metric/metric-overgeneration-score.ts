@@ -18,6 +18,13 @@ export default class MetricOvergenerationScore implements IMetricOvergenerationS
             []
         );
     }
+
+    public static uncalculated(overgenerations: Overgeneration[]): MetricOvergenerationScore {
+        return new MetricOvergenerationScore(
+            0,
+            overgenerations
+        );
+    }
 }
 
 export const metricOvergenerationScoreSchema = new Schema<IMetricOvergenerationScore>(

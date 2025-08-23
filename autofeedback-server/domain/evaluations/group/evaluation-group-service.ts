@@ -14,6 +14,7 @@ import {Llm} from "../../llms/llm";
 import {EvaluationGroupLlmScore} from "./llm/evaluation-group-llm-score";
 import pLimit from "p-limit";
 import {logger} from "../../../logger";
+import {EvaluationScoreCorrection} from "../score/correction/evaluation-score-correction";
 
 export default class EvaluationGroupService {
 
@@ -99,6 +100,16 @@ export default class EvaluationGroupService {
 
         await this.scoreEvaluationGroup(evalGroup);
         return evalGroup;
+    }
+
+    public async correctScore(
+        evaluationGroupId: string,
+        evaluationId: string,
+        correction: EvaluationScoreCorrection
+    ): Promise<Evaluation> {
+        const evaluation = await this.evaluationService.correctScore(evaluationId, correction)
+        await this.calculateScore(evaluationGroupId);
+        return evaluation;
     }
 
     private async evaluateAll(

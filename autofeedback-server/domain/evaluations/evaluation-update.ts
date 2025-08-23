@@ -8,10 +8,11 @@ import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statist
 import {Evaluation} from "./evaluation";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
 import Ast from "../ast/ast";
+import {EvaluationScoreUpsert} from "./score/evaluation-score-upsert";
 
 export default class EvaluationUpdate {
     public state: EvaluationState = EvaluationState.INITIATED;
-    public score: EvaluationScore = EvaluationScore.zero();
+    public score: EvaluationScoreUpsert = EvaluationScoreUpsert.zero();
     public semanticStatistic = EvaluationSemanticStatistic.empty();
     public generatedFeedback: string = "Not generated yet";
     public ragDocuments?: EvaluationRagDocument[] = [];
@@ -39,7 +40,7 @@ export default class EvaluationUpdate {
             evaluation.rag
         )
             .setSemanticStatistic(evaluation.semanticStatistic)
-            .setScore(evaluation.score)
+            .setScore(EvaluationScoreUpsert.ofEvaluationScore(evaluation.score))
             .setState(evaluation.state)
             .setGeneratedFeedback(evaluation.generatedFeedback)
             .setRagDocuments(evaluation.ragDocuments);
@@ -50,7 +51,7 @@ export default class EvaluationUpdate {
         return this;
     }
 
-    public setScore(score: EvaluationScore): EvaluationUpdate {
+    public setScore(score: EvaluationScoreUpsert): EvaluationUpdate {
         this.score = score;
         return this;
     }

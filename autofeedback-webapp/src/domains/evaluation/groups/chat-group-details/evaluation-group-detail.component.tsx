@@ -1,8 +1,23 @@
 import './evaluation-group-detail.component.css';
 import {
-    Accordion, AccordionDetails, AccordionSummary,
-    Box, Button, Chip,
-    Divider, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Checkbox,
+    Chip,
+    Divider,
+    FormControl,
+    FormControlLabel,
+    InputLabel, MenuItem, Select,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Typography
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
@@ -36,6 +51,8 @@ import {useDispatch} from "react-redux";
 import {evaluationGroupsUpdateSlice, evaluationGroupUpdateSlice} from "../evaluation-groups-update.slice";
 import ReferenceAddressing from "../../score/reference-addressing";
 import UnreferencedFeedback from "../../score/unreferenced-feedback";
+import OvergenerationValidity from "../../score/overgeneration-validity";
+import overgenerationValidity from "../../score/overgeneration-validity";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -429,6 +446,9 @@ export default function EvaluationGroupDetailComponent() {
     function MetricScores(props: {evaluationScore: EvaluationScore}) {
         return (
             <div style={{flex: 1, display: "flex", gap: 10, flexDirection: "column"}}>
+                <div>
+                    <FormControlLabel control={<Checkbox/>} label={"Confusion"}/>
+                </div>
                 <MetricScore title={"Correctness"} metricScore={evaluation!.score.correctness}/>
                 <MetricScore title={"Suggestion"} metricScore={evaluation!.score.suggestion}/>
                 <MetricScore title={"Code Style"} metricScore={evaluation!.score.codeStyle}/>
@@ -437,16 +457,18 @@ export default function EvaluationGroupDetailComponent() {
         )
     }
 
-    function MetricScore(props: {title: string, metricScore: MetricScore}) {
+    function MetricScore(props: { title: string, metricScore: MetricScore }) {
         return (
             <Paper elevation={3} style={{padding: 10}}>
                 <Typography variant={"h5"}>{props.title}</Typography>
-                {props.metricScore.referenceAddressings.map(reference => {
-                    if(reference) {
-                        return <RefAddressing key={reference.id} referenceAddressing={reference}/>
-                    } else return <></>
-                }
+                <div style={{display: "flex", flexDirection: "column", gap: 20}}>
+                    {props.metricScore.referenceAddressings.map(reference => {
+                        if(reference) {
+                            return <RefAddressing key={reference.id} referenceAddressing={reference}/>
+                        } else return <></>
+                    }
                 )}
+                </div>
                 {props.metricScore.unreferencedFeedbacks.length === 0 ? <></> :
                     <Typography style={{marginTop: 20}} fontWeight={"bold"}>Wrong Feedback</Typography>
                 }
@@ -466,7 +488,21 @@ export default function EvaluationGroupDetailComponent() {
                 <Typography variant={"h5"}>Overgenerations</Typography>
                 <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                     {props.metricOvergenerationScore.overgenerations.map(overgenration =>
-                        <Paper elevation={10} style={{padding: 10}}>
+                        <Paper elevation={10} style={{padding: 10, display: "flex", flexDirection: "column", gap: 10}}>
+                            <FormControl fullWidth>
+                                <InputLabel id="validity-select-label">Validity</InputLabel>
+                                <Select
+                                    labelId="validity-select-label"
+                                    id="validity-simple-select"
+                                    value={overgenration.validity}
+                                    label="Age"
+                                    onChange={() => {}}
+                                >
+                                    <MenuItem value={OvergenerationValidity.VALID}>Valid</MenuItem>
+                                    <MenuItem value={OvergenerationValidity.IGNORE}>Ignore</MenuItem>
+                                    <MenuItem value={OvergenerationValidity.CODE_STYLE}>Count to Code Style</MenuItem>
+                                </Select>
+                            </FormControl>
                             <Stack direction="row" spacing={1}>
                                 <Chip label={`index: ${overgenration.generatedFeedbackIndex}`} size="small"/>
                                 <Chip label={`validity: ${overgenration.validity}`} size="small"/>
@@ -486,12 +522,15 @@ export default function EvaluationGroupDetailComponent() {
         return (
             <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                 <Paper elevation={10} style={{padding: 10}}>
+                    <div>
+                        <FormControlLabel control={<Checkbox checked={!refAddressing.ignore}/>} label={"Count"}/>
+                    </div>
                     <Typography variant={"h6"} fontWeight={"bold"}>{refAddressing.id}</Typography>
                     <Typography>Semantic Similarity: {refAddressing.similarityScore.toFixed(4)}</Typography>
                 </Paper>
                 <div style={{display: "flex", flexDirection: "row", gap: 10}}>
                     <Paper elevation={10} style={{padding: 10, flex: 1}}>
-                        <Typography variant={"h6"}>Expected</Typography>
+                    <Typography variant={"h6"}>Expected</Typography>
                         <MarkdownX>
                             {refAddressing.expectedSentence}
                         </MarkdownX>
@@ -514,6 +553,9 @@ export default function EvaluationGroupDetailComponent() {
         return (
             <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
                 <Paper elevation={10} style={{padding: 10}}>
+                    <div>
+                        <FormControlLabel control={<Checkbox checked={!unreferencedFeedback.ignore}/>} label={"Count"}/>
+                    </div>
                     <Typography variant={"h6"} fontWeight={"bold"}>{unreferencedFeedback.index}</Typography>
                     <MarkdownX>{unreferencedFeedback.generatedSentence}</MarkdownX>
                 </Paper>
