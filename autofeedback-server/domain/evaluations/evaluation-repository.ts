@@ -90,7 +90,6 @@ export default class EvaluationRepository {
     }
 
     public async update(id: string, evaluation: EvaluationUpdate): Promise<Evaluation> {
-        console.log(evaluation.score.correctness.referenceAddressings);
         return await EvaluationModel.updateOne(
             {_id: id},
             evaluation
