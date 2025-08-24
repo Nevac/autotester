@@ -1,11 +1,13 @@
 import {Document, model, Schema} from "mongoose";
 import Entity from "../entities/entity";
 import EntityUtil from "../entities/entity";
+import ExerciseDifficulty from "./exercise-difficulty";
 
 export interface IExercise {
     name: string,
     task: string,
-    solution: string
+    difficulty: ExerciseDifficulty
+    solution: string,
 }
 
 export class Exercise implements IExercise, Entity {
@@ -13,9 +15,10 @@ export class Exercise implements IExercise, Entity {
         public readonly _id: string,
         public readonly name: string,
         public readonly task: string,
+        public readonly difficulty: ExerciseDifficulty,
         public readonly solution: string,
         public readonly createdAt: Date,
-        public readonly updatedAt: Date
+        public readonly updatedAt: Date,
     ) {
     }
 
@@ -26,6 +29,7 @@ export class Exercise implements IExercise, Entity {
             EntityUtil.convertId(exercise._id),
             exercise.name,
             exercise.task,
+            exercise.difficulty,
             exercise.solution,
             createdAt,
             updatedAt
@@ -37,7 +41,8 @@ export const exerciseSchema = new Schema<IExercise>(
     {
         name: { type: String, required: true },
         task: { type: String, required: true },
-        solution: { type: String, required: true },
+        difficulty: { type: String, required: true },
+        solution: { type: String, required: true }
     },
     {
         timestamps: true

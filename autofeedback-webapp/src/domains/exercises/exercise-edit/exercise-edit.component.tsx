@@ -54,6 +54,7 @@ export default function ExerciseEditComponent() {
                         save={saveExercise}
                         nameInit={exercise.name}
                         taskInit={exercise.task}
+                        difficultyInit={exercise.difficulty}
                         solutionInit={exercise.solution}
                         key={exercise._id}
                     />
