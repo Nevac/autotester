@@ -55,6 +55,7 @@ export default function AttemptEditComponent() {
                         save={saveExercise}
                         nameInit={attempt.name}
                         exerciseIdInit={attempt.exercise._id}
+                        complexityInit={attempt.complexity}
                         attemptInit={attempt.attempt}
                         expectedFeedbackInit={attempt.expectedFeedback}
                         key={attempt._id}

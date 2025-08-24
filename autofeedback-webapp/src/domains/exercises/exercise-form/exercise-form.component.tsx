@@ -23,6 +23,7 @@ export default function ExerciseFormComponent(props: ExerciseFormProps) {
     const solutionInput = useInputValue<string>(props.solutionInit, {required: false});
     const inputs = [
         nameInput,
+        difficultyInput,
         taskInput,
         solutionInput
     ]

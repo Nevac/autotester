@@ -4,18 +4,21 @@ import useFormValidationHook from "../../util/forms/form-validation-hook";
 import AttemptUpdate from "../attempt-update";
 import {Button, FormControl, InputLabel, MenuItem, TextField, Typography} from "@mui/material";
 import MarkdownEditor from "../../util/markdown-editor/MarkdownEditor";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import ExerciseListItem from "../../exercises/exercise-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
 import ExerciseEndpoint from "../../exercises/exercise-endpoint";
 import ExpectedFeedbackFormComponent from "./expected-feedback-form/expected-feedback-form.component";
 import ExpectedFeedback from "../expected-feedback/expected-feedback";
 import ExpectedFeedbackFormModel from "./expected-feedback-form/expected-feedback-form-model";
+import ExerciseDifficulty from "../../exercises/exercise-difficulty";
+import AttemptComplexity from "../attempt-complexity";
 
 export interface AttemptFormProps {
     save: (update: AttemptUpdate) => void
     nameInit?: string,
     exerciseIdInit?: string,
+    complexityInit?: AttemptComplexity,
     attemptInit?: string,
     expectedFeedbackInit?: ExpectedFeedback
 }
@@ -23,11 +26,13 @@ export interface AttemptFormProps {
 export default function AttemptFormComponent(props: AttemptFormProps) {
     const nameInput = useInputValue<string>(props.nameInit, {required: true});
     const exerciseInput = useInputValue<string>(props.exerciseIdInit, {required: true});
+    const complexityInput = useInputValue<AttemptComplexity>(props.complexityInit, {required: true})
     const attemptInput = useInputValue<string>(props.attemptInit, {required: false});
     const expectedFeedbackInput = useInputValue<ExpectedFeedbackFormModel>(ExpectedFeedbackFormModel.create(), {required: false});
     const inputs = [
         nameInput,
         exerciseInput,
+        complexityInput,
         attemptInput,
         expectedFeedbackInput
     ]
@@ -60,6 +65,7 @@ export default function AttemptFormComponent(props: AttemptFormProps) {
             new AttemptUpdate(
                 nameInput.valueOrThrow(),
                 exerciseInput.valueOrThrow(),
+                complexityInput.valueOrThrow(),
                 attemptInput.value ? attemptInput.value : "",
                 expectedFeedbackInput.valueOrThrow()
             )
@@ -70,15 +76,30 @@ export default function AttemptFormComponent(props: AttemptFormProps) {
         <div className={'attempt-form-container'}>
             <Snackbar/>
             <div className={'attempt-form-text-area-container'}>
-                <TextField
-                    id="name"
-                    label="Name"
-                    className='attempt-form-text-area'
-                    value={nameInput.value}
-                    onChange={nameInput.handleChange}
-                    required
-                    error={nameInput.error}
-                />
+                <div style={{display: "flex", flexDirection: "row", gap: 10}}>
+                    <TextField
+                        id="name"
+                        label="Name"
+                        className='attempt-form-text-area'
+                        value={nameInput.value}
+                        onChange={nameInput.handleChange}
+                        required
+                        error={nameInput.error}
+                    />
+                    <FormControl style={{width: 150}}>
+                        <TextField
+                            select
+                            id="complexity-label"
+                            value={complexityInput.value}
+                            label="Complexity"
+                            onChange={complexityInput.handleChange}
+                        >
+                            <MenuItem value={AttemptComplexity.LOW}>Low</MenuItem>
+                            <MenuItem value={AttemptComplexity.MEDIUM}>Medium</MenuItem>
+                            <MenuItem value={AttemptComplexity.HIGH}>High</MenuItem>
+                        </TextField>
+                    </FormControl>
+                </div>
             </div>
             <div className={'attempt-form-text-area-container'}>
                 <FormControl fullWidth>

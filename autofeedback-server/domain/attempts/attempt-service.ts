@@ -37,6 +37,7 @@ export default class AttemptService {
             new AttemptUpdate(
                 attempt.name,
                 await this.exerciseRepo.getById(attempt.exerciseId),
+                attempt.complexity,
                 attempt.attempt,
                 attempt.expectedFeedback
             )
@@ -49,6 +50,7 @@ export default class AttemptService {
             new AttemptUpdate(
                 update.name,
                 await this.exerciseRepo.getById(update.exerciseId),
+                update.complexity,
                 update.attempt,
                 update.expectedFeedback
             )

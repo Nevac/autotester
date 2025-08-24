@@ -5,10 +5,12 @@ import {Exercise, exerciseSchema} from "../exercises/exercise";
 import {ObjectId} from "mongodb";
 import {IEvaluationGroup} from "../evaluations/group/evaluation-group";
 import ExpectedFeedback, {expectedFeedbackSchema} from "./expected-feedback/expected-feedback";
+import AttemptComplexity from "./attempt-complexity";
 
 export interface IAttempt {
     name: string,
     exercise: Exercise,
+    complexity: AttemptComplexity
     attempt: string,
     expectedFeedback: ExpectedFeedback
 }
@@ -18,6 +20,7 @@ export class Attempt implements IAttempt, Entity {
         public readonly _id: string,
         public readonly name: string,
         public readonly exercise: Exercise,
+        public readonly complexity: AttemptComplexity,
         public readonly attempt: string,
         public readonly expectedFeedback: ExpectedFeedback,
         public readonly createdAt: Date,
@@ -32,6 +35,7 @@ export class Attempt implements IAttempt, Entity {
             EntityUtil.convertId(attempt._id),
             attempt.name,
             attempt.exercise,
+            attempt.complexity,
             attempt.attempt,
             attempt.expectedFeedback,
             createdAt,
@@ -52,6 +56,7 @@ export const attemptSchema = new Schema<IAttempt>(
     {
         name: { type: String, required: true },
         exercise: { type: exerciseSchema, required: true },
+        complexity: { type: String, required: true },
         attempt: { type: String, required: true },
         expectedFeedback: { type: expectedFeedbackSchema, required: true }
     },
