@@ -1,5 +1,5 @@
-import UnreferencedFeedback from "./unreferenced-feedback";
-import ReferenceAddressing from "./reference-addressing";
+import UnreferencedFeedback from "../reference/unreferenced-feedback";
+import ReferenceAddressing from "../reference/reference-addressing";
 
 export default class MetricScore {
     constructor(

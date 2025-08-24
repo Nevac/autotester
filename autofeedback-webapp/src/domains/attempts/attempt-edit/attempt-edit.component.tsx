@@ -37,7 +37,7 @@ export default function AttemptEditComponent() {
             state == EndpointResponeStatus.SUCCESS ?
                 openSnackbar("Attempt saved successfully", SnackbarVariant.SUCCESS) :
                 openSnackbar("Failed to save Attempt", SnackbarVariant.ERROR)
-        )
+        );
     }
 
     return(

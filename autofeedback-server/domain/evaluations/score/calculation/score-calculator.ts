@@ -198,7 +198,9 @@ export default class ScoreCalculator {
         referenceAddressings: ReferenceAddressing[]
     ): number {
         return referenceAddressings
-            .filter(addressing => addressing.addressed && !addressing.ignore)
+            .filter(addressing =>
+                (addressing.addressed && !addressing.ignore) ||
+                (!addressing.addressed && addressing.ignore))
             .length;
     }
 

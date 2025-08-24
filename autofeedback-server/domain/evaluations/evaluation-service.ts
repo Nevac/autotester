@@ -20,6 +20,7 @@ import RagResponse from "../rag/client/rag-response";
 import {EvaluationScore} from "./score/evaluation-score";
 import {EvaluationScoreCorrection} from "./score/correction/evaluation-score-correction";
 import ScoreCorrector from "./score/correction/score-corrector";
+import ConfusionDto from "./score/confusion/confusion-dto";
 
 export default class EvaluationService {
 
@@ -32,52 +33,6 @@ export default class EvaluationService {
         this.evaluationRepository = new EvaluationRepository();
         this.llmService = new LlmService();
         this.semanticEvaluatorClient = new ModernBertClient();
-    }
-
-    public async getAll(): Promise<Evaluation[]> {
-        return await this.evaluationRepository.getAll();
-    }
-
-    public async getAllListEntries(evaluationGroupId: string, llm: Llm): Promise<EvaluationListEntry[]> {
-        return await this.evaluationRepository.getAllListEntries(evaluationGroupId, llm);
-    }
-
-    public async getById(id: string): Promise<Evaluation> {
-        return await this.evaluationRepository.getById(id);
-    }
-
-    public async getByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
-        return await this.evaluationRepository.getByGroupId(groupId);
-    }
-
-    public async getAllNotDoneByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
-        return await this.evaluationRepository.getAllNotDoneByGroupId(groupId);
-    }
-
-    public async create(evaluationUpdate: EvaluationUpdate): Promise<Evaluation> {
-        return await this.evaluationRepository.create(evaluationUpdate);
-    }
-
-    public async createByGroup(evaluationGroup: EvaluationGroup): Promise<Map<string, Evaluation>> {
-        const evaluations = [];
-        for(const llm of evaluationGroup.llms) {
-            for(const attempt of evaluationGroup.attempts.values()) {
-                evaluations.push(
-                    new EvaluationUpdate(
-                        llm[0] + "-" + attempt.name,
-                        evaluationGroup._id,
-                        attempt,
-                        evaluationGroup.promptGroup,
-                        llm[0],
-                        Ast.empty(evaluationGroup.astEnabled),
-                        evaluationGroup.rag
-                    )
-                )
-            }
-        }
-        return await this.evaluationRepository.createAll(
-            evaluations
-        );
     }
 
     public async evaluate(evaluation: Evaluation): Promise<Evaluation> {
@@ -157,7 +112,7 @@ export default class EvaluationService {
 
     }
 
-    public async calculateScores(evaluations: Map<string, Evaluation>): Promise<Map<string, Evaluation>> {
+    public async calculateScoresFromStatistic(evaluations: Map<string, Evaluation>): Promise<Map<string, Evaluation>> {
         const updates = new Map(
             Array.from(evaluations.entries()).map(([id, evaluation]) => {
                 const evaluationScore = ScoreCalculator.calculateFromStatistic(
@@ -169,7 +124,7 @@ export default class EvaluationService {
                     .setScore(evaluationScore);
 
                 return [id, update];
-        }));
+            }));
 
         return await this.evaluationRepository.updateAll(updates);
     }
@@ -194,6 +149,56 @@ export default class EvaluationService {
         );
 
         return await this.evaluationRepository.update(id, evaluationUpdate);
+    }
+
+    public async confusion(id: string, confusion: ConfusionDto): Promise<Evaluation> {
+        return await this.evaluationRepository.setConfusionById(id, confusion.confusion);
+    }
+
+    public async getAll(): Promise<Evaluation[]> {
+        return await this.evaluationRepository.getAll();
+    }
+
+    public async getAllListEntries(evaluationGroupId: string, llm: Llm): Promise<EvaluationListEntry[]> {
+        return await this.evaluationRepository.getAllListEntries(evaluationGroupId, llm);
+    }
+
+    public async getById(id: string): Promise<Evaluation> {
+        return await this.evaluationRepository.getById(id);
+    }
+
+    public async getByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
+        return await this.evaluationRepository.getByGroupId(groupId);
+    }
+
+    public async getAllNotDoneByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
+        return await this.evaluationRepository.getAllNotDoneByGroupId(groupId);
+    }
+
+    public async create(evaluationUpdate: EvaluationUpdate): Promise<Evaluation> {
+        return await this.evaluationRepository.create(evaluationUpdate);
+    }
+
+    public async createByGroup(evaluationGroup: EvaluationGroup): Promise<Map<string, Evaluation>> {
+        const evaluations = [];
+        for(const llm of evaluationGroup.llms) {
+            for(const attempt of evaluationGroup.attempts.values()) {
+                evaluations.push(
+                    new EvaluationUpdate(
+                        llm[0] + "-" + attempt.name,
+                        evaluationGroup._id,
+                        attempt,
+                        evaluationGroup.promptGroup,
+                        llm[0],
+                        Ast.empty(evaluationGroup.astEnabled),
+                        evaluationGroup.rag
+                    )
+                )
+            }
+        }
+        return await this.evaluationRepository.createAll(
+            evaluations
+        );
     }
 
     public async update(id: string, update: EvaluationUpdate): Promise<Evaluation> {

@@ -1,17 +1,17 @@
 import MetricScoreUpsert from "./metric/metric-score-upsert";
 import MetricOvergenerationScoreUpsert from "./metric/metric-overgeneration-score-upsert";
 import {EvaluationScore} from "./evaluation-score";
-import MetricScore from "./metric/metric-score";
-import MetricOvergenerationScore from "./metric/metric-overgeneration-score";
 
 export class EvaluationScoreUpsert {
+
     constructor(
         public total: number,
         public correctness: MetricScoreUpsert,
         public suggestion: MetricScoreUpsert,
         public codeStyle: MetricScoreUpsert,
-        public overgeneration: MetricOvergenerationScoreUpsert
-    ) {}
+        public overgeneration: MetricOvergenerationScoreUpsert,
+        public confusion: boolean = false
+) {}
 
     public static ofEvaluationScore(evaluationScore: EvaluationScore) {
         return new EvaluationScoreUpsert(
@@ -20,7 +20,7 @@ export class EvaluationScoreUpsert {
             MetricScoreUpsert.ofMetricScore(evaluationScore.suggestion),
             MetricScoreUpsert.ofMetricScore(evaluationScore.codeStyle),
             MetricOvergenerationScoreUpsert.ofMetricOvergenerationScore(evaluationScore.overgeneration)
-        )
+        ).setConfusion(evaluationScore.confusion);
     }
 
     public static zero(): EvaluationScoreUpsert {
@@ -31,5 +31,10 @@ export class EvaluationScoreUpsert {
             MetricScoreUpsert.zero(),
             MetricOvergenerationScoreUpsert.zero()
         );
+    }
+
+    public setConfusion(value: boolean): EvaluationScoreUpsert {
+        this.confusion = value;
+        return this;
     }
 }

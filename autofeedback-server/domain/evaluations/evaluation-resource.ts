@@ -32,5 +32,10 @@ export default class EvaluationResource {
             const exercise = await this.service.getById(req.params.id).catch(next);
             res.json(exercise);
         });
+
+        router.post(`/${this.RESOURCE}/:id/confusion`, async (req, res, next) => {
+            const exercise = await this.service.confusion(req.params.id, req.body).catch(next);
+            res.json(exercise);
+        });
     }
 }

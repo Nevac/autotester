@@ -33,7 +33,7 @@ export default function useInputValue<T>(initValue: InputType<T>, options?: Inpu
     }
 
     const valueOrThrow = () => {
-        if(value) return value;
+        if(value !== undefined) return value;
         else throw "Input value is undefined";
     }
 

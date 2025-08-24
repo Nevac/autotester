@@ -41,7 +41,7 @@ export default class EvaluationGroupResource {
         });
 
         router.post(`/${this.RESOURCE}/:id/calculateScore`, async (req, res, next) => {
-            const evaluationGroup = await this.service.calculateScore(req.params.id).catch(next);
+            const evaluationGroup = await this.service.calculateScoreAllEvaluations(req.params.id).catch(next);
             res.json(evaluationGroup);
         });
 

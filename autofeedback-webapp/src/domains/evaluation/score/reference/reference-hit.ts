@@ -1,4 +1,4 @@
-import ExpectedFeedbackSemanticStatistic from "../statistic/expected-feedback-semantic-statistic";
+import ExpectedFeedbackSemanticStatistic from "../../statistic/expected-feedback-semantic-statistic";
 
 export default class ReferenceHit {
     constructor(

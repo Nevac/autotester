@@ -92,12 +92,18 @@ export default class EvaluationGroupService {
         return evalGroup;
     }
 
-    public async calculateScore(id: string): Promise<EvaluationGroup> {
+    public async calculateScoreAllEvaluations(id: string): Promise<EvaluationGroup> {
         const evalGroup = await this.evaluationGroupRepository.getById(id);
 
         const evaluations = await this.evaluationService.getByGroupId(id);
-        await this.evaluationService.calculateScores(evaluations)
+        await this.evaluationService.calculateScoresFromStatistic(evaluations)
 
+        await this.scoreEvaluationGroup(evalGroup);
+        return evalGroup;
+    }
+
+    public async recalculateScore(id: string): Promise<EvaluationGroup> {
+        const evalGroup = await this.evaluationGroupRepository.getById(id);
         await this.scoreEvaluationGroup(evalGroup);
         return evalGroup;
     }
@@ -108,7 +114,7 @@ export default class EvaluationGroupService {
         correction: EvaluationScoreCorrection
     ): Promise<Evaluation> {
         const evaluation = await this.evaluationService.correctScore(evaluationId, correction)
-        await this.calculateScore(evaluationGroupId);
+        await this.recalculateScore(evaluationGroupId);
         return evaluation;
     }
 

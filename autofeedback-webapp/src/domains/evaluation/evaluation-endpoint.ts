@@ -1,6 +1,7 @@
 import {EvaluationListItem} from "./evaluation-list-item";
 import {Evaluation} from "./evaluation";
 import {Llm} from "../llms/llm";
+import ConfusionDto from "./score/confusion/confusion-dto";
 
 export default class EvaluationEndpoint {
 
@@ -22,5 +23,16 @@ export default class EvaluationEndpoint {
             .then(res => {
                 return res.json();
             });
+    }
+
+    public confusion(id: string, confusion: ConfusionDto): Promise<Evaluation> {
+        return fetch(`${this.ENDPOINT}/${id}/confusion`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(confusion)
+        }).then(res => res.json());
     }
 }

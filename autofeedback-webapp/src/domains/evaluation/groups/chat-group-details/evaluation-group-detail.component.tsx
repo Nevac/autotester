@@ -24,13 +24,11 @@ import React, {useEffect, useState} from "react";
 import EvaluationGroupEndpoint from "../evaluation-group-endpoint";
 import {useParams} from "react-router-dom";
 import {EvaluationGroup} from "../evaluation-group";
-import {Add, ExpandMore} from "@mui/icons-material";
 import {useAppSelector} from "../../../../app/redux-hooks";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import java from 'react-syntax-highlighter/dist/esm/languages/hljs/java';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import 'highlight.js/styles/vs2015.css';
-import MarkdownX from "../../../util/markdown-x/MarkdownX";
 import {DataGrid, GridColDef, GridSortingInitialState, GridSortModel} from "@mui/x-data-grid";
 import {Llm} from "../../../llms/llm";
 import Paper from "@mui/material/Paper";
@@ -38,21 +36,11 @@ import EvaluationEndpoint from "../../evaluation-endpoint";
 import {EvaluationListItem} from "../../evaluation-list-item";
 import EvaluationGroupLlm from "../llm/evaluation-group-llm";
 import {Evaluation} from "../../evaluation";
-import EvaluationScore from "../../score/evaluation-score";
-import MetricScore from "../../score/metric-score";
-import ReferenceHit from "../../score/reference-hit";
-import EvaluationSemanticStatistic from "../../statistic/evaluation-semantic-statistic";
-import MetricOvergenerationScore from "../../score/metric-overgeneration-score";
-import Attempt from "../../../attempts/attempt";
-import Ast from "../../../ast/ast";
 import ReplayIcon from '@mui/icons-material/Replay';
 import {EndpointResponeStatus} from "../../../util/EndpointResponeStatus";
 import {useDispatch} from "react-redux";
 import {evaluationGroupsUpdateSlice, evaluationGroupUpdateSlice} from "../evaluation-groups-update.slice";
-import ReferenceAddressing from "../../score/reference-addressing";
-import UnreferencedFeedback from "../../score/unreferenced-feedback";
-import OvergenerationValidity from "../../score/overgeneration-validity";
-import overgenerationValidity from "../../score/overgeneration-validity";
+import EvaluationDetailsComponent from "./evaluation-details/evaluation-details.component";
 
 SyntaxHighlighter.registerLanguage('java', java);
 
@@ -161,7 +149,7 @@ export default function EvaluationGroupDetailComponent() {
             </Typography>
             <EvaluationActions/>
             <EvaluationSelection/>
-            <EvaluationDetail evaluation={evaluation}/>
+            <EvaluationDetailsComponent evaluation={evaluation}/>
         </Box>
     )
 
@@ -234,332 +222,6 @@ export default function EvaluationGroupDetailComponent() {
                     </Paper>
                 </Box>
             </Box>
-        );
-    }
-
-    function EvaluationDetail(props: {evaluation?: Evaluation}) {
-        if(evaluation) {
-            return (
-                <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                    <AttemptDetail attempt={evaluation.attempt}/>
-                    <GeneratedFeedback generatedFeedback={evaluation.generatedFeedback}/>
-                    <RagDocuments evaluation={evaluation}/>
-                    <EvaluationScore evaluation={evaluation}/>
-                    <SemanticStatistic semanticStatistic={evaluation.semanticStatistic}/>
-                </div>
-            )
-        }
-        return <></>;
-    }
-
-    function AttemptDetail(props: {attempt: Attempt}) {
-        return (
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMore/>}
-                    aria-controls={`attempt-accordion-content`}
-                    id={`attempt-accordion-header`}
-                >
-                    <Typography variant={"h5"}>Attempt</Typography>
-                </AccordionSummary>
-                <AccordionDetails style={{maxWidth: 1500}}>
-                    <MarkdownX>
-                        {props.attempt.attempt}
-                    </MarkdownX>
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
-
-    function GeneratedFeedback(props: {generatedFeedback: string}) {
-        return (
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMore/>}
-                    aria-controls={`generated-feedback-accordion-content`}
-                    id={`generated-feedback-accordion-header`}
-                >
-                    <Typography variant={"h5"}>Generated Feedback</Typography>
-                </AccordionSummary>
-                <AccordionDetails style={{maxWidth: 1500}}>
-                    <MarkdownX>
-                        {props.generatedFeedback}
-                    </MarkdownX>
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
-
-    function RagDocuments(props: {evaluation: Evaluation }) {
-        const ragDocuments = props.evaluation.ragDocuments;
-        const ast = props.evaluation.ast;
-
-        if(ragDocuments) {
-            return (
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMore/>}
-                        aria-controls={`generated-feedback-accordion-content`}
-                        id={`generated-feedback-accordion-header`}
-                    >
-                        <Typography variant={"h5"}>RagDocuments</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails style={{maxWidth: 1500}}>
-                        <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                            <Ast ast={ast}/>
-                            {ragDocuments.map(ragDocument =>
-                                <Paper elevation={10} style={{padding: 10}}>
-                                    <Stack direction="row" spacing={1}>
-                                        <Chip label={`id: ${ragDocument.id}`} size="small"/>
-                                        <Chip label={`language: ${ragDocument.language}`} size="small"/>
-                                        <Chip label={`category: ${ragDocument.category}`} size="small"/>
-                                        <Chip label={`topic: ${ragDocument.topic}`} size="small"/>
-                                        <Chip label={`type: ${ragDocument.type}`} size="small"/>
-                                        <Chip label={`constructs: ${ragDocument.constructs}`} size="small"/>
-                                    </Stack>
-                                    <MarkdownX>
-                                        {ragDocument.text.replace(/\\n/g, '\n')}
-                                    </MarkdownX>
-                                </Paper>
-                            )}
-                        </div>
-                    </AccordionDetails>
-                </Accordion>
-            );
-        } else {
-            return (<></>);
-        }
-    }
-
-    function Ast(props: {ast: Ast}) {
-        const ast = props.ast;
-
-        if(ast) {
-            return (
-                <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                    <div>
-                        <Typography fontWeight={'bold'}>Contructs</Typography>
-                        <Stack direction="row" spacing={1}>
-                            {ast.constructs.map(construct =>
-                                <Chip label={construct} size="small"/>
-                            )}
-                        </Stack>
-                    </div>
-                </div>
-            );
-        } else {
-            return (<></>);
-        }
-    }
-
-    function SemanticStatistic(props: { semanticStatistic: EvaluationSemanticStatistic }) {
-        return (
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMore/>}
-                    aria-controls={`semantic-statistic-accordion-content`}
-                    id={`semantic-statistic-accordion-header`}
-                >
-                    <Typography variant={"h5"}>Semantic Statistics</Typography>
-                </AccordionSummary>
-                <AccordionDetails style={{maxWidth: 1500}}>
-                    <MarkdownX>
-                        ```json
-                        {JSON.stringify(props.semanticStatistic, null, 2)}
-                        ```
-                    </MarkdownX>
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
-
-    function EvaluationScore(props: { evaluation: Evaluation }) {
-        if (evaluation?.score) {
-            return (
-                <div style={{display: "flex", gap: 10}}>
-                    <ScoreTable score={evaluation.score}/>
-                    <Accordion style={{flex: 1}}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMore/>}
-                            aria-controls={`evaluation-score-accordion-content`}
-                            id={`evaluation-score-accordion-header`}
-                        >
-                            <Typography variant="h5">
-                                Score
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <div style={{display: "flex", flexDirection: "row", gap: 20}}>
-                                <MetricScores evaluationScore={evaluation.score}/>
-                            </div>
-                        </AccordionDetails>
-                    </Accordion>
-                </div>
-            )
-        }
-        return <></>;
-    }
-
-    function ScoreTable(props: {score: EvaluationScore}) {
-        return(
-            <Paper elevation={3}>
-                <TableContainer>
-                    <Table size={"small"} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography align="right" fontWeight={"bold"}>Metric</Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography align="right" fontWeight={"bold"}>Score</Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell align="right">Correctness</TableCell>
-                                <TableCell align="right">{props.score.correctness.score}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell align="right">Suggestion</TableCell>
-                                <TableCell align="right">{props.score.suggestion.score}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell align="right">Code Style</TableCell>
-                                <TableCell align="right">{props.score.codeStyle.score}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell align="right">Overgeneration</TableCell>
-                                <TableCell align="right">{props.score.overgeneration.score}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell align="right">Total</TableCell>
-                                <TableCell align="right">{props.score.total.toFixed(3)}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
-        )
-    }
-
-    function MetricScores(props: {evaluationScore: EvaluationScore}) {
-        return (
-            <div style={{flex: 1, display: "flex", gap: 10, flexDirection: "column"}}>
-                <div>
-                    <FormControlLabel control={<Checkbox/>} label={"Confusion"}/>
-                </div>
-                <MetricScore title={"Correctness"} metricScore={evaluation!.score.correctness}/>
-                <MetricScore title={"Suggestion"} metricScore={evaluation!.score.suggestion}/>
-                <MetricScore title={"Code Style"} metricScore={evaluation!.score.codeStyle}/>
-                <MetricOvergenerationScore metricOvergenerationScore={evaluation!.score.overgeneration}/>
-            </div>
-        )
-    }
-
-    function MetricScore(props: { title: string, metricScore: MetricScore }) {
-        return (
-            <Paper elevation={3} style={{padding: 10}}>
-                <Typography variant={"h5"}>{props.title}</Typography>
-                <div style={{display: "flex", flexDirection: "column", gap: 20}}>
-                    {props.metricScore.referenceAddressings.map(reference => {
-                        if(reference) {
-                            return <RefAddressing key={reference.id} referenceAddressing={reference}/>
-                        } else return <></>
-                    }
-                )}
-                </div>
-                {props.metricScore.unreferencedFeedbacks.length === 0 ? <></> :
-                    <Typography style={{marginTop: 20}} fontWeight={"bold"}>Wrong Feedback</Typography>
-                }
-                {props.metricScore.unreferencedFeedbacks.map(unrefFeedback => {
-                        if(unrefFeedback) {
-                            return <UnrefFeedback key={unrefFeedback.index} unreferencedFeedback={unrefFeedback}/>
-                        } else return <></>
-                    }
-                )}
-            </Paper>
-        );
-    }
-
-    function MetricOvergenerationScore(props: {metricOvergenerationScore: MetricOvergenerationScore}) {
-        return (
-            <Paper elevation={3} style={{padding: 10}}>
-                <Typography variant={"h5"}>Overgenerations</Typography>
-                <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                    {props.metricOvergenerationScore.overgenerations.map(overgenration =>
-                        <Paper elevation={10} style={{padding: 10, display: "flex", flexDirection: "column", gap: 10}}>
-                            <FormControl fullWidth>
-                                <InputLabel id="validity-select-label">Validity</InputLabel>
-                                <Select
-                                    labelId="validity-select-label"
-                                    id="validity-simple-select"
-                                    value={overgenration.validity}
-                                    label="Age"
-                                    onChange={() => {}}
-                                >
-                                    <MenuItem value={OvergenerationValidity.VALID}>Valid</MenuItem>
-                                    <MenuItem value={OvergenerationValidity.IGNORE}>Ignore</MenuItem>
-                                    <MenuItem value={OvergenerationValidity.CODE_STYLE}>Count to Code Style</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <Stack direction="row" spacing={1}>
-                                <Chip label={`index: ${overgenration.generatedFeedbackIndex}`} size="small"/>
-                                <Chip label={`validity: ${overgenration.validity}`} size="small"/>
-                            </Stack>
-                            <Typography>{overgenration.sentence}</Typography>
-                        </Paper>
-                    )}
-                </div>
-            </Paper>
-    );
-    }
-
-    function RefAddressing(props: {
-        referenceAddressing: ReferenceAddressing
-    }) {
-        const refAddressing = props.referenceAddressing;
-        return (
-            <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                <Paper elevation={10} style={{padding: 10}}>
-                    <div>
-                        <FormControlLabel control={<Checkbox checked={!refAddressing.ignore}/>} label={"Count"}/>
-                    </div>
-                    <Typography variant={"h6"} fontWeight={"bold"}>{refAddressing.id}</Typography>
-                    <Typography>Semantic Similarity: {refAddressing.similarityScore.toFixed(4)}</Typography>
-                </Paper>
-                <div style={{display: "flex", flexDirection: "row", gap: 10}}>
-                    <Paper elevation={10} style={{padding: 10, flex: 1}}>
-                    <Typography variant={"h6"}>Expected</Typography>
-                        <MarkdownX>
-                            {refAddressing.expectedSentence}
-                        </MarkdownX>
-                    </Paper>
-                    <Paper elevation={10} style={{padding: 10, flex: 1}}>
-                        <Typography variant={"h6"}>Generated</Typography>
-                        <MarkdownX>
-                            {refAddressing.addressed ? refAddressing.generatedSentence : "Not Addressed"}
-                        </MarkdownX>
-                    </Paper>
-                </div>
-            </div>
-        );
-    }
-
-    function UnrefFeedback(props: {
-        unreferencedFeedback: UnreferencedFeedback
-    }) {
-        const unreferencedFeedback = props.unreferencedFeedback;
-        return (
-            <div style={{display: "flex", flexDirection: "column", gap: 10, padding: 10}}>
-                <Paper elevation={10} style={{padding: 10}}>
-                    <div>
-                        <FormControlLabel control={<Checkbox checked={!unreferencedFeedback.ignore}/>} label={"Count"}/>
-                    </div>
-                    <Typography variant={"h6"} fontWeight={"bold"}>{unreferencedFeedback.index}</Typography>
-                    <MarkdownX>{unreferencedFeedback.generatedSentence}</MarkdownX>
-                </Paper>
-            </div>
         );
     }
 }

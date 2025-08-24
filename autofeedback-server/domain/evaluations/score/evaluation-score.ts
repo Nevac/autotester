@@ -7,7 +7,8 @@ export interface IEvaluationScore {
     correctness: MetricScore,
     suggestion: MetricScore,
     codeStyle: MetricScore,
-    overgeneration: MetricOvergenerationScore
+    overgeneration: MetricOvergenerationScore,
+    confusion: boolean
 }
 
 export class EvaluationScore implements IEvaluationScore {
@@ -16,7 +17,8 @@ export class EvaluationScore implements IEvaluationScore {
         public readonly correctness: MetricScore,
         public readonly suggestion: MetricScore,
         public readonly codeStyle: MetricScore,
-        public readonly overgeneration: MetricOvergenerationScore
+        public readonly overgeneration: MetricOvergenerationScore,
+        public readonly confusion: boolean
     ) {}
 
     public static zero(): EvaluationScore {
@@ -25,7 +27,8 @@ export class EvaluationScore implements IEvaluationScore {
             MetricScore.zero(),
             MetricScore.zero(),
             MetricScore.zero(),
-            MetricOvergenerationScore.zero()
+            MetricOvergenerationScore.zero(),
+            false
         );
     }
 }
@@ -36,7 +39,8 @@ export const evaluationScoreSchema = new Schema<IEvaluationScore>(
         correctness: { type: metricScoreSchema, required: true },
         suggestion: { type: metricScoreSchema, required: true },
         codeStyle: { type: metricScoreSchema, required: true },
-        overgeneration: { type: metricOvergenerationScoreSchema, required: true }
+        overgeneration: { type: metricOvergenerationScoreSchema, required: true },
+        confusion: { type: Boolean, required: true },
     },
     {
         _id: false,

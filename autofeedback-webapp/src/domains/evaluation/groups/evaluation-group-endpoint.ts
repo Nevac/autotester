@@ -2,6 +2,8 @@ import EvaluationGroupListItem from "./evaluation-group-list-item";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import EvaluationGroupUpdate from "./evaluation-group-update";
 import {EvaluationGroup} from "./evaluation-group";
+import CorrectScoreDto from "../score/correction/correct-score-dto";
+import {Evaluation} from "../evaluation";
 
 export default class EvaluationGroupEndpoint {
 
@@ -65,6 +67,18 @@ export default class EvaluationGroupEndpoint {
             return EndpointResponeStatus.FAIL;
         })
     }
+
+    public correctScore(id: string, correctScoreDto: CorrectScoreDto): Promise<Evaluation> {
+        return fetch(`${this.ENDPOINT}/${id}/correctScore`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(correctScoreDto)
+        }).then(res => res.json());
+    }
+
 
     public delete(id: string): Promise<EndpointResponeStatus> {
         return fetch(`${this.ENDPOINT}/${id}`, {

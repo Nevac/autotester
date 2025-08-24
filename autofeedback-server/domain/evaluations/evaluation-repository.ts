@@ -41,6 +41,17 @@ export default class EvaluationRepository {
             });
     }
 
+    public async setConfusionById(id: string, confusion: boolean): Promise<Evaluation> {
+        return await EvaluationModel.updateOne(
+            {_id: id},
+            {$set: {"score.confusion": confusion}}
+        )
+            .exec()
+            .then(document => {
+                return this.getById(id)
+            })
+    }
+
     public async getByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
         return await EvaluationModel.find({
             evaluationGroup: groupId
@@ -79,6 +90,7 @@ export default class EvaluationRepository {
     }
 
     public async update(id: string, evaluation: EvaluationUpdate): Promise<Evaluation> {
+        console.log(evaluation.score.correctness.referenceAddressings);
         return await EvaluationModel.updateOne(
             {_id: id},
             evaluation
