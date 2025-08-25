@@ -18,7 +18,7 @@ export default class PineconeClient implements RagClient {
     private readonly astExtractor: AstExtractor;
 
     private readonly DOCUMENT_COUNT = 3;
-    private readonly NO_HARD_FILTER_DOCUMENT_COUNT = 20;
+    private readonly RETRIEVE_DOCUMENT_COUNT = 20;
 
     constructor(
         private readonly embeddingClient: EmbeddingClient,
@@ -33,33 +33,22 @@ export default class PineconeClient implements RagClient {
     }
 
     public async retrieve(query: string, astEnabled: boolean): Promise<RagResponse> {
-        let filter = undefined;
         let constructs: string[] = [];
 
         if (astEnabled) {
             constructs = this.astExtractor.extractConstructs(query);
-
-            // Only hard filter on strong/rare constructs
-            const hardFilterConstructs = constructs.filter(c =>
-                ["god class", "duplication", "long method", "magic numbers", "exceptions"].includes(c)
-            );
-
-            if (hardFilterConstructs.length > 0 && hardFilterConstructs.length <= 5) {
-                filter = { constructs: { $in: hardFilterConstructs } };
-            }
         }
 
         const embedding = await this.embeddingClient.embed(query);
         const results = await this.index.query({
             vector: embedding[0].embedding,
-            filter: filter,
-            topK: filter ? this.DOCUMENT_COUNT : this.NO_HARD_FILTER_DOCUMENT_COUNT,
+            topK: this.RETRIEVE_DOCUMENT_COUNT,
             includeMetadata: true
         });
 
         let docs = results.matches;
 
-        if (!filter && astEnabled) {
+        if (astEnabled) {
             docs = RecordRanker.rerankByConstructOverlap(docs, constructs).slice(0, this.DOCUMENT_COUNT);
         } else {
             docs = docs.slice(0, this.DOCUMENT_COUNT);

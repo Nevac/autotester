@@ -147,14 +147,13 @@ export default class AstExtractor {
                         constructs.add("List");
                     }
                     if (/HashMap/.test(text)) {
-                        constructs.add("HashMap");
                         constructs.add("Map");
                     }
                     if (/Map/.test(text)) {
                         constructs.add("Map");
                     }
                     if (/HashSet/.test(text)) {
-                        constructs.add("HashSet");
+                        constructs.add("Set");
                         constructs.add("Set");
                     }
                     if (/Set/.test(text)) {
@@ -181,12 +180,6 @@ export default class AstExtractor {
                     }
                     if (/add/.test(text)) {
                         constructs.add("add");
-                    }
-                    if (/put/.test(text)) {
-                        constructs.add("put");
-                    }
-                    if (/get/.test(text)) {
-                        constructs.add("get");
                     }
                     break;
                 }
