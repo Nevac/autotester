@@ -125,6 +125,7 @@ export default function MetricScoresComponent(props: {evaluation: Evaluation}) {
         metric: FeedbackMetric,
         ignore: boolean
     ): void {
+        console.log(generatedFeedbackIndex);
         if(unreferencedCorrections.has(generatedFeedbackIndex)) {
             unreferencedCorrections
                 .get(generatedFeedbackIndex)!
@@ -232,7 +233,7 @@ export default function MetricScoresComponent(props: {evaluation: Evaluation}) {
                 }
                 {props.metricScore.unreferencedFeedbacks.map(unrefFeedback => {
                         if(unrefFeedback) {
-                            return <UnreferencedFeedbackComponent key={unrefFeedback.index}
+                            return <UnreferencedFeedbackComponent key={unrefFeedback.generatedFeedbackIndex}
                                                                   unreferencedFeedback={unrefFeedback}
                                                                   metric={props.metric}/>
                         } else return <></>
@@ -299,7 +300,6 @@ export default function MetricScoresComponent(props: {evaluation: Evaluation}) {
         metric: FeedbackMetric
     }) {
         const refAddressing = props.referenceAddressing;
-        console.log(refAddressing.ignore);
 
         const countInput = useInputValue<boolean>(!refAddressing.ignore, { required: false })
 
@@ -349,7 +349,7 @@ export default function MetricScoresComponent(props: {evaluation: Evaluation}) {
 
         function handleCountChange(value: boolean) {
             countInput.setValue(value);
-            addUnreferencedCorrection(unreferencedFeedback.index, props.metric, !value);
+            addUnreferencedCorrection(unreferencedFeedback.generatedFeedbackIndex, props.metric, !value);
         }
 
         return (
@@ -363,7 +363,9 @@ export default function MetricScoresComponent(props: {evaluation: Evaluation}) {
                         }
                                           label={"Count"}/>
                     </div>
-                    <Typography variant={"h6"} fontWeight={"bold"}>{unreferencedFeedback.index}</Typography>
+                    <Stack direction="row" spacing={1}>
+                        <Chip label={`index: ${unreferencedFeedback.generatedFeedbackIndex}`} size="small"/>
+                    </Stack>
                     <MarkdownX>{unreferencedFeedback.generatedSentence}</MarkdownX>
                 </Paper>
             </div>

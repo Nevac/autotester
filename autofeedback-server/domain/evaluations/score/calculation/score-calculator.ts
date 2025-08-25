@@ -161,8 +161,8 @@ export default class ScoreCalculator {
         let score = this.calculateScore(
             this.extractAddressedReferencesCount(referenceAddressings),
             totalReferences,
-            0,
-            this.extractUnreferencedFeedbackCount(unreferencedFeedback)
+            this.extractUnreferencedFeedbackCount(unreferencedFeedback),
+            0
         );
 
         return emptyMetricScore.setScore(
@@ -185,8 +185,8 @@ export default class ScoreCalculator {
         let score = this.calculateScore(
             this.extractAddressedReferencesCount(referenceAddressings),
             totalReferences,
-            bonus,
-            this.extractUnreferencedFeedbackCount(unreferencedFeedback)
+            this.extractUnreferencedFeedbackCount(unreferencedFeedback),
+            bonus
         );
 
         return emptyCodeStyle.setScore(
