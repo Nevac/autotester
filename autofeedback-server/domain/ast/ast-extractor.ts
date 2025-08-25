@@ -172,7 +172,6 @@ export default class AstExtractor {
                         constructs.add("containsKey");
                     }
                     if (/Collections\.sort/.test(text)) {
-                        constructs.add("Collections.sort");
                         constructs.add("sorting");
                     }
                     if (/remove/.test(text)) {
