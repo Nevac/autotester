@@ -17,6 +17,7 @@ export default function TabPanel(props: TabPanelProps) {
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
+            style={{overflowY: "scroll"}}
             {...other}
         >
             {value === index && <Box sx={{p: padding != undefined ? padding : 2}}>{children}</Box>}

@@ -11,6 +11,7 @@ import React, {useState} from "react";
 import RagDocumentMetadataUpdate from "../rag-document-metadata-update";
 import MarkdownEditor from "../../../util/markdown-editor/MarkdownEditor";
 import Paper from "@mui/material/Paper";
+import {Delete} from "@mui/icons-material";
 
 interface PromptGroupFormProps {
     isIdEditEnabled: boolean,
@@ -54,7 +55,7 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
             new RagDocumentUpdate(
                 idInput.valueOrThrow(),
                 new RagDocumentMetadataUpdate(
-                    idInput.valueOrThrow(),
+                    textInput.valueOrThrow(),
                     categoryInput.valueOrThrow(),
                     languageInput.valueOrThrow(),
                     topicInput.valueOrThrow(),
@@ -95,6 +96,12 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
             constructInput.setValue("");
             setSelectedConstructIndex(undefined);
         }
+    }
+
+    const removeConstruct = (index: number) => {
+        const newConstructs = [...constructsInput.valueOrThrow()];
+        newConstructs.splice(index, 1);
+        constructsInput.setRawValue(newConstructs);
     }
 
     const onClickConstructs = (prompt: string, index: number) => {
@@ -155,7 +162,7 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
                     <List
                         subheader={
                             <div style={{padding: 10, display: "flex", justifyContent: "start", background: "#121212"}}>
-                                Instruction
+                                Constructs
                             </div>
                         }
                         style={{border: "1px solid gray", flex: 1, borderRadius: 5}}
@@ -169,6 +176,12 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
                                         <ListItemText primary={item}/>
                                     </Paper>
                                 </ListItemButton>
+                                <Button onClick={() => removeConstruct(index)}
+                                        variant={"contained"}
+                                        color={"error"}
+                                >
+                                    <Delete/>
+                                </Button>
                             </ListItem>
                         ) : <></>}
                     </List>

@@ -42,7 +42,7 @@ export default function MainViewSideComponent() {
     }, [location]);
 
     return (
-        <PaperDefaultComponent className={'main-view-side-entity-tabs'}>
+        <PaperDefaultComponent className={'main-view-side-entity-main-container'}>
             <FormControl fullWidth>
                 <InputLabel id="entity-select">Entity</InputLabel>
                 <Select

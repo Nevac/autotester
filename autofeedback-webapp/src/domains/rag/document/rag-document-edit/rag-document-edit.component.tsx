@@ -28,6 +28,8 @@ export default function RagDocumentEditComponent() {
     }, [id]);
 
     const createRag = (update: RagDocumentUpdate) => {
+        console.log(update);
+
         ragEndpoint.update(
             id!,
             update
