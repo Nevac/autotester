@@ -17,7 +17,7 @@ export default class PineconeClient implements RagClient {
     private readonly index: Index<RagResponseMetadata>;
     private readonly astExtractor: AstExtractor;
 
-    private readonly DOCUMENT_COUNT = 3;
+    private readonly DOCUMENT_COUNT = 5;
     private readonly RETRIEVE_DOCUMENT_COUNT = 20;
 
     constructor(
