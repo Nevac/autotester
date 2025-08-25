@@ -130,6 +130,13 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
         );
     }
 
+    function replaceN(): void {
+        textInput.setRawValue(
+            textInput.valueOrThrow()
+                .replace(/\\n/g, "\n")
+        );
+    }
+
     return (
         <div className={'rag-document-form-container'}>
             <div className={'rag-document-form-text-area-container'}>
@@ -188,7 +195,12 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
                 </div>
             </div>
 
-            <div className={'rag-document-form-text-area-container'}>
+            <div>
+                <Button variant={"contained"} onClick={replaceN}>
+                    <Typography>
+                        Replace \n
+                    </Typography>
+                </Button>
                 <FormControl
                     className='rag-document-form-text-area'
                     error={textInput.error}
