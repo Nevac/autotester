@@ -221,7 +221,7 @@ export default class ScoreCalculator {
         let score = 1;
         let modifier = bonus - malus;
         if(totalReferences !== 0) {
-            score = (addressedReferences - modifier) / totalReferences;
+            score = (addressedReferences + modifier) / totalReferences;
         } else {
             score += modifier;
         }
