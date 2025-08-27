@@ -44,6 +44,22 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
             this.pipelineConfig
         )
 
+        const feedbackEmbeddings = Array.from(GeneratedFeedbackExtractor.extract(llmFeedback).map.entries()).flatMap((
+                [
+                    metric,
+                    sentences
+                ],
+                index
+            ) =>
+                sentences.map(sentence =>
+                    new GeneratedFeedbackEmbedding(
+                        sentence,
+                        metric,
+                        index
+                    )
+                )
+        );
+
         const expectedEmbeddings =
             [
                 ...expectedFeedback.correctness,
@@ -58,43 +74,37 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
                         fR.metric
                     )
             ));
-        expectedEmbeddings.forEach((embedding, index) =>
-            embedding.index = index
-        );
 
-        const feedbackEmbeddings = Array.from(GeneratedFeedbackExtractor.extract(llmFeedback).map.entries()).flatMap((
-            [
-                metric,
-                sentences
-            ],
-            index
-        ) =>
-            sentences.map(sentence =>
-                new GeneratedFeedbackEmbedding(
-                    sentence,
-                    metric,
-                    index
-                )
-            )
-        );
+        if(expectedEmbeddings.length > 0) {
+            expectedEmbeddings.forEach((embedding, index) =>
+                embedding.index = index
+            );
 
-        const queryEmbeddings = await extractor(
-            expectedEmbeddings.map(embedding => "search_query: " + embedding.sentence),
-            this.embedderConfig
-        );
-        const docEmbeddings = await extractor(
-            feedbackEmbeddings.map(embedding => "search_document: " + embedding.sentence),
-            this.embedderConfig
-        );
 
-        // Similarity matrix (queries x documents)
-        const similarities = await matmul(queryEmbeddings, docEmbeddings.transpose(1, 0));
-        const similarityScores: number[][] = similarities.tolist();
+            const queryEmbeddings = await extractor(
+                expectedEmbeddings.map(embedding => "search_query: " + embedding.sentence),
+                this.embedderConfig
+            );
+            const docEmbeddings = await extractor(
+                feedbackEmbeddings.map(embedding => "search_document: " + embedding.sentence),
+                this.embedderConfig
+            );
 
-        return SemanticStatisticGenerator.generate(
-            expectedEmbeddings,
-            feedbackEmbeddings,
-            similarityScores
-        );
+            // Similarity matrix (queries x documents)
+            const similarities = await matmul(queryEmbeddings, docEmbeddings.transpose(1, 0));
+            const similarityScores: number[][] = similarities.tolist();
+
+            return SemanticStatisticGenerator.generate(
+                expectedEmbeddings,
+                feedbackEmbeddings,
+                similarityScores
+            );
+        } else {
+            return SemanticStatisticGenerator.generate(
+                [],
+                feedbackEmbeddings,
+                [[]]
+            );
+        }
     }
 }

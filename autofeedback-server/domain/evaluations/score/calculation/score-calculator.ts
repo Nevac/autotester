@@ -178,14 +178,22 @@ export default class ScoreCalculator {
         const referenceAddressings = emptyCodeStyle.referenceAddressings;
         const totalReferences = referenceAddressings.length;
 
+        let malus = this.extractUnreferencedFeedbackCount(unreferencedFeedback)
         const bonus = emptyOvergeneration.overgenerations.filter(overgeneration =>
             overgeneration.validity === OvergenerationValidity.CODE_STYLE
         ).length;
 
+        const validOvergenerationsCount = emptyOvergeneration.overgenerations
+            .filter(overgeneration => overgeneration.validity === OvergenerationValidity.VALID)
+            .length;
+        if(totalReferences === 0 && validOvergenerationsCount > 0) {
+            malus += 1;
+        }
+
         let score = this.calculateScore(
             this.extractAddressedReferencesCount(referenceAddressings),
             totalReferences,
-            this.extractUnreferencedFeedbackCount(unreferencedFeedback),
+            malus,
             bonus
         );
 
