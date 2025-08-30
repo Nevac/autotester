@@ -3,6 +3,7 @@ import AttemptUpdateDto from "./attempt-update-dto";
 import { Request } from 'express';
 import AttemptService from "./attempt-service";
 import {coerceBoolean} from "openai/core";
+import DocumentResponseHeaders from "../export/document-response-headers";
 
 export default class AttemptResource {
 
@@ -28,16 +29,13 @@ export default class AttemptResource {
         });
 
         router.put(`/${this.RESOURCE}/export`, async (req, res, next) => {
-            console.log(req.body.ids);
             const pdf = await this.service.export(req.body.ids).catch(next);
-
             if(pdf) {
-                res.set({
-                    "Content-Type": "application/pdf",
-                    "Content-Disposition": "attachment; filename=document.pdf",
-                    "Content-Length": pdf.length
-                });
-
+                DocumentResponseHeaders.pdf(
+                    "aufgaben",
+                    pdf.length,
+                    res
+                );
                 res.end(pdf);
             }
         });

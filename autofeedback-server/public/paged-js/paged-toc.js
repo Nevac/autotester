@@ -8,20 +8,16 @@ class TocHandler extends Paged.Handler {
         pages.forEach((page, i) => {
             page.element.querySelectorAll("h1, h2").forEach(heading => {
                 let text = heading.textContent.trim();
-                if(text !== "Table of Contents") {
-                    let pageNum = i + 1;
-                    if (heading.tagName === "H1") {
-                        h1Count++;
-                        h2Count = 0;
-                        const num = `${text}`;
-                        toc.appendChild(makeEntry(num, pageNum, "h1", 0));
-                    }
+                let pageNum = i + 2;
+                if (heading.tagName === "H1") {
+                    h1Count++;
+                    h2Count = 0;
+                    toc.appendChild(makeEntry(text, pageNum, "h1", 0));
+                }
 
-                    if (heading.tagName === "H2") {
-                        h2Count++;
-                        const num = `${text}`;
-                        toc.appendChild(makeEntry(num, pageNum, "h2", 1));
-                    }
+                if (heading.tagName === "H2") {
+                    h2Count++;
+                    toc.appendChild(makeEntry(text, pageNum, "h2", 1));
                 }
             });
         });
@@ -34,11 +30,11 @@ class TocHandler extends Paged.Handler {
             const div = document.createElement("div");
             div.className = `toc-entry ${cls}`;
             div.innerHTML = `
-    ${createTabbing(level)}
-    <span>${label}</span>
-    <div style="flex: 1; border-bottom: solid 1px"></div>
-    <span>${page}</span>
-        `;
+                ${createTabbing(level)}
+                <span>${label}</span>
+                <div style="flex: 1; border-bottom: solid 1px"></div>
+                <span>${page}</span>
+            `;
             return div;
         }
     }
