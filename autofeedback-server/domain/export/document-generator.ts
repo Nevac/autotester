@@ -13,16 +13,12 @@ export default class DocumentGenerator {
         const page = await browser.newPage();
         await page.setContent(this.generateDocumentHtml(title, content), { waitUntil: "networkidle0" });
 
-        const logoPath = path.join(process.cwd(), "public/fh_header.png");
-        const logoBase64 = fs.readFileSync(logoPath).toString("base64");
-        const logoDataUri = `data:image/png;base64,${logoBase64}`;
-
         const pdf = await page.pdf({
             format: "A4",
-            displayHeaderFooter: true,
+            displayHeaderFooter: false,
             headerTemplate: `
                 <div style="font-size:11pt; text-align:start; width:100%; padding: 0 40px">
-                    <img style="height: 50px" src="${logoDataUri}"/>
+                    <img style="height: 50px" src=""/>
                 </div>`,
             footerTemplate: `
                 <div style="font-size:11pt; text-align:end; width:100%; padding: 40px">
@@ -48,6 +44,10 @@ export default class DocumentGenerator {
           <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
           <script>${tocHandler}</script>
         `;
+
+        const logoPath = path.join(process.cwd(), "public/fh_header.png");
+        const logoBase64 = fs.readFileSync(logoPath).toString("base64");
+        const logoDataUri = `data:image/png;base64,${logoBase64}`;
 
         return `
           <!DOCTYPE html>
@@ -79,42 +79,46 @@ export default class DocumentGenerator {
                 
                 /* --- PAGE TYPES --- */
                 .cover {
+                  height: 90vh;
                   display: flex;
                   flex-direction: column;
                   justify-content: center;
                   align-items: start;
                   margin-bottom: 50px;
+                  page-break-after: always;
                 }
                 
-                .toc-page {
-                  display: block !important;       /* ⛔ no flex/grid */
-                  break-inside: auto !important;
-                  page-break-inside: auto !important;
-                  overflow: visible !important;
-                  page-break-after: always;        /* still push content after TOC to next page */
-                }
+                /* TOC can flow across pages */
+                #toc { break-inside: auto; page-break-inside: auto; }
+                
+                /* basic layout */
+                .toc-list { list-style: none; padding: 0; margin: 0; }
+                .toc-h1 { margin-left: 0; }
+                .toc-h2 { margin-left: 1.5rem; }
                 
                 .toc-title {
                     font-size: 13pt;
                     font-weight: bold;
                 }
                 
-                #toc {
-                  margin-bottom: 2rem;
-                  break-inside: auto !important;
-                  page-break-inside: auto !important;
-                  overflow: visible !important;
+                /* dotted leaders + page numbers for the anchor target */
+                .toc-list a {
+                  text-decoration: none;
+                  color: inherit;
+                  display: inline-block;
+                  width: 100%;
                 }
-                .toc-entry {
-                  display: flex;
-                  justify-content: space-between;
-                  page-break-inside: avoid;  /* don’t split single line across pages */
+                .toc-list a::after { 
+                    content: ' ' target-counter(attr(href url), page);
+                    float: right;
                 }
+
                 
-                .blank-page {
-                  page-break-after: always;
+                .force-break { 
+                    break-before: 
+                    page; height: 0; 
                 }
-                
+                                
                 table {
                   width: 100%;
                   border-collapse: collapse;   /* make borders merge nicely */
@@ -133,9 +137,29 @@ export default class DocumentGenerator {
                 }
                 
                 .cover-tilte { font-size: 20pt; font-weight: bold; line-height: 2}
+                
+                /* register the element so it can appear in the margin box */
+                #doc-header { position: running(doc-header); }
+                
+                /* now you can size it like a normal <img> */
+                #doc-header img {
+                  display: block;
+                  height: 50px;   /* target height */
+                  width: auto;    /* keep aspect ratio */
+                  object-fit: contain;
+                }
+                
+                @page {
+                  size: A4;
+                  margin: 80px 40px 50px 40px;
+                  @top-left { content: element(doc-header); }
+                  /* your data: URI */
+                  @bottom-right { content: counter(page) " von " counter(pages); font-size: 11pt; }
+                }
               </style>
             </head>
             <body>
+              <div id="doc-header"><img src="${logoDataUri}" alt="Logo"></div>
               <!-- Cover Page -->
               <div class="cover">
                 <div class="cover-tilte">Autofeedback</div>
@@ -154,12 +178,14 @@ export default class DocumentGenerator {
 
               </div>
             
+              <div class="force-break"></div>
               <!-- TOC -->
-              <div class="toc-page">
+              <div>
                 <div class="toc-title">Inhaltsverzeichnis</div>
                 <div id="toc"></div>
               </div>
-            
+              <div class="force-break"></div>
+
               <!-- Main Content -->
               ${content}
             

@@ -1,43 +1,27 @@
 class TocHandler extends Paged.Handler {
-    afterRendered(pages) {
-        const toc = document.querySelector("#toc");
-        toc.innerHTML = "";
+    beforeParsed(content) {
+        const toc = content.querySelector("#toc");
+        if (!toc) return;
 
-        let h1Count = 0, h2Count = 0;
+        const list = document.createElement("ol");
+        list.className = "toc-list";
 
-        pages.forEach((page, i) => {
-            page.element.querySelectorAll("h1, h2").forEach(heading => {
-                let text = heading.textContent.trim();
-                let pageNum = i + 2;
-                if (heading.tagName === "H1") {
-                    h1Count++;
-                    h2Count = 0;
-                    toc.appendChild(makeEntry(text, pageNum, "h1", 0));
-                }
+        content.querySelectorAll("h1, h2").forEach((h, i) => {
+            if (!h.id) h.id = `h-${i}`;
 
-                if (heading.tagName === "H2") {
-                    h2Count++;
-                    toc.appendChild(makeEntry(text, pageNum, "h2", 1));
-                }
-            });
+            const li = document.createElement("li");
+            li.className = `toc-${h.tagName.toLowerCase()}`;
+
+            const a = document.createElement("a");
+            a.href = `#${h.id}`;
+            a.textContent = h.textContent.trim();
+
+            li.appendChild(a);
+            list.appendChild(li);
         });
 
-        function createTabbing(level) {
-            return `<div style="width: ${level * 20}px"></div>`
-        }
-
-        function makeEntry(label, page, cls, level) {
-            const div = document.createElement("div");
-            div.className = `toc-entry ${cls}`;
-            div.innerHTML = `
-                ${createTabbing(level)}
-                <span>${label}</span>
-                <div style="flex: 1; border-bottom: solid 1px"></div>
-                <span>${page}</span>
-            `;
-            return div;
-        }
+        toc.innerHTML = "";
+        toc.appendChild(list);
     }
 }
-
 Paged.registerHandlers(TocHandler);
