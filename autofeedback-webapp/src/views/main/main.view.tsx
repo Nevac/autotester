@@ -23,6 +23,8 @@ import RagDocumentCreateComponent from "../../domains/rag/document/rag-dcoument-
 import RagDocumentEditComponent from "../../domains/rag/document/rag-document-edit/rag-document-edit.component";
 import AttemptExportComponent from "../../domains/attempts/attempt-export/attempt-export.component";
 import RagDocumentExportComponent from "../../domains/rag/document/rag-document-export/rag-document-export.component";
+import EvaluationGroupExportComponent
+    from "../../domains/evaluation/groups/evaluation-group-export/evaluation-group-export.component";
 
 export default function MainView() {
 
@@ -47,6 +49,7 @@ export default function MainView() {
                             <Route path={Routes.PROMPT_GROUP_EDIT} element={<PromptGroupEditComponent/>}/>
                             <Route path={Routes.EVALUATION_GROUP_CREATE} element={<EvaluationGroupCreateComponent/>}/>
                             <Route path={Routes.EVALUATION_GROUP_DETAILS} element={<EvaluationGroupDetailComponent/>}/>
+                            <Route path={Routes.EVALUATION_GROUP_EXPORT} element={<EvaluationGroupExportComponent/>}/>
                             <Route path={Routes.RAG_CREATE} element={<RagCreateComponent/>}/>
                             <Route path={Routes.RAG_EDIT} element={<RagEditComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_CREATE} element={<RagDocumentCreateComponent/>}/>

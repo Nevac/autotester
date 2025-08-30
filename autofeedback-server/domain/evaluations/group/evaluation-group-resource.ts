@@ -1,6 +1,7 @@
 import {Router} from "express";
 import EvaluationGroupService from "./evaluation-group-service";
 import {coerceBoolean} from "openai/core";
+import DocumentResponseHeaders from "../../export/document-response-headers";
 
 export default class EvaluationGroupResource {
 
@@ -28,6 +29,18 @@ export default class EvaluationGroupResource {
         router.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
             const evaluationGroup = await this.service.getById(req.params.id).catch(next);
             res.json(evaluationGroup);
+        });
+
+        router.put(`/${this.RESOURCE}/export`, async (req, res, next) => {
+            const pdf = await this.service.export(req.body.ids).catch(next);
+            if(pdf) {
+                DocumentResponseHeaders.pdf(
+                    "evaluation",
+                    pdf.length,
+                    res
+                );
+                res.end(pdf);
+            }
         });
 
         router.post(`/${this.RESOURCE}`, async (req, res, next) => {

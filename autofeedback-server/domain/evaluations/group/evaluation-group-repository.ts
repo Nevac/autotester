@@ -1,10 +1,6 @@
 import EvaluationGroupListEntry from "./evaluation-group-list-entry";
 import {EvaluationGroup, EvaluationGroupModel} from "./evaluation-group";
 import EvaluationGroupUpsert from "./evaluation-group-upsert";
-import AttemptUpdate from "../../attempts/attempt-update";
-import {Attempt, AttemptModel} from "../../attempts/attempt";
-import EvaluationUpdate from "../evaluation-update";
-import {Evaluation, EvaluationModel} from "../evaluation";
 
 
 export default class EvaluationGroupRepository {
@@ -36,6 +32,14 @@ export default class EvaluationGroupRepository {
                 if (document) return EvaluationGroup.ofDocument(document);
                 throw `Evaluation Group with id ${id} not found`
             });
+    }
+
+    public async getAllByIds(ids: string[]): Promise<Map<string, EvaluationGroup>> {
+        return EvaluationGroupModel.find({_id: { $in: ids}})
+            .exec()
+            .then(documents =>
+                EvaluationGroup.ofDocumentsToMap(documents)
+            );
     }
 
     public async create(upsert: EvaluationGroupUpsert): Promise<EvaluationGroup> {

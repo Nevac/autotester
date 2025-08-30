@@ -1,5 +1,5 @@
 import {Document, model, Schema} from "mongoose";
-import {Attempt, attemptSchema} from "../attempts/attempt";
+import {Attempt, AttemptDocument, attemptSchema} from "../attempts/attempt";
 import PromptGroup, {promptGroupSchema} from "../prompts/prompt-group";
 import EntityUtil from "../entities/entity";
 import Entity from "../entities/entity";
@@ -75,6 +75,14 @@ export class Evaluation implements IEvaluation, Entity {
             evaluations.map(evaluation => [
                 EntityUtil.convertId(evaluation._id),
                 Evaluation.ofDocument(evaluation)
+            ]));
+    }
+
+    public static ofDocumentsToMap(attempts: EvaluationDocument[]): Map<string, Evaluation> {
+        return new Map(
+            attempts.map(attempt => [
+                EntityUtil.convertId(attempt._id),
+                Evaluation.ofDocument(attempt)
             ]));
     }
 }

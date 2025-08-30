@@ -19,6 +19,9 @@ import RagResponse from "../rag/client/rag-response";
 import {EvaluationScoreCorrection} from "./score/correction/evaluation-score-correction";
 import ScoreCorrector from "./score/correction/score-corrector";
 import ConfusionDto from "./score/confusion/confusion-dto";
+import ExportDocumentContentGenerator from "../export/document-attempts-content-generator";
+import ExportDocumentGenerator from "../export/document-generator";
+import DocumentEvaluationsContentGenerator from "../export/document-evaluations-content-generator";
 
 export default class EvaluationService {
 
@@ -167,6 +170,10 @@ export default class EvaluationService {
 
     public async getByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
         return await this.evaluationRepository.getByGroupId(groupId);
+    }
+
+    public async getByGroupIds(groupIds: string[]): Promise<Map<string, Evaluation>> {
+        return await this.evaluationRepository.getByGroupIds(groupIds);
     }
 
     public async getAllNotDoneByGroupId(groupId: string): Promise<Map<string, Evaluation>> {

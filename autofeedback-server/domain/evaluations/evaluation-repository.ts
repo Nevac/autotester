@@ -62,6 +62,16 @@ export default class EvaluationRepository {
             );
     }
 
+    public async getByGroupIds(groupIds: string[]): Promise<Map<string, Evaluation>> {
+        return await EvaluationModel.find({
+            evaluationGroup: { $in: groupIds }
+        })
+            .exec()
+            .then(documents =>
+                Evaluation.ofDocuments(documents)
+            );
+    }
+
     public async getAllNotDoneByGroupId(groupId: string): Promise<Map<string, Evaluation>> {
         return await EvaluationModel.find({
             state: { "$ne": EvaluationState.DONE },
@@ -70,6 +80,14 @@ export default class EvaluationRepository {
             .exec()
             .then(documents =>
                 Evaluation.ofDocuments(documents)
+            );
+    }
+
+    public async getAllByIds(ids: string[]): Promise<Map<string, Evaluation>> {
+        return EvaluationModel.find({_id: { $in: ids}})
+            .exec()
+            .then(documents =>
+                Evaluation.ofDocumentsToMap(documents)
             );
     }
 

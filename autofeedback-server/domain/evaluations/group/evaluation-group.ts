@@ -7,6 +7,7 @@ import {Llm} from "../../llms/llm";
 import EvaluationGroupLlm, {evaluationGroupLlmSchema} from "./llm/evaluation-group-llm";
 import EvaluationState from "../evaluation-state";
 import Rag, {ragSchema} from "../../rag/rag";
+import {EvaluationDocument} from "../evaluation";
 
 
 export interface IEvaluationGroup {
@@ -56,6 +57,14 @@ export class EvaluationGroup implements IEvaluationGroup, Entity {
             evaluationGroup.bestLlm,
             evaluationGroup.bestScore
         )
+    }
+
+    public static ofDocumentsToMap(evaluationGroups: EvaluationGroupDocument[]): Map<string, EvaluationGroup> {
+        return new Map(
+            evaluationGroups.map(evaluationGroup => [
+                EntityUtil.convertId(evaluationGroup._id),
+                EvaluationGroup.ofDocument(evaluationGroup)
+            ]));
     }
 }
 

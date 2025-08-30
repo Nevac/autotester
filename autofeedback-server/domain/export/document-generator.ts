@@ -152,7 +152,7 @@ export default class DocumentGenerator {
                 @page {
                   size: A4;
                   margin: 80px 40px 50px 40px;
-                  @top-left { content: element(doc-header); }
+                  /*@top-left { content: element(doc-header); }*/
                   /* your data: URI */
                   @bottom-right { content: counter(page) " von " counter(pages); font-size: 11pt; }
                 }

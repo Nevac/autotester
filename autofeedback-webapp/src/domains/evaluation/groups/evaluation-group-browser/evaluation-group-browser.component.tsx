@@ -3,7 +3,7 @@ import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Typog
 import React, {useEffect, useState} from 'react';
 import EvaluationGroupListItem from "../evaluation-group-list-item";
 import EvaluationGroupEndpoint from "../evaluation-group-endpoint";
-import {Add} from '@mui/icons-material';
+import {Add, FileDownload} from '@mui/icons-material';
 import {useLocation, useNavigate} from "react-router-dom";
 import Routes from "../../../routes/routes";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
@@ -67,6 +67,9 @@ export default function EvaluationGroupBrowserComponent() {
             <List
                 subheader={
                 <div style={{display: "flex", justifyContent: "end", background: "#121212"}}>
+                    <IconButton aria-label="add" onClick={() => navigate(Routes.EVALUATION_GROUP_EXPORT)}>
+                        <FileDownload/>
+                    </IconButton>
                     <IconButton aria-label="add" onClick={() => navigate(Routes.EVALUATION_GROUP_CREATE)}>
                         <Add/>
                     </IconButton>

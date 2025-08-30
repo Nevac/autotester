@@ -15,6 +15,8 @@ import {EvaluationGroupLlmScore} from "./llm/evaluation-group-llm-score";
 import pLimit from "p-limit";
 import {logger} from "../../../logger";
 import {EvaluationScoreCorrection} from "../score/correction/evaluation-score-correction";
+import DocumentEvaluationsContentGenerator from "../../export/document-evaluations-content-generator";
+import ExportDocumentGenerator from "../../export/document-generator";
 
 export default class EvaluationGroupService {
 
@@ -226,5 +228,17 @@ export default class EvaluationGroupService {
         return await Promise
             .all<boolean>([isDeleteEvaluationsSuccess, isDeleteEvaluationGroupSuccess])
             .then(result => result[0] && result[1]);
+    }
+
+
+    public async export(ids: string[]): Promise<Buffer> {
+        const evaluationGroups = await this.evaluationGroupRepository.getAllByIds(ids);
+        const evaluations = await this.evaluationService.getByGroupIds(ids);
+
+        const htmlContent = DocumentEvaluationsContentGenerator.generate(
+            evaluationGroups,
+            evaluations
+        );
+        return await ExportDocumentGenerator.pdf("Anhang Evaluation", htmlContent);
     }
 }

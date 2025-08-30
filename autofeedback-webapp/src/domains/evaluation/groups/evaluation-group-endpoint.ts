@@ -4,6 +4,7 @@ import EvaluationGroupUpdate from "./evaluation-group-update";
 import {EvaluationGroup} from "./evaluation-group";
 import CorrectScoreDto from "../score/correction/correct-score-dto";
 import {Evaluation} from "../evaluation";
+import FileDownloader from "../../util/file-downloader/file-downloader";
 
 export default class EvaluationGroupEndpoint {
 
@@ -88,5 +89,19 @@ export default class EvaluationGroupEndpoint {
                 if(res.ok) return EndpointResponeStatus.SUCCESS
                 return EndpointResponeStatus.FAIL;
             });
+    }
+
+    public export(ids: string[]): Promise<void> {
+        return fetch(`${this.ENDPOINT}/export`,{
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ids: ids})
+        }).then(async (res) => {
+            if (!res.ok) throw new Error("Failed to export");
+            await FileDownloader.pdf("evaluation", res)
+        });
     }
 }

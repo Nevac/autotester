@@ -40,7 +40,7 @@ export default class RagDocumentResource {
             const pdf = await this.service.export(req.body.ids).catch(next);
             if(pdf) {
                 DocumentResponseHeaders.pdf(
-                    "aufgaben",
+                    "rag_dokumente",
                     pdf.length,
                     res
                 );
