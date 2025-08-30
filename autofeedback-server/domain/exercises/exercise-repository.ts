@@ -1,6 +1,7 @@
 import {ExerciseModel, Exercise} from "./exercise";
 import ExerciseUpdate from "./exercise-update";
 import ExerciseListEntry from "./exercise-list-entry";
+import {Evaluation, EvaluationModel} from "../evaluations/evaluation";
 
 export default class ExerciseRepository {
 
@@ -11,6 +12,14 @@ export default class ExerciseRepository {
                 res.map(document =>
                     Exercise.ofDocument(document)
                 ))
+    }
+
+    public async findAllByIds(ids: string[]) {
+        return ExerciseModel.find({_id: { $in: ids}})
+            .exec()
+            .then(documents =>
+                Exercise.ofDocuments(documents)
+            );
     }
 
     public async getAllListEntries(): Promise<ExerciseListEntry[]> {

@@ -1,10 +1,6 @@
 import AttemptListEntry from "./attempt-list-entry";
 import {Attempt, AttemptModel} from "./attempt";
-import ChatGroupUpdate from "../chats/group/chat-group-update";
 import AttemptUpdate from "./attempt-update";
-import * as mongoose from "mongoose";
-import {ObjectId} from "mongodb";
-import ExerciseUpdate from "../exercises/exercise-update";
 import {Exercise, ExerciseModel} from "../exercises/exercise";
 
 
@@ -17,6 +13,14 @@ export default class AttemptRepository {
                 document =>
                     Attempt.ofDocument(document)
             ))
+    }
+
+    public async findAllByIds(ids: string[]): Promise<Map<string, Attempt>> {
+        return AttemptModel.find({_id: { $in: ids}})
+            .exec()
+            .then(documents =>
+                Attempt.ofDocumentsToMap(documents)
+            );
     }
 
     public async getAllListEntries(): Promise<AttemptListEntry[]> {
@@ -42,7 +46,7 @@ export default class AttemptRepository {
     public async getByIds(ids: Set<string>): Promise<Map<string, Attempt>> {
         return await AttemptModel.find({ _id: { $in: ids }})
             .exec()
-            .then(documents => Attempt.ofDocuments(documents));
+            .then(documents => Attempt.ofDocumentsToMap(documents));
     }
 
     public async create(chatGroup: AttemptUpdate): Promise<Attempt> {
@@ -73,4 +77,6 @@ export default class AttemptRepository {
                 return document.acknowledged;
             })
     }
+
+
 }

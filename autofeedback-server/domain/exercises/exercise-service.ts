@@ -12,6 +12,10 @@ export default class ExerciseService {
         this.repository = new ExerciseRepository();
     }
 
+    public async findAllByIds(ids: string[]): Promise<Exercise[]> {
+        return await this.repository.findAllByIds(ids);
+    }
+
     public async getAll(): Promise<Exercise[]> {
         return await this.repository.getAll();
     }

@@ -1,7 +1,7 @@
 import './attempt-browser.component.css';
 import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText} from "@mui/material";
 import React, {useEffect, useState} from 'react';
-import {Add} from '@mui/icons-material';
+import {Add, FileDownload} from '@mui/icons-material';
 import AttemptEndpoint from "../attempt-endpoint";
 import AttemptListItem from "../attempt-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";
@@ -66,6 +66,9 @@ export default function AttemptBrowserComponent() {
             <List
                 subheader={
                 <div style={{display: "flex", justifyContent: "end", background: "#121212"}}>
+                    <IconButton aria-label="add" onClick={() => navigate(Routes.ATTEMPT_EXPORT)}>
+                        <FileDownload/>
+                    </IconButton>
                     <IconButton aria-label="add" onClick={() => navigate(Routes.ATTEMPT_CREATE)}>
                         <Add/>
                     </IconButton>

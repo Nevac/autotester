@@ -1,7 +1,7 @@
 import './exercise-browser.component.css';
 import {Divider, IconButton, List, ListItem, ListItemButton, ListItemText} from "@mui/material";
 import React, {useEffect, useState} from 'react';
-import {Add} from '@mui/icons-material';
+import {Add, FileDownload} from '@mui/icons-material';
 import ExerciseEndpoint from "../exercise-endpoint";
 import ExerciseListItem from "../exercise-list-item";
 import {SnackbarVariant, useSnackbar} from "../../util/feedback/snackbar-hook";

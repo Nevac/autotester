@@ -35,6 +35,10 @@ export class Exercise implements IExercise, Entity {
             updatedAt
         )
     }
+
+    public static ofDocuments(exercises: ExerciseDocument[]): Exercise[] {
+        return exercises.map(exercise => Exercise.ofDocument(exercise));
+    }
 }
 
 export const exerciseSchema = new Schema<IExercise>(

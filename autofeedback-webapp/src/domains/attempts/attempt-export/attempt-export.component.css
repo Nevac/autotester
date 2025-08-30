@@ -1,0 +1,17 @@
+.attempt-export-modal-paper {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    flex: 1;
+}
+
+.attempt-export-modal-text-area-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+}
+
+.attempt-export-modal-text-area {
+    width: 100%;
+}

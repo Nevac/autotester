@@ -21,6 +21,7 @@ import RagCreateComponent from "../../domains/rag/groups/rag-create/rag-create.c
 import RagEditComponent from "../../domains/rag/groups/rag-edit/rag-edit.component";
 import RagDocumentCreateComponent from "../../domains/rag/document/rag-dcoument-create/rag-document-create.component";
 import RagDocumentEditComponent from "../../domains/rag/document/rag-document-edit/rag-document-edit.component";
+import AttemptExportComponent from "../../domains/attempts/attempt-export/attempt-export.component";
 
 export default function MainView() {
 
@@ -35,6 +36,7 @@ export default function MainView() {
                         <RoutesComponent>
                             <Route path={Routes.ATTEMPT_CREATE} element={<AttemptCreateComponent/>}/>
                             <Route path={Routes.ATTEMPT_EDIT} element={<AttemptEditComponent/>}/>
+                            <Route path={Routes.ATTEMPT_EXPORT} element={<AttemptExportComponent/>}/>
                             <Route path={Routes.CHAT_GROUP_CREATE} element={<ChatGroupCreateComponent/>}/>
                             <Route path={Routes.CHAT_GROUP_DETAILS} element={<ChatGroupDetailComponent key={":id"}/>}/>
                             <Route path={Routes.CHAT_GROUP_DETAIL} element={<ChatGroupDetailComponent/>}/>

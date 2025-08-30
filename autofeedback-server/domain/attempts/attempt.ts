@@ -43,7 +43,12 @@ export class Attempt implements IAttempt, Entity {
         )
     }
 
-    public static ofDocuments(attempts: AttemptDocument[]): Map<string, Attempt> {
+    public static ofDocuments(attempts: AttemptDocument[]): Attempt[] {
+        return attempts.map(attempt => Attempt.ofDocument(attempt));
+    }
+
+
+    public static ofDocumentsToMap(attempts: AttemptDocument[]): Map<string, Attempt> {
         return new Map(
             attempts.map(attempt => [
                 EntityUtil.convertId(attempt._id),

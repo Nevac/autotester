@@ -27,7 +27,23 @@ export default class AttemptResource {
             }
         });
 
+        router.put(`/${this.RESOURCE}/export`, async (req, res, next) => {
+            console.log(req.body.ids);
+            const pdf = await this.service.export(req.body.ids).catch(next);
+
+            if(pdf) {
+                res.set({
+                    "Content-Type": "application/pdf",
+                    "Content-Disposition": "attachment; filename=document.pdf",
+                    "Content-Length": pdf.length
+                });
+
+                res.end(pdf);
+            }
+        });
+
         router.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
+            console.log(req.params.id);
             const attempt = await this.service.getById(req.params.id).catch(next);
             res.json(attempt);
         });

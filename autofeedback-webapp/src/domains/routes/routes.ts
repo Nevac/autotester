@@ -5,6 +5,7 @@ export default class Routes {
     public static readonly ATTEMPT_CREATE = `${Routes.ATTEMPT}/create`;
     public static readonly ATTEMPT_EDIT = `${Routes.ATTEMPT}/:id`;
     public static attemptEdit(id: string): string { return `${Routes.ATTEMPT}/${id}`};
+    public static readonly ATTEMPT_EXPORT = `${Routes.ATTEMPT}/export`;
     public static readonly CHAT_GROUP = `${Routes.ROOT}/chat-group`;
     public static readonly CHAT_GROUP_DETAIL = `${Routes.CHAT_GROUP}/detail`;
     public static readonly CHAT_GROUP_CREATE = `${Routes.CHAT_GROUP}/create`;

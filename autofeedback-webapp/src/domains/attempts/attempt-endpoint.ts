@@ -2,6 +2,7 @@ import AttemptListItem from "./attempt-list-item";
 import AttemptUpdate from "./attempt-update";
 import {EndpointResponeStatus} from "../util/EndpointResponeStatus";
 import Attempt from "./attempt";
+import FileDownloader from "../util/file-downloader/file-downloader";
 
 export default class AttemptEndpoint {
 
@@ -53,10 +54,23 @@ export default class AttemptEndpoint {
     public delete(id: string): Promise<EndpointResponeStatus> {
         return fetch(`${this.ENDPOINT}/${id}`, {
             method: "DELETE"
-        })
-        .then(res => {
+        }).then(res => {
             if(res.ok) return EndpointResponeStatus.SUCCESS
             return EndpointResponeStatus.FAIL;
+        });
+    }
+
+    public export(ids: string[]): Promise<void> {
+        return fetch(`${this.ENDPOINT}/export`,{
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ids: ids})
+        }).then(async (res) => {
+            if (!res.ok) throw new Error("Failed to export");
+            await FileDownloader.pdf("attempts", res)
         });
     }
 }
