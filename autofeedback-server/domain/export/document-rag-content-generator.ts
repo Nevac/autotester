@@ -1,6 +1,7 @@
 import FeedbackReference from "../attempts/expected-feedback/feedback-reference";
 import md from "./markdown-it";
 import RagDoc from "../rag/document/rag-doc";
+import RagDocumentMetadata from "../rag/document/rag-document-metadata";
 
 
 export default class DocumentRagContentGenerator {
@@ -41,6 +42,9 @@ export default class DocumentRagContentGenerator {
                 const subChapterNumber = parseFloat(ragDocIndex) + 1;
                 markdown += `## ${chapterNumber}.${subChapterNumber}. ${ragDoc.externalId} | ${this.extractTitle(ragDoc)} \n`;
                 markdown += `${this.changeHeadings(ragDoc.metadata.text)} \n`;
+                markdown += "\n"
+                markdown += `${this.metadataGenerator(ragDoc.metadata)} \n`;
+                markdown += "\n";
             }
         }
 
@@ -58,20 +62,19 @@ export default class DocumentRagContentGenerator {
         return text.slice(3, text.indexOf("\n"));
     }
 
-    private static expectedFeedbackGenerator(metric: string, feedbackReferences: FeedbackReference[]): string {
-        let markdown = `**${metric}**\n`
-        if(feedbackReferences.length > 0) {
-            markdown += `| Id | Referenz Beschreibungen |
+    private static metadataGenerator(metadata: RagDocumentMetadata): string {
+        let markdown = `### Metadata \n`;
+        markdown += `| Metadata | Value |
 | ----------- | ----------- |\n`
-            for (const feedbackReference of feedbackReferences) {
-                markdown += feedbackReference.references.map((text, i) =>
-                    `| ${i === 0 ? feedbackReference.id : "^^"} | ${text} |`
-                ).join("\n");
-                markdown += '\n';
-            }
-        } else {
-            markdown += 'Keine Referenzen \n'
-        }
+        markdown += this.metadataRow("category", metadata.category);
+        markdown += this.metadataRow("language", metadata.language);
+        markdown += this.metadataRow("topic", metadata.topic);
+        markdown += this.metadataRow("type", metadata.type);
+        markdown += this.metadataRow("constructs", metadata.constructs.join(", "));
         return markdown;
+    }
+
+    private static metadataRow(name: string, value: string): string {
+        return `| ${name} | ${value} |\n`;
     }
 }
