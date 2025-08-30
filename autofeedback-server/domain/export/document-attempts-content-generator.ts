@@ -36,6 +36,8 @@ export default class DocumentAttemptsContentGenerator {
             const chapterNumber = parseFloat(exerciseIndex) + 1;
             markdown += `# ${chapterNumber}. ${exercise.name} \n`
             markdown += `${this.changeTaskHeaders(exercise.task)} \n`;
+            markdown += `### Musterlösung \n`;
+            markdown += `${exercise.solution} \n`
 
             const attempts = attemptsMap.get(exercise._id.toString())!;
             for(const attemptIndex in attempts) {
