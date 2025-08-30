@@ -31,4 +31,5 @@ export default class Routes {
     public static readonly RAG_DOCUMENT_CREATE = `${Routes.RAG_DOCUMENT}/create`;
     public static readonly RAG_DOCUMENT_EDIT = `${Routes.RAG_DOCUMENT}/:id`;
     public static ragDocumentEdit(id: string): string { return `${Routes.RAG_DOCUMENT}/${id}`};
+    public static readonly RAG_DOCUMENT_EXPORT = `${Routes.RAG_DOCUMENT}/export`;
 }

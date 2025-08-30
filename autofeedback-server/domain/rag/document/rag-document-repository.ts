@@ -33,6 +33,12 @@ export default class RagDocumentRepository {
             });
     }
 
+    public async getByIds(ids: string[]): Promise<Map<string, RagDoc>> {
+        return await RagDocModel.find({ _id: { $in: ids }})
+            .exec()
+            .then(documents => RagDoc.ofDocumentsToMap(documents));
+    }
+
     public async create(ragUpdate: RagDocumentUpsert): Promise<RagDoc> {
         return await RagDocModel.create(
             ragUpdate

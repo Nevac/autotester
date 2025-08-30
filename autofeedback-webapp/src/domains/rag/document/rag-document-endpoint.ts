@@ -3,6 +3,7 @@ import RagDocumentUpdate from "./rag-document-update";
 import {EndpointResponeStatus} from "../../util/EndpointResponeStatus";
 import RagDocument from "./rag-document";
 import RagDocumentListItem from "./rag-document-list-item";
+import FileDownloader from "../../util/file-downloader/file-downloader";
 
 export default class RagDocumentEndpoint {
 
@@ -60,5 +61,19 @@ export default class RagDocumentEndpoint {
                 if(res.ok) return EndpointResponeStatus.SUCCESS
                 return EndpointResponeStatus.FAIL;
             });
+    }
+
+    public export(ids: string[]): Promise<void> {
+        return fetch(`${this.ENDPOINT}/export`,{
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ids: ids})
+        }).then(async (res) => {
+            if (!res.ok) throw new Error("Failed to export");
+            await FileDownloader.pdf("rag_documents", res)
+        });
     }
 }

@@ -42,11 +42,6 @@ export default function AttemptExportComponent() {
         attemptEndpoint.export(
             attemptsInput.valueOrThrow()
         )
-        // ).then(state => {
-        //     if (state == EndpointResponeStatus.SUCCESS) {
-        //         openSnackbar("Export successful", SnackbarVariant.SUCCESS);
-        //     } else openSnackbar("Export failed", SnackbarVariant.ERROR);
-        // });
     }
 
     const attemptColumns: GridColDef[] = [

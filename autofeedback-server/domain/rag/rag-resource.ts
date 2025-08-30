@@ -5,6 +5,7 @@ import RagUpdate from "./rag-update";
 import {coerceBoolean} from "openai/core";
 import ExerciseUpdate from "../exercises/exercise-update";
 import * as wasi from "node:wasi";
+import DocumentResponseHeaders from "../export/document-response-headers";
 
 export default class RagResource {
 

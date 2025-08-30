@@ -1,6 +1,7 @@
 import {Router} from "express";
 import RagDocumentService from "./rag-document-service";
 import {coerceBoolean} from "openai/core";
+import DocumentResponseHeaders from "../../export/document-response-headers";
 
 export default class RagDocumentResource {
 
@@ -33,6 +34,18 @@ export default class RagDocumentResource {
         router.post(`/${this.RESOURCE}`, async (req, res, next) => {
             const exercise = await this.service.create(req.body).catch(next);
             res.json(exercise);
+        });
+
+        router.put(`/${this.RESOURCE}/export`, async (req, res, next) => {
+            const pdf = await this.service.export(req.body.ids).catch(next);
+            if(pdf) {
+                DocumentResponseHeaders.pdf(
+                    "aufgaben",
+                    pdf.length,
+                    res
+                );
+                res.end(pdf);
+            }
         });
 
         router.put(`/${this.RESOURCE}/:id`, async (req, res, next) => {

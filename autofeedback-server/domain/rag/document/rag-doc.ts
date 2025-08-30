@@ -2,6 +2,7 @@ import {Document, model, Schema} from "mongoose";
 import Entity from "../../entities/entity";
 import EntityUtil from "../../entities/entity";
 import RagDocumentMetadata, {ragDocumentMetadataSchema} from "./rag-document-metadata";
+import {AttemptDocument} from "../../attempts/attempt";
 
 export interface IRagDoc {
     externalId: string,
@@ -27,6 +28,14 @@ export default class RagDoc implements IRagDoc, Entity {
             createdAt,
             updatedAt
         )
+    }
+
+    public static ofDocumentsToMap(ragDocDocuments: RagDocDocument[]): Map<string, RagDoc> {
+        return new Map(
+            ragDocDocuments.map(ragDocDocument => [
+                EntityUtil.convertId(ragDocDocument._id),
+                RagDoc.ofDocument(ragDocDocument)
+            ]));
     }
 }
 

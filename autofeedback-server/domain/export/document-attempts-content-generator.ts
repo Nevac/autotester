@@ -1,25 +1,15 @@
-import MarkdownIt from "markdown-it";
 import {Attempt} from "../attempts/attempt";
 import {Exercise} from "../exercises/exercise";
 import FeedbackReference from "../attempts/expected-feedback/feedback-reference";
-import multimdTable from "markdown-it-multimd-table-ext";
+import md from "./markdown-it";
 
 
-export default class DocumentContentGenerator {
+export default class DocumentAttemptsContentGenerator {
 
-
-    public static attempts(attempts: Attempt[]): string {
-
-        const md = new MarkdownIt({html: true});
-        md.enable("table")
+    public static generate(attempts: Attempt[]): string {
         const exMap = new Map<string, Exercise>(
             attempts.map(attempt => [attempt.exercise._id.toString(), attempt.exercise])
         )
-        md.use(multimdTable, {
-            multiline: true,   // allow line breaks inside cells
-            rowspan: true,     // enable rowspan
-            headerless: true,  // allow tables without header row
-        });
 
         const exercises = Array.from(
             exMap.values()
@@ -35,6 +25,10 @@ export default class DocumentContentGenerator {
                 attemptsMap.set(exerciseId, [attempt]);
             }
         }
+        Array.from(attemptsMap.values())
+            .forEach(attempts =>
+                attempts.sort((a, b) => a.name.localeCompare(b.name)
+            ));
 
         let markdown = "";
         for(const exerciseIndex in exercises) {

@@ -22,6 +22,7 @@ import RagEditComponent from "../../domains/rag/groups/rag-edit/rag-edit.compone
 import RagDocumentCreateComponent from "../../domains/rag/document/rag-dcoument-create/rag-document-create.component";
 import RagDocumentEditComponent from "../../domains/rag/document/rag-document-edit/rag-document-edit.component";
 import AttemptExportComponent from "../../domains/attempts/attempt-export/attempt-export.component";
+import RagDocumentExportComponent from "../../domains/rag/document/rag-document-export/rag-document-export.component";
 
 export default function MainView() {
 
@@ -50,6 +51,8 @@ export default function MainView() {
                             <Route path={Routes.RAG_EDIT} element={<RagEditComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_CREATE} element={<RagDocumentCreateComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_EDIT} element={<RagDocumentEditComponent/>}/>
+                            <Route path={Routes.RAG_DOCUMENT_EXPORT} element={<RagDocumentExportComponent/>}/>
+
                         </RoutesComponent>
                     </PaperDefaultComponent>
                 </div>

@@ -28,17 +28,7 @@ export default class AttemptResource {
             }
         });
 
-        router.put(`/${this.RESOURCE}/export`, async (req, res, next) => {
-            const pdf = await this.service.export(req.body.ids).catch(next);
-            if(pdf) {
-                DocumentResponseHeaders.pdf(
-                    "aufgaben",
-                    pdf.length,
-                    res
-                );
-                res.end(pdf);
-            }
-        });
+
 
         router.get(`/${this.RESOURCE}/:id`, async (req, res, next) => {
             console.log(req.params.id);
@@ -63,6 +53,18 @@ export default class AttemptResource {
             const deleted = await this.service.delete(req.params.id).catch(next);
             if(deleted) res.sendStatus(200);
             else res.sendStatus(409);
+        });
+
+        router.put(`/${this.RESOURCE}/export`, async (req, res, next) => {
+            const pdf = await this.service.export(req.body.ids).catch(next);
+            if(pdf) {
+                DocumentResponseHeaders.pdf(
+                    "aufgaben",
+                    pdf.length,
+                    res
+                );
+                res.end(pdf);
+            }
         });
     }
 }

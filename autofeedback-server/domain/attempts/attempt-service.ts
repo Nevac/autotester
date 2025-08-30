@@ -4,7 +4,7 @@ import AttemptListEntry from "./attempt-list-entry";
 import {Attempt} from "./attempt";
 import ExerciseRepository from "../exercises/exercise-repository";
 import AttemptUpdate from "./attempt-update";
-import ExportDocumentContentGenerator from "../export/document-content-generator";
+import ExportDocumentContentGenerator from "../export/document-attempts-content-generator";
 import ExportDocumentGenerator from "../export/document-generator";
 
 export default class AttemptService {
@@ -67,7 +67,7 @@ export default class AttemptService {
 
     public async export(ids: string[]): Promise<Buffer> {
         const attempts = await this.attemptRepository.findAllByIds(ids);
-        const htmlContent = ExportDocumentContentGenerator.attempts(Array.from(attempts.values()));
+        const htmlContent = ExportDocumentContentGenerator.generate(Array.from(attempts.values()));
         return await ExportDocumentGenerator.pdf("Anhang Aufgaben", htmlContent);
     }
 }

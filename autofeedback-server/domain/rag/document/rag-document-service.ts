@@ -5,6 +5,8 @@ import RagDoc from "./rag-doc";
 import RagClient from "../client/rag-client";
 import PineconeClient from "../client/pinecone-client";
 import TextEmbedding3LargeClient from "../embedding/text-embedding3-large.client";
+import ExportDocumentGenerator from "../../export/document-generator";
+import DocumentRagContentGenerator from "../../export/document-rag-content-generator";
 
 export default class RagDocumentService {
 
@@ -50,5 +52,11 @@ export default class RagDocumentService {
     public async delete(id: string): Promise<boolean> {
         await this.rag.delete(id);
         return await this.repository.delete(id);
+    }
+
+    public async export(ids: string[]): Promise<Buffer> {
+        const attempts = await this.repository.getByIds(ids);
+        const htmlContent = DocumentRagContentGenerator.generate(Array.from(attempts.values()));
+        return await ExportDocumentGenerator.pdf("Anhang RAG Dokumente", htmlContent);
     }
 }

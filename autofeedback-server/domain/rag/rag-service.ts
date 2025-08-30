@@ -2,8 +2,6 @@ import RagRepository from "./rag-repository";
 import RagUpdate from "./rag-update";
 import RagGroupListEntry from "./rag-group-list-entry";
 import Rag from "./rag";
-import ExerciseUpdate from "../exercises/exercise-update";
-import {Exercise} from "../exercises/exercise";
 
 export default class RagService {
 

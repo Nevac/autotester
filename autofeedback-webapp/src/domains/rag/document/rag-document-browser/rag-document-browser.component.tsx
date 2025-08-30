@@ -8,7 +8,7 @@ import {
     ListItemText
 } from "@mui/material";
 import React, { useState, useEffect } from 'react';
-import {Add} from '@mui/icons-material';
+import {Add, FileDownload} from '@mui/icons-material';
 import RagDocumentEndpoint from "../rag-document-endpoint";
 import RagListItem from "../rag-document-list-item";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
@@ -78,6 +78,9 @@ export default function RagDocumentBrowserComponent() {
             <List
                 subheader={
                 <div style={{display: "flex", justifyContent: "end", background: "#121212"}}>
+                    <IconButton aria-label="add" onClick={() => navigate(Routes.RAG_DOCUMENT_EXPORT)}>
+                        <FileDownload/>
+                    </IconButton>
                     <IconButton aria-label="add" onClick={() => navigate(Routes.RAG_DOCUMENT_CREATE)}>
                         <Add/>
                     </IconButton>

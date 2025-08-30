@@ -59,8 +59,6 @@ export default class DocumentGenerator {
               <style>
                 body { font-family: "Arial", sans-serif; font-size: 11pt; margin: 2rem; }
                 h1, h2, h3 { page-break-after: avoid; }
-                #toc { margin-bottom: 2rem;}
-                .toc-entry { display: flex; justify-content: space-between; }
                    /* --- CODE BLOCKS --- */
                    /* Make code blocks split naturally across pages */
                 pre code {
@@ -89,12 +87,28 @@ export default class DocumentGenerator {
                 }
                 
                 .toc-page {
-                  page-break-after: always;
+                  display: block !important;       /* ⛔ no flex/grid */
+                  break-inside: auto !important;
+                  page-break-inside: auto !important;
+                  overflow: visible !important;
+                  page-break-after: always;        /* still push content after TOC to next page */
                 }
                 
                 .toc-title {
                     font-size: 13pt;
                     font-weight: bold;
+                }
+                
+                #toc {
+                  margin-bottom: 2rem;
+                  break-inside: auto !important;
+                  page-break-inside: auto !important;
+                  overflow: visible !important;
+                }
+                .toc-entry {
+                  display: flex;
+                  justify-content: space-between;
+                  page-break-inside: avoid;  /* don’t split single line across pages */
                 }
                 
                 .blank-page {
