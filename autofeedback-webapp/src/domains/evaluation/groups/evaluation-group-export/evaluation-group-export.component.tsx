@@ -47,7 +47,6 @@ export default function EvaluationGroupExportComponent() {
 
     const evaluationGroupColumns: GridColDef[] = [
         {field: 'name', headerName: 'Name', width: 400},
-        {field: 'rag.name', headerName: 'RAG', width: 400, valueGetter: (value, row) => row.rag ? row.rag.name : "No RAG"},
     ];
 
     return (

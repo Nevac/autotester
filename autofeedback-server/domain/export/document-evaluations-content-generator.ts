@@ -9,6 +9,7 @@ import EvaluationRagDocument from "../evaluations/rag-document/evaluation-rag-do
 import {EvaluationScore} from "../evaluations/score/evaluation-score";
 import MetricScore from "../evaluations/score/metric/metric-score";
 import MetricOvergenerationScore from "../evaluations/score/metric/metric-overgeneration-score";
+import {Llm} from "../llms/llm";
 
 
 export default class DocumentEvaluationsContentGenerator {
@@ -23,17 +24,26 @@ export default class DocumentEvaluationsContentGenerator {
         let headerNumber = 1;
         for(const attemptName of Array.from(preppedEvaluations.keys())) {
             markdown += `# ${headerNumber}. ${attemptName}\n`
-            const evaluations = preppedEvaluations.get(attemptName)!;
-            for(const evaluationIndex in evaluations) {
-                const evaluation = evaluations[evaluationIndex]
-                const subheaderNumber = parseFloat(evaluationIndex) + 1;
-                const evaluationGroup = evaluationGroups.get(evaluation.evaluationGroup)!;
-                markdown += `## ${headerNumber}.${subheaderNumber}. ${evaluationGroup.name}\n`
-                markdown += `#### Generiertes Feedback**\n`
-                markdown += `${this.changeHeadings(evaluation.generatedFeedback)}\n`
-                markdown += `${this.ragDocuments(evaluation.ragDocuments)}\n`
-                markdown += '#### Scores\n';
-                markdown += `${this.metricScores(evaluation.score)}\n`
+            const evaluationMap = preppedEvaluations.get(attemptName)!;
+            const llmList = Array.from(evaluationMap.keys()).sort((a, b) =>
+                a.toString().localeCompare(b.toString())
+            );
+            for(const llmIndex in llmList) {
+                const llm = llmList[llmIndex];
+                const evaluations = evaluationMap.get(llm)!;
+                const subheaderNumber = parseFloat(llmIndex) + 1;
+                markdown += `## ${headerNumber}.${subheaderNumber}. ${llm}\n`
+                for (const evaluationIndex in evaluations) {
+                    const evaluation = evaluations[evaluationIndex]
+                    const evaluationGroup = evaluationGroups.get(evaluation.evaluationGroup)!;
+                    const subsubheaderNumber = parseFloat(evaluationIndex) + 1;
+                    markdown += `### ${headerNumber}.${subheaderNumber}.${subsubheaderNumber} Evaluations Gruppe: ${evaluationGroup.name}\n`
+                    markdown += `#### Generiertes Feedback\n`
+                    markdown += `${this.changeHeadings(evaluation.generatedFeedback)}\n`
+                    markdown += `${this.ragDocuments(evaluation.ragDocuments)}\n`
+                    markdown += '#### Scores\n';
+                    markdown += `${this.metricScores(evaluation.score)}\n`
+                }
             }
             headerNumber++;
         }
@@ -67,20 +77,32 @@ export default class DocumentEvaluationsContentGenerator {
         return markdown;
     }
 
-    private static prepareEvaluations(evaluations: Map<string, Evaluation>, evaluationGroups: Map<string, EvaluationGroup>): Map<string, Evaluation[]> {
-        const evaluationMap = new Map<string, Evaluation[]>();
+    private static prepareEvaluations(evaluations: Map<string, Evaluation>, evaluationGroups: Map<string, EvaluationGroup>): Map<string, Map<Llm, Evaluation[]>> {
+        const evaluationMap = new Map<string, Map<Llm, Evaluation[]>>();
         Array.from(evaluations.values()).forEach(evaluation => {
             const attemptName = evaluation.attempt.name;
+            const llm = evaluation.llm;
+
             if(evaluationMap.has(attemptName)) {
-                evaluationMap.get(attemptName)!.push(evaluation);
+                const llmMap = evaluationMap.get(attemptName)!;
+                if(llmMap.has(llm)) {
+                    llmMap.get(llm)!.push(evaluation);
+                } else {
+                    llmMap.set(llm, [evaluation]);
+                }
             } else {
-                evaluationMap.set(attemptName, [evaluation]);
+                const llmMap = new Map<Llm, Evaluation[]>();
+                llmMap.set(llm, [evaluation]);
+                evaluationMap.set(attemptName, llmMap);
             }
         });
-        Array.from(evaluationMap.values()).forEach(evaluations =>
-            evaluations.sort((a, b) =>
-                evaluationGroups.get(a.evaluationGroup)!.name.localeCompare(
-                    evaluationGroups.get(b.evaluationGroup)!.name)
+
+        Array.from(evaluationMap.values()).forEach(llmMap =>
+            Array.from(llmMap.values()).forEach(evaluations =>
+                evaluations.sort((a, b) =>
+                    evaluationGroups.get(a.evaluationGroup)!.name.localeCompare(
+                        evaluationGroups.get(b.evaluationGroup)!.name)
+                )
             )
         );
         return evaluationMap;

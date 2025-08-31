@@ -75,7 +75,7 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
                     )
             ));
 
-        if(expectedEmbeddings.length > 0) {
+        if(expectedEmbeddings.length > 0 && feedbackEmbeddings.length > 0) {
             expectedEmbeddings.forEach((embedding, index) =>
                 embedding.index = index
             );
@@ -102,7 +102,7 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
         } else {
             return SemanticStatisticGenerator.generate(
                 [],
-                feedbackEmbeddings,
+                [],
                 [[]]
             );
         }
