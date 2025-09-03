@@ -19,6 +19,7 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
 
     private readonly client: HfInference;
     private readonly MODEL = 'lightonai/modernbert-embed-large';
+    private extractor: any;
     private readonly pipelineConfig: PretrainedModelOptions = {
         dtype: 'fp32'
     };
@@ -38,11 +39,13 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
         llmFeedback: string,
         expectedFeedback: ExpectedFeedback
     ): Promise<EvaluationSemanticStatistic> {
-        let extractor = await pipeline(
-            'feature-extraction',
-            this.MODEL,
-            this.pipelineConfig
-        )
+        if(!this.extractor) {
+            this.extractor = await pipeline(
+                'feature-extraction',
+                this.MODEL,
+                this.pipelineConfig
+            )
+        }
 
         const feedbackEmbeddings = Array.from(GeneratedFeedbackExtractor.extract(llmFeedback).map.entries()).flatMap((
                 [
@@ -81,11 +84,11 @@ export default class ModernBertClient implements SemanticEvaluatorClient {
             );
 
 
-            const queryEmbeddings = await extractor(
+            const queryEmbeddings = await this.extractor(
                 expectedEmbeddings.map(embedding => "search_query: " + embedding.sentence),
                 this.embedderConfig
             );
-            const docEmbeddings = await extractor(
+            const docEmbeddings = await this.extractor(
                 feedbackEmbeddings.map(embedding => "search_document: " + embedding.sentence),
                 this.embedderConfig
             );

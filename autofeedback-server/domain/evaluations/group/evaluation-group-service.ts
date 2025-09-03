@@ -17,6 +17,9 @@ import {logger} from "../../../logger";
 import {EvaluationScoreCorrection} from "../score/correction/evaluation-score-correction";
 import DocumentEvaluationsContentGenerator from "../../export/document-evaluations-content-generator";
 import ExportDocumentGenerator from "../../export/document-generator";
+import EvaluationGroupStatisticRequestDto from "./statistic/evaluation-group-statistic-request-dto";
+import EvaluationGroupStatistic from "./statistic/evaluation-group-statistic";
+import StatisticGenerator from "./statistic/statistic-generator";
 
 export default class EvaluationGroupService {
 
@@ -240,5 +243,15 @@ export default class EvaluationGroupService {
             evaluations
         );
         return await ExportDocumentGenerator.pdf("Anhang Evaluation", htmlContent);
+    }
+
+    public async statistic(request: EvaluationGroupStatisticRequestDto): Promise<EvaluationGroupStatistic> {
+        const evaluationGroupBase = await this.evaluationGroupRepository.getById(request.evaluationGroupBaseId);
+        const evaluationGroupCompares = await this.evaluationGroupRepository.getAllByIds(request.evaluationGroupCompareIds);
+
+        return StatisticGenerator.generate(
+            evaluationGroupBase,
+            Array.from(evaluationGroupCompares.values())
+        );
     }
 }

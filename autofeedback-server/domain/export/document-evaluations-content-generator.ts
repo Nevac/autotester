@@ -113,14 +113,14 @@ export default class DocumentEvaluationsContentGenerator {
         markdown += `| Metrik | Punktzahl |
 | ----------- | ----------- |\n`
         markdown += `| Korrektheit | ${evaluationScore.correctness.score} |\n`
-        markdown += `| Vorschlag | ${evaluationScore.suggestion.score} |\n`
+        markdown += `| Anregung | ${evaluationScore.suggestion.score} |\n`
         markdown += `| Code Style | ${evaluationScore.codeStyle.score} |\n`
         markdown += `| Overgeneration | ${evaluationScore.overgeneration.score} |\n`
         markdown += `| **Total** | **${parseFloat(evaluationScore.total.toFixed(3))}** |\n`
         markdown += "\n";
         markdown += this.metricScoreDetail("Korrektheit", evaluationScore.correctness);
-        markdown += this.metricScoreDetail("Vorschlag", evaluationScore.correctness);
-        markdown += this.metricScoreDetail("Code Style", evaluationScore.correctness);
+        markdown += this.metricScoreDetail("Anregung", evaluationScore.suggestion);
+        markdown += this.metricScoreDetail("Code Style", evaluationScore.codeStyle);
         markdown += this.metricOvergenerations("Overgenerations", evaluationScore.overgeneration);
 
         return markdown;

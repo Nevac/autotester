@@ -100,11 +100,11 @@ export default class EvaluationService {
                 .setState(EvaluationState.DONE)
                 .setScore(evaluationScore);
 
-            logger.info(`Evaluation DONE [${evaluation._id}][${evaluation.llm}]`)
+            logger.info(`Evaluation DONE [${evaluation.llm}][${evaluation._id}]`)
             return await this.update(evaluation._id, evaluationUpdate);
 
         } catch (e) {
-            console.error(`Evaluation FAILED [${evaluation._id}][${evaluation.llm}]`, e);
+            console.error(`Evaluation FAILED [${evaluation.llm}][${evaluation._id}]`, e);
             const evaluationUpdate = EvaluationUpdate.ofEvaluation(evaluation)
                 .setState(EvaluationState.FAILURE);
 

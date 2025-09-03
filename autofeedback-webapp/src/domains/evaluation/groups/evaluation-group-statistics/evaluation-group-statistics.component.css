@@ -1,0 +1,8 @@
+.evaluation-group-statistics-box {
+    flex: 1;
+}
+
+.evaluation-group-statistics-selection-tables-box {
+    flex-direction: row;
+    display: flex;
+}

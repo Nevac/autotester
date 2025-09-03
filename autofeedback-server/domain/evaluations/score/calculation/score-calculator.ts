@@ -183,12 +183,12 @@ export default class ScoreCalculator {
             overgeneration.validity === OvergenerationValidity.CODE_STYLE
         ).length;
 
-        const validOvergenerationsCount = emptyOvergeneration.overgenerations
-            .filter(overgeneration => overgeneration.validity === OvergenerationValidity.VALID)
-            .length;
-        if(totalReferences === 0 && validOvergenerationsCount > 0) {
-            malus += 1;
-        }
+        // const validOvergenerationsCount = emptyOvergeneration.overgenerations
+        //     .filter(overgeneration => overgeneration.validity === OvergenerationValidity.VALID)
+        //     .length;
+        // if(totalReferences === 0 && validOvergenerationsCount > 0) {
+        //     malus += 1;
+        // }
 
         let score = this.calculateScore(
             this.extractAddressedReferencesCount(referenceAddressings),

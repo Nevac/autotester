@@ -5,6 +5,7 @@ import {EvaluationGroup} from "./evaluation-group";
 import CorrectScoreDto from "../score/correction/correct-score-dto";
 import {Evaluation} from "../evaluation";
 import FileDownloader from "../../util/file-downloader/file-downloader";
+import EvaluationGroupStatistic from "./evaluation-group-statistics/statistic/evaluation-group-statistic";
 
 export default class EvaluationGroupEndpoint {
 
@@ -103,5 +104,19 @@ export default class EvaluationGroupEndpoint {
             if (!res.ok) throw new Error("Failed to export");
             await FileDownloader.pdf("evaluation", res)
         });
+    }
+
+    public statistics(baseEvaluationGroupId: string, evaluationGroupsToCompareIds: string[]): Promise<EvaluationGroupStatistic> {
+        return fetch(`${this.ENDPOINT}/statistics`,{
+            method: "PUT",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                evaluationGroupBaseId: baseEvaluationGroupId,
+                evaluationGroupCompareIds: evaluationGroupsToCompareIds
+            })
+        }).then(async (res) => res.json());
     }
 }

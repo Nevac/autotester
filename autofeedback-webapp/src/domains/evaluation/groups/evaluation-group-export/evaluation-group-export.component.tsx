@@ -13,16 +13,15 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import PaperDefaultComponent from "../../../util/paper/paper-default.component";
 import EvaluationGroupListItem from "../evaluation-group-list-item";
 import EvaluationGroupEndpoint from "../evaluation-group-endpoint";
-import {it} from "node:test";
 
 export default function EvaluationGroupExportComponent() {
 
-    const ragDocumentsInput = useInputValue<string[]>([], {required: true});
+    const evaluationGroupsInput = useInputValue<string[]>([], {required: true});
     const isFormValid = useFormValidationHook([
-        ragDocumentsInput,
+        evaluationGroupsInput,
     ]);
 
-    const [selectableragDocuments, setSelectableEvaluationGroups] = useState<EvaluationGroupListItem[]>([]);
+    const [selectableEvaluationGroups, setSelectableEvaluationGroups] = useState<EvaluationGroupListItem[]>([]);
 
     const evaluationGroupEndpoint = new EvaluationGroupEndpoint();
     const [openSnackbar, Snackbar] = useSnackbar();
@@ -34,14 +33,14 @@ export default function EvaluationGroupExportComponent() {
                 console.log(items)
             })
             .catch(err => {
-                openSnackbar("Failed to load RAG Document selection", SnackbarVariant.ERROR);
+                openSnackbar("Failed to load Evaluation Group selection", SnackbarVariant.ERROR);
                 console.error(err);
             });
     }, []);
 
-    const downloadragDocuments = () => {
+    const downloadEvaluationGroups = () => {
         evaluationGroupEndpoint.export(
-            ragDocumentsInput.valueOrThrow()
+            evaluationGroupsInput.valueOrThrow()
         )
     }
 
@@ -53,24 +52,24 @@ export default function EvaluationGroupExportComponent() {
         <PaperDefaultComponent className={'evaluation-group-export-modal-paper'}>
             <Snackbar/>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-                Export RAG Documents
+                Export Evaluations
             </Typography>
             <div className={'evaluation-group-export-modal-text-area-container'}>
                 <FormControl fullWidth>
                     <Paper sx={{height: 600, width: '100%'}}>
                         <DataGrid
-                            rows={selectableragDocuments}
+                            rows={selectableEvaluationGroups}
                             getRowId={row => row._id}
                             columns={evaluationGroupColumns}
                             checkboxSelection
-                            onRowSelectionModelChange={selection => ragDocumentsInput.setRawValue(selection.map(String))}
-                            rowSelectionModel={ragDocumentsInput.value}
+                            onRowSelectionModelChange={selection => evaluationGroupsInput.setRawValue(selection.map(String))}
+                            rowSelectionModel={evaluationGroupsInput.value}
                             sx={{border: 0}}
                         />
                     </Paper>
                 </FormControl>
             </div>
-            <Button variant={"contained"} onClick={downloadragDocuments} disabled={!isFormValid}>
+            <Button variant={"contained"} onClick={downloadEvaluationGroups} disabled={!isFormValid}>
                 Export
             </Button>
         </PaperDefaultComponent>

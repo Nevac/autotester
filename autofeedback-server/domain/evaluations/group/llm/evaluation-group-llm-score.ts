@@ -48,7 +48,7 @@ export class EvaluationGroupLlmScore implements IEvaluationGroupLlmScore {
             parseFloat(this.total.toPrecision(precision)),
             parseFloat(this.correctness.toPrecision(precision)),
             parseFloat(this.suggestion.toPrecision(precision)),
-            parseFloat(this.correctness.toPrecision(precision)),
+            parseFloat(this.codeStyle.toPrecision(precision)),
             parseFloat(this.overgeneration.toPrecision(precision)),
         )
     }

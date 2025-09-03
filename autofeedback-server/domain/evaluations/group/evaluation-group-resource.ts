@@ -43,6 +43,11 @@ export default class EvaluationGroupResource {
             }
         });
 
+        router.put(`/${this.RESOURCE}/statistics`, async (req, res, next) => {
+            const statistic = await this.service.statistic(req.body).catch(next);
+            res.json(statistic)
+        });
+
         router.post(`/${this.RESOURCE}`, async (req, res, next) => {
             const evaluationGroup = await this.service.create(req.body).catch(next);
             res.json(evaluationGroup);

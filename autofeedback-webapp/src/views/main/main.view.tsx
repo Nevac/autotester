@@ -25,6 +25,8 @@ import AttemptExportComponent from "../../domains/attempts/attempt-export/attemp
 import RagDocumentExportComponent from "../../domains/rag/document/rag-document-export/rag-document-export.component";
 import EvaluationGroupExportComponent
     from "../../domains/evaluation/groups/evaluation-group-export/evaluation-group-export.component";
+import EvaluationGroupStatisticsComponent
+    from "../../domains/evaluation/groups/evaluation-group-statistics/evaluation-group-statistics.component";
 
 export default function MainView() {
 
@@ -50,6 +52,7 @@ export default function MainView() {
                             <Route path={Routes.EVALUATION_GROUP_CREATE} element={<EvaluationGroupCreateComponent/>}/>
                             <Route path={Routes.EVALUATION_GROUP_DETAILS} element={<EvaluationGroupDetailComponent/>}/>
                             <Route path={Routes.EVALUATION_GROUP_EXPORT} element={<EvaluationGroupExportComponent/>}/>
+                            <Route path={Routes.EVALUATION_GROUP_STATISTICS} element={<EvaluationGroupStatisticsComponent/>}/>
                             <Route path={Routes.RAG_CREATE} element={<RagCreateComponent/>}/>
                             <Route path={Routes.RAG_EDIT} element={<RagEditComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_CREATE} element={<RagDocumentCreateComponent/>}/>

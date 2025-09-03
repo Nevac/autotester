@@ -48,7 +48,7 @@ export default class DocumentAttemptsContentGenerator {
                 markdown += `### Erwartetes Feedback \n`;
                 markdown += this.expectedFeedbackGenerator('Korrektheit', attempt.expectedFeedback.correctness);
                 markdown += "\n";
-                markdown += this.expectedFeedbackGenerator('Vorschlag', attempt.expectedFeedback.suggestion);
+                markdown += this.expectedFeedbackGenerator('Anregung', attempt.expectedFeedback.suggestion);
                 markdown += "\n";
                 markdown += this.expectedFeedbackGenerator('Code Style', attempt.expectedFeedback.codeStyle);
                 markdown += "\n";
