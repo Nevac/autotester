@@ -34,7 +34,7 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
         return removeUsedFromSelection(
             new Map<Llm, string>([
                 [Llm.GPT_5, Llm.GPT_5.toString()],
-                [Llm.GPT_4o, Llm.GPT_4o.toString()],
+                //[Llm.GPT_4o, Llm.GPT_4o.toString()],
             ])
         );
     }
@@ -53,7 +53,7 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
         return removeUsedFromSelection(
             new Map<Llm, string>([
                 [Llm.CLAUDE_4_1_OPUS, Llm.CLAUDE_4_1_OPUS.toString()],
-                [Llm.CLAUDE_4_SONNET, Llm.CLAUDE_4_SONNET.toString()]
+                //[Llm.CLAUDE_4_SONNET, Llm.CLAUDE_4_SONNET.toString()]
             ])
         );
     }
@@ -77,7 +77,7 @@ export default function ChatGroupDetailsModelList(props: ChatGroupDetailsModelLi
         return removeUsedFromSelection(
             new Map<Llm, string>([
                 [Llm.DEEPSEEK_R1, Llm.DEEPSEEK_R1.toString()],
-                [Llm.DEEPSEEK_V3, Llm.DEEPSEEK_V3.toString()],
+                //[Llm.DEEPSEEK_V3, Llm.DEEPSEEK_V3.toString()],
             ])
         );
     }

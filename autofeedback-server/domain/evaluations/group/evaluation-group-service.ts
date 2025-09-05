@@ -17,9 +17,9 @@ import {logger} from "../../../logger";
 import {EvaluationScoreCorrection} from "../score/correction/evaluation-score-correction";
 import DocumentEvaluationsContentGenerator from "../../export/document-evaluations-content-generator";
 import ExportDocumentGenerator from "../../export/document-generator";
-import EvaluationGroupStatisticRequestDto from "./statistic/evaluation-group-statistic-request-dto";
-import EvaluationGroupStatistic from "./statistic/evaluation-group-statistic";
-import StatisticGenerator from "./statistic/statistic-generator";
+import EvaluationGroupStatisticRequestDto from "./statistics/evaluation-group-statistic-request-dto";
+import EvaluationGroupStatistic from "./statistics/evaluation-group-statistic";
+import StatisticGenerator from "./statistics/statistic-generator";
 
 export default class EvaluationGroupService {
 

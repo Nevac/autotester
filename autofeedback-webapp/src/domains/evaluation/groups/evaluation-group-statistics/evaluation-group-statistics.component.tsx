@@ -13,10 +13,9 @@ import Paper from "@mui/material/Paper";
 import {DataGrid, GridColDef} from "@mui/x-data-grid";
 import EvaluationGroupStatistic from "./statistic/evaluation-group-statistic";
 import ScoreDelta from "./statistic/score-delta";
-import EvaluationGroupStatKey from "./statistic/evaluation-group-stat-key";
 import ScoreDeltaData from "./statistic/score-delta-data";
-import {Llm} from "../../../llms/llm";
 import StatisticColors from "./statistic-colors";
+import ScoreRanking from "./statistic/ranking/score-ranking";
 
 Chart.register(
     CategoryScale,
@@ -32,26 +31,28 @@ Chart.defaults.backgroundColor = '#9BD0F5';
 Chart.defaults.borderColor = '#65696f';
 Chart.defaults.color = '#fff';
 
-export const options = {
-    responsive: true,
-    layout: { padding: { top: 24 } }, // gives labels room above bars
-    plugins: {
-        legend: { position: 'top' as const },
-        title: { display: true, text: 'Chart.js Bar Chart' },
-        datalabels: {
-            anchor: 'end',
-            align: 'top',
-            offset: 4,
-            formatter: (v: number) => `${v.toFixed(3)}`, // your data is 0..1; show as %
-            font: { weight: 'bold' },
-            color: '#fff',
-            clamp: true, // keeps labels inside chart area if they would overflow
+export const options = (title: string) => {
+    return {
+        responsive: true,
+        layout: { padding: { top: 24 } }, // gives labels room above bars
+        plugins: {
+            legend: { position: 'top' as const },
+            title: { display: true, font: {size: 30}, text: title },
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                offset: 4,
+                formatter: (v: number) => `${v.toFixed(3)}`, // your data is 0..1; show as %
+                font: { weight: 'bold' },
+                color: '#fff',
+                clamp: true, // keeps labels inside chart area if they would overflow
+            },
         },
-    },
-    scales: {
-        y: { beginAtZero: true },
-    },
-} as const;
+        scales: {
+            y: { beginAtZero: true },
+        },
+    } as const;
+}
 
 
 
@@ -98,6 +99,7 @@ export default function EvaluationGroupStatisticsComponent() {
             </Typography>
             <Box className={'evaluation-group-export-modal-paper'} sx={{padding: "20px"}}>
                 <EvaluationGroupSelectionComponent/>
+                <RankingTablesComponent/>
                 <EvaluationStatisticsComponent/>
             </Box>
         </Box>
@@ -159,15 +161,56 @@ export default function EvaluationGroupStatisticsComponent() {
         )
     }
 
+    function RankingTablesComponent() {
+        if(evaluationGroupStatistics) {
+            return (
+                <>
+                    <RankingTableComponent ranking={evaluationGroupStatistics.rankings.rankingBase}/>
+                    {evaluationGroupStatistics.rankings.rankingCompares.map(ranking =>
+                        <RankingTableComponent ranking={ranking}/>
+                    )}
+                </>
+            );
+        } else return <></>;
+    }
+
+    function RankingTableComponent(props: {ranking: ScoreRanking}) {
+        const colWidht = 120;
+        const rankingGroupColumns: GridColDef[] = [
+            {field: 'llm', headerName: 'Llm', width: 250},
+            {field: 'totalScore', headerName: 'Total', width: colWidht},
+            {field: 'correctness', headerName: 'Correctness', width: colWidht},
+            {field: 'suggestion', headerName: 'Suggestion', width: colWidht},
+            {field: 'codeStyle', headerName: 'Code Style', width: colWidht},
+            {field: 'overgeneration', headerName: 'Overgeneration', width: colWidht},
+        ];
+        return (
+            <Paper>
+                <Typography variant={'h5'}>
+                    {props.ranking.evaluationGroup.name}
+                </Typography>
+                <DataGrid
+                    rows={props.ranking.rankings}
+                    getRowId={row => row.llm}
+                    columns={rankingGroupColumns}
+                    checkboxSelection={false}
+                    hideFooter={true}
+                    sx={{border: 0}}
+                />
+            </Paper>
+        )
+    }
+
     function EvaluationStatisticsComponent() {
         if(evaluationGroupStatistics) {
             const scoreDelta = evaluationGroupStatistics.scoreDelta!;
             return (
                 <div>
-                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.totalScore)} options={options} title={"Total Score"}/>
-                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.suggestion)} options={options} title={"Correctness"}/>
-                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.codeStyle)} options={options} title={"Suggestion"}/>
-                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.overgeneration)} options={options} title={"Overgeneration"}/>
+                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.totalScore)} options={options("Total Score")} title={"Total Score"}/>
+                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.totalScore)} options={options("Correctness ")} title={"Total Score"}/>
+                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.suggestion)} options={options("Suggestion")} title={"Correctness"}/>
+                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.codeStyle)} options={options("Code Style")} title={"Suggestion"}/>
+                    <Bar data={convertToDeltaBarData(scoreDelta, scoreDelta.overgeneration)} options={options("Overgeneration")} title={"Overgeneration"}/>
                 </div>
             );
         } else return <></>;
@@ -201,88 +244,5 @@ export default function EvaluationGroupStatisticsComponent() {
             labels: deltas.llms,
             datasets: Array.from(datasetMap.values())
         }
-    }
-
-    function generateDummyEvaluationStatistics() {
-        return new EvaluationGroupStatistic(
-            null!,
-            [],
-            [Llm.GPT_5, Llm.GEMINI_2_5_PRO, Llm.O3, Llm.DEEPSEEK_V3],
-            [],
-            new ScoreDelta(
-                [Llm.GPT_5, Llm.GEMINI_2_5_PRO, Llm.O3, Llm.DEEPSEEK_V3, Llm.CLAUDE_4_1_OPUS, Llm.GPT_4o, Llm.O4_MINI],
-                [
-                    new EvaluationGroupStatKey("EvalGroup 1", "EvalGroup 1"),
-                    new EvaluationGroupStatKey("EvalGroup 2", "EvalGroup 2"),
-                    new EvaluationGroupStatKey("EvalGroup 3", "EvalGroup 3"),
-                ],
-                [
-                    new ScoreDeltaData(
-                        Llm.GPT_5,
-                        new EvaluationGroupStatKey("EvalGroup 1", "EvalGroup 1"),
-                        0.1
-                    ),
-                    new ScoreDeltaData(
-                        Llm.GEMINI_2_5_PRO,
-                        new EvaluationGroupStatKey("EvalGroup 1", "EvalGroup 1"),
-                        -0.5
-                    ),
-                    new ScoreDeltaData(
-                        Llm.O3,
-                        new EvaluationGroupStatKey("EvalGroup 1", "EvalGroup 1"),
-                        0.2
-                    ),
-                    new ScoreDeltaData(
-                        Llm.DEEPSEEK_V3,
-                        new EvaluationGroupStatKey("EvalGroup 1", "EvalGroup 1"),
-                        0.3
-                    ),
-                    new ScoreDeltaData(
-                        Llm.GPT_5,
-                        new EvaluationGroupStatKey("EvalGroup 2", "EvalGroup 2"),
-                        0.2
-                    ),
-                    new ScoreDeltaData(
-                        Llm.GEMINI_2_5_PRO,
-                        new EvaluationGroupStatKey("EvalGroup 2", "EvalGroup 2"),
-                        0.3
-                    ),
-                    new ScoreDeltaData(
-                        Llm.O3,
-                        new EvaluationGroupStatKey("EvalGroup 2", "EvalGroup 2"),
-                        0.1
-                    ),
-                    new ScoreDeltaData(
-                        Llm.DEEPSEEK_V3,
-                        new EvaluationGroupStatKey("EvalGroup 2", "EvalGroup 2"),
-                        -0.1
-                    ),
-                    new ScoreDeltaData(
-                        Llm.GPT_5,
-                        new EvaluationGroupStatKey("EvalGroup 3", "EvalGroup 3"),
-                        0.1
-                    ),
-                    new ScoreDeltaData(
-                        Llm.GEMINI_2_5_PRO,
-                        new EvaluationGroupStatKey("EvalGroup 3", "EvalGroup 3"),
-                        -0.5
-                    ),
-                    new ScoreDeltaData(
-                        Llm.O3,
-                        new EvaluationGroupStatKey("EvalGroup 3", "EvalGroup 3"),
-                        0.2
-                    ),
-                    new ScoreDeltaData(
-                        Llm.DEEPSEEK_V3,
-                        new EvaluationGroupStatKey("EvalGroup 3", "EvalGroup 3"),
-                        0.3
-                    ),
-                ],
-                [],
-                [],
-                [],
-                []
-            ),
-        );
     }
 }

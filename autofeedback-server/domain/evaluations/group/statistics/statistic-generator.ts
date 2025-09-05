@@ -4,6 +4,9 @@ import ScoreDelta from "./score-delta";
 import {Llm} from "../../../llms/llm";
 import EvaluationGroupStatKey from "./evaluation-group-stat-key";
 import ScoreDeltaData from "./score-delta-data";
+import ScoreRankings from "./ranking/score-rankings";
+import ScoreRanking from "./ranking/score-ranking";
+import ScoreRankingEntry from "./ranking/score-ranking-entry";
 
 export default class StatisticGenerator {
 
@@ -32,12 +35,19 @@ export default class StatisticGenerator {
             evaluationGroupCompares
         );
 
+        const rankings = this.generateRankings(
+            llmOccurance.occuring,
+            evaluationGroupBase,
+            evaluationGroupCompares
+        );
+
         return new EvaluationGroupStatistic(
             evaluationGroupBase,
             evaluationGroupCompares,
             llmOccurance.occuring,
             llmOccurance.nonOccuring,
-            scoreDelta
+            scoreDelta,
+            rankings
         );
     }
 
@@ -89,6 +99,45 @@ export default class StatisticGenerator {
         )
     }
 
+    private generateRankings(
+        llms: Llm[],
+        evaluationGroupBase: EvaluationGroup,
+        evaluationGroupCompares: EvaluationGroup[]
+    ): ScoreRankings {
+        const rankingsBase = ScoreRanking.ofEvaluation(evaluationGroupBase);
+        const rankingCompareMap = new Map<string, ScoreRanking> (
+            evaluationGroupCompares.map(evaluationGroup =>
+                [evaluationGroup._id, ScoreRanking.ofEvaluation(evaluationGroup)]
+            )
+        );
+
+        for(const llm of llms) {
+            const evalGroupLlmBase = evaluationGroupBase.llms.get(llm)!
+            rankingsBase.rankings.push(
+                ScoreRankingEntry.ofEvaluationGroupScore(evalGroupLlmBase)
+            )
+
+            for(const evaluationGroupCompare of evaluationGroupCompares) {
+                const ranking = rankingCompareMap.get(evaluationGroupCompare._id)!
+                const evalGroupLlm = evaluationGroupCompare.llms.get(llm)!
+                ranking.rankings.push(
+                    ScoreRankingEntry.ofEvaluationGroupScore(evalGroupLlm)
+                );
+            }
+        }
+
+        rankingsBase.rankings.sort((a, b) => b.totalScore - a.totalScore);
+        const rankingCompares = Array.from(rankingCompareMap.values());
+        rankingCompares.forEach(
+            ranking => ranking.rankings.sort((a, b) => b.totalScore - a.totalScore)
+        );
+
+        return new ScoreRankings(
+            rankingsBase,
+            rankingCompares
+        );
+    }
+
     private calculateDelta(
         llm: Llm,
         evaluationGroupBase: EvaluationGroup,
@@ -134,6 +183,7 @@ export default class StatisticGenerator {
             Array.from(nonOccuring)
         );
     }
+
 
 }
 
