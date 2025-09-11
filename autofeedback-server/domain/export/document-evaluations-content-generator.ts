@@ -21,8 +21,10 @@ export default class DocumentEvaluationsContentGenerator {
         let markdown = "";
         const preppedEvaluations = this.prepareEvaluations(evaluations, evaluationGroups);
 
+        const attemptNames = Array.from(preppedEvaluations.keys())
+            .sort((a, b) => a.localeCompare(b));
         let headerNumber = 1;
-        for(const attemptName of Array.from(preppedEvaluations.keys())) {
+        for(const attemptName of attemptNames) {
             markdown += `# ${headerNumber}. ${attemptName}\n`
             const evaluationMap = preppedEvaluations.get(attemptName)!;
             const llmList = Array.from(evaluationMap.keys()).sort((a, b) =>
@@ -37,7 +39,9 @@ export default class DocumentEvaluationsContentGenerator {
                     const evaluation = evaluations[evaluationIndex]
                     const evaluationGroup = evaluationGroups.get(evaluation.evaluationGroup)!;
                     const subsubheaderNumber = parseFloat(evaluationIndex) + 1;
-                    markdown += `### ${headerNumber}.${subheaderNumber}.${subsubheaderNumber} Evaluations Gruppe: ${evaluationGroup.name}\n`
+                    if(evaluationGroups.size > 1) {
+                        markdown += `### ${headerNumber}.${subheaderNumber}.${subsubheaderNumber} Evaluations Gruppe: ${evaluationGroup.name}\n`
+                    }
                     markdown += `#### Generiertes Feedback\n`
                     markdown += `${this.changeHeadings(evaluation.generatedFeedback)}\n`
                     markdown += `${this.ragDocuments(evaluation.ragDocuments)}\n`
@@ -54,7 +58,9 @@ export default class DocumentEvaluationsContentGenerator {
     private static changeHeadings(task: string): string {
         return task
             .replace(/## /g, "### ")
-            .replace(/# /g, "### ");
+            .replace(/# /g, "### ")
+            .replace(/-\r?\n/g, '')
+            .replace(/- \r?\n/g, '');
     }
 
     private static extractTitle(ragDoc: EvaluationRagDocument) {

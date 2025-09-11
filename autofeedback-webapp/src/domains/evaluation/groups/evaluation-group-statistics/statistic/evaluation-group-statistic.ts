@@ -2,6 +2,7 @@ import {EvaluationGroup} from "../../evaluation-group";
 import ScoreDelta from "./score-delta";
 import {Llm} from "../../../../llms/llm";
 import ScoreRankings from "./ranking/score-rankings";
+import AttemptScores from "./attempt/attempt-scores";
 
 export default class EvaluationGroupStatistic {
     public constructor(
@@ -10,6 +11,7 @@ export default class EvaluationGroupStatistic {
         public readonly llms: Llm[],
         public readonly nonCommonLlms: Llm[],
         public readonly scoreDelta: ScoreDelta,
-        public readonly rankings: ScoreRankings
+        public readonly rankings: ScoreRankings,
+        public readonly attemptScores: AttemptScores
     ) {}
 }

@@ -242,16 +242,19 @@ export default class EvaluationGroupService {
             evaluationGroups,
             evaluations
         );
-        return await ExportDocumentGenerator.pdf("Anhang Evaluation", htmlContent);
+        return await ExportDocumentGenerator.pdf("Anhang 3. Evaluation mit RAG AST", htmlContent);
     }
 
     public async statistic(request: EvaluationGroupStatisticRequestDto): Promise<EvaluationGroupStatistic> {
         const evaluationGroupBase = await this.evaluationGroupRepository.getById(request.evaluationGroupBaseId);
         const evaluationGroupCompares = await this.evaluationGroupRepository.getAllByIds(request.evaluationGroupCompareIds);
+        const groupIds = [...Array.from(evaluationGroupCompares.values()), evaluationGroupBase].map(evaluationGroup => evaluationGroup._id);
+        const evaluations = await this.evaluationService.getByGroupIds(groupIds);
 
         return StatisticGenerator.generate(
             evaluationGroupBase,
-            Array.from(evaluationGroupCompares.values())
+            Array.from(evaluationGroupCompares.values()),
+            evaluations
         );
     }
 }

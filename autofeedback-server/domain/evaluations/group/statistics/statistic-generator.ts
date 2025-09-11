@@ -7,22 +7,33 @@ import ScoreDeltaData from "./score-delta-data";
 import ScoreRankings from "./ranking/score-rankings";
 import ScoreRanking from "./ranking/score-ranking";
 import ScoreRankingEntry from "./ranking/score-ranking-entry";
+import ScoreRankingAverage from "./ranking/score-ranking-average";
+import AttemptScoreEntry from "./attempt/attempt-score-entry";
+import AttemptScores from "./attempt/attempt-scores";
+import {Attempt} from "../../../attempts/attempt";
+import EvaluationService from "../../evaluation-service";
+import {Evaluation} from "../../evaluation";
 
 export default class StatisticGenerator {
 
+    private readonly evaluationService = new EvaluationService();
+
     public static generate(
         evaluationGroupBase: EvaluationGroup,
-        evaluationGroupBaseCompares: EvaluationGroup[]
+        evaluationGroupBaseCompares: EvaluationGroup[],
+        evaluations: Map<string, Evaluation>
     ): EvaluationGroupStatistic {
         return new StatisticGenerator().generate(
             evaluationGroupBase,
-            evaluationGroupBaseCompares
+            evaluationGroupBaseCompares,
+            evaluations
         );
     }
 
     public generate(
         evaluationGroupBase: EvaluationGroup,
-        evaluationGroupCompares: EvaluationGroup[]
+        evaluationGroupCompares: EvaluationGroup[],
+        evaluations: Map<string, Evaluation>
     ): EvaluationGroupStatistic {
         const llmOccurance = this.extractLlms(
             evaluationGroupBase,
@@ -41,13 +52,21 @@ export default class StatisticGenerator {
             evaluationGroupCompares
         );
 
+        const attemptScores = this.calculateAverageAttemptScores(
+            evaluationGroupBase,
+            evaluationGroupCompares,
+            llmOccurance,
+            evaluations
+        );
+
         return new EvaluationGroupStatistic(
             evaluationGroupBase,
             evaluationGroupCompares,
             llmOccurance.occuring,
             llmOccurance.nonOccuring,
             scoreDelta,
-            rankings
+            rankings,
+            attemptScores
         );
     }
 
@@ -111,18 +130,22 @@ export default class StatisticGenerator {
             )
         );
 
+        const rankingAverageMap = new Map<Llm, ScoreRankingEntry[]> (
+            llms.map(llm => [llm, []])
+        )
+
         for(const llm of llms) {
             const evalGroupLlmBase = evaluationGroupBase.llms.get(llm)!
-            rankingsBase.rankings.push(
-                ScoreRankingEntry.ofEvaluationGroupScore(evalGroupLlmBase)
-            )
+            const scoreRankingEntryBase = ScoreRankingEntry.ofEvaluationGroupScore(evalGroupLlmBase);
+            rankingsBase.rankings.push(scoreRankingEntryBase);
+            rankingAverageMap.get(llm)!.push(scoreRankingEntryBase);
 
             for(const evaluationGroupCompare of evaluationGroupCompares) {
                 const ranking = rankingCompareMap.get(evaluationGroupCompare._id)!
                 const evalGroupLlm = evaluationGroupCompare.llms.get(llm)!
-                ranking.rankings.push(
-                    ScoreRankingEntry.ofEvaluationGroupScore(evalGroupLlm)
-                );
+                const scoreRankingEntry = ScoreRankingEntry.ofEvaluationGroupScore(evalGroupLlm);
+                ranking.rankings.push(scoreRankingEntry);
+                rankingAverageMap.get(llm)!.push(scoreRankingEntry);
             }
         }
 
@@ -134,8 +157,95 @@ export default class StatisticGenerator {
 
         return new ScoreRankings(
             rankingsBase,
-            rankingCompares
+            rankingCompares,
+            this.calculateAverageRanking(rankingAverageMap)
         );
+    }
+
+    private calculateAverageRanking(averageRankingsMap: Map<Llm, ScoreRankingEntry[]>): ScoreRankingAverage {
+        const scoreRankingAverage = new ScoreRankingAverage([]);
+        for(const [llm, scoreRankingEntries] of averageRankingsMap) {
+            const entriesCount = scoreRankingEntries.length;
+            let scoreRanking = ScoreRankingEntry.zero(llm);
+            for(const scoreRankingEntry of scoreRankingEntries) {
+                scoreRanking = scoreRanking.add(scoreRankingEntry);
+            }
+            scoreRanking = scoreRanking.divide(entriesCount);
+            scoreRankingAverage.rankings.push(scoreRanking);
+        }
+        scoreRankingAverage.rankings.sort((a, b) => b.totalScore - a.totalScore);
+        return scoreRankingAverage;
+    }
+
+    private calculateAverageAttemptScores(
+        evaluationGroupBase: EvaluationGroup,
+        evaluationGroupBaseCompares: EvaluationGroup[],
+        llmOccurence: LlmOccurence,
+        evaluationsMap: Map<string, Evaluation>
+    ): AttemptScores {
+        const llmAttemptScoreMap = this.createLlmAttemptScoreMap(
+            evaluationGroupBase.attempts,
+            llmOccurence
+        );
+        const evaluationGroups = [...evaluationGroupBaseCompares, evaluationGroupBase];
+        const llmEvaluationMap = new Map<Llm, Evaluation[]>();
+        for (const evaluation of Array.from(evaluationsMap.values())) {
+            const llm = evaluation.llm;
+            if(llmEvaluationMap.has(llm)) {
+                llmEvaluationMap.get(llm)!.push(evaluation);
+            } else {
+                llmEvaluationMap.set(llm, [evaluation]);
+            }
+        }
+
+        const groupsNumber = evaluationGroups.length;
+        for(const llm of llmOccurence.occuring) {
+            const attemptMap = llmAttemptScoreMap.get(llm)!;
+            const evaluations = llmEvaluationMap.get(llm)!
+            for(const evaluation of evaluations) {
+                const attemptId = evaluation.attempt._id.toString();
+                const attemptScoreEntry = attemptMap.get(attemptId)!;
+                attemptMap.set(
+                    attemptId,
+                    attemptScoreEntry.add(
+                        evaluation
+                    )
+                )
+            }
+            const attemptMapKeys = Array.from(attemptMap.keys());
+            for(const attemptId of attemptMapKeys) {
+                const entry = attemptMap.get(attemptId)!;
+                attemptMap.set(
+                    attemptId,
+                    entry.divide(groupsNumber)
+                );
+            }
+        }
+
+        const averageAttemptScoresPerLlm = Array.from(llmAttemptScoreMap.values()).map(map => Array.from(map.values()));
+        averageAttemptScoresPerLlm.sort((a, b) => a[0].llm.localeCompare(b[0].llm))
+        return new AttemptScores(averageAttemptScoresPerLlm);
+    }
+
+    private createLlmAttemptScoreMap(
+        attempts: Set<Attempt>,
+        llmOccurence: LlmOccurence
+    ): Map<Llm, Map<string, AttemptScoreEntry>> {
+        const llmMap = new Map<Llm, Map<string, AttemptScoreEntry>>();
+        for(const llm of llmOccurence.occuring) {
+            const attemptMap = new Map<string, AttemptScoreEntry>;
+            llmMap.set(llm, attemptMap);
+            for(const attempt of attempts) {
+                attemptMap.set(
+                    attempt._id.toString(),
+                    AttemptScoreEntry.zero(
+                        llm,
+                        attempt
+                    )
+                );
+            }
+        }
+        return llmMap;
     }
 
     private calculateDelta(

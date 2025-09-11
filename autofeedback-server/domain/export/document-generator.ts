@@ -11,7 +11,7 @@ export default class DocumentGenerator {
     ): Promise<Buffer> {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-        await page.setContent(this.generateDocumentHtml(title, content), { waitUntil: "networkidle0" });
+        await page.setContent(this.generateDocumentHtml(title, content), { waitUntil: "networkidle0", timeout: 0 });
 
         const pdf = await page.pdf({
             format: "A4",

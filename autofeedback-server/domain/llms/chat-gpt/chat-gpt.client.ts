@@ -19,6 +19,7 @@ export default class ChatGptClient implements LlmClient {
 
     public async create(request: ClientRequest): Promise<ClientResponse> {
         try {
+            console.log(PromptBuilder.default(request));
             const completion = await this.client.chat.completions.create({
                 messages: [
                     this.generateSystemMessage(request)

@@ -2,7 +2,18 @@ import './evaluation-group-statistics.component.css';
 import React, {useEffect, useState} from "react";
 import {Bar} from "react-chartjs-2";
 import {BarElement, CategoryScale, Chart, Legend, LinearScale, Title, Tooltip} from "chart.js";
-import {Box, Button, Divider, FormControl, MenuItem, TextField, Typography} from "@mui/material";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Divider,
+    FormControl,
+    MenuItem,
+    TextField,
+    Typography
+} from "@mui/material";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import useInputValue from "../../../util/forms/input-value-hook";
 import useFormValidationHook from "../../../util/forms/form-validation-hook";
@@ -10,12 +21,18 @@ import EvaluationGroupListItem from "../evaluation-group-list-item";
 import EvaluationGroupEndpoint from "../evaluation-group-endpoint";
 import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook";
 import Paper from "@mui/material/Paper";
-import {DataGrid, GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridToolbar} from "@mui/x-data-grid";
 import EvaluationGroupStatistic from "./statistic/evaluation-group-statistic";
 import ScoreDelta from "./statistic/score-delta";
 import ScoreDeltaData from "./statistic/score-delta-data";
 import StatisticColors from "./statistic-colors";
 import ScoreRanking from "./statistic/ranking/score-ranking";
+import ScoreRankings from "./statistic/ranking/score-rankings";
+import ScoreRankingEntry from "./statistic/ranking/score-ranking-entry";
+import ScoreRankingAverage from "./statistic/ranking/score-ranking-average";
+import {ExpandMore} from "@mui/icons-material";
+import MarkdownX from "../../../util/markdown-x/MarkdownX";
+import AttemptScoreEntry from "./statistic/attempt/attempt-score-entry";
 
 Chart.register(
     CategoryScale,
@@ -100,6 +117,7 @@ export default function EvaluationGroupStatisticsComponent() {
             <Box className={'evaluation-group-export-modal-paper'} sx={{padding: "20px"}}>
                 <EvaluationGroupSelectionComponent/>
                 <RankingTablesComponent/>
+                <AverageAttemptScoresComponent/>
                 <EvaluationStatisticsComponent/>
             </Box>
         </Box>
@@ -114,8 +132,10 @@ export default function EvaluationGroupStatisticsComponent() {
             evaluationGroupEndpoint.statistics(
                 evaluationGroupsBaseInput.valueOrThrow(),
                 evaluationGroupsCompareInput.valueOrThrow()
-            ).then(statistics =>
-                setEvaluationGroupStatistics(statistics)
+            ).then(statistics => {
+                console.log(statistics);
+                setEvaluationGroupStatistics(statistics);
+            }
             ).catch(err => {
                     openSnackbar("Could not generate statistics", SnackbarVariant.ERROR);
                     console.log(err);
@@ -165,16 +185,30 @@ export default function EvaluationGroupStatisticsComponent() {
         if(evaluationGroupStatistics) {
             return (
                 <>
-                    <RankingTableComponent ranking={evaluationGroupStatistics.rankings.rankingBase}/>
+                    <AverageScoreRankingComponent ranking={evaluationGroupStatistics.rankings.rankingAverage}/>
+                    <ScoreRankingComponent ranking={evaluationGroupStatistics.rankings.rankingBase}/>
                     {evaluationGroupStatistics.rankings.rankingCompares.map(ranking =>
-                        <RankingTableComponent ranking={ranking}/>
+                        <ScoreRankingComponent ranking={ranking}/>
                     )}
                 </>
             );
         } else return <></>;
     }
 
-    function RankingTableComponent(props: {ranking: ScoreRanking}) {
+
+    function AverageScoreRankingComponent(props: {ranking: ScoreRankingAverage}) {
+        return (
+            <RankingTableComponent title={"Durchschnitt"} entries={props.ranking.rankings}/>
+        )
+    }
+
+    function ScoreRankingComponent(props: {ranking: ScoreRanking}) {
+        return (
+            <RankingTableComponent title={props.ranking.evaluationGroup.name} entries={props.ranking.rankings}/>
+        )
+    }
+
+    function RankingTableComponent(props: {title: string, entries: ScoreRankingEntry[]}) {
         const colWidht = 120;
         const rankingGroupColumns: GridColDef[] = [
             {field: 'llm', headerName: 'Llm', width: 250},
@@ -187,15 +221,68 @@ export default function EvaluationGroupStatisticsComponent() {
         return (
             <Paper>
                 <Typography variant={'h5'}>
-                    {props.ranking.evaluationGroup.name}
+                    {props.title}
                 </Typography>
                 <DataGrid
-                    rows={props.ranking.rankings}
+                    rows={props.entries}
                     getRowId={row => row.llm}
                     columns={rankingGroupColumns}
                     checkboxSelection={false}
                     hideFooter={true}
                     sx={{border: 0}}
+                    slots={{ toolbar: GridToolbar }}
+                />
+            </Paper>
+        )
+    }
+
+    function AverageAttemptScoresComponent() {
+        if(evaluationGroupStatistics) {
+            const attemptScores = evaluationGroupStatistics.attemptScores.averageScores;
+            return (
+                <Accordion>
+                    <AccordionSummary
+                        expandIcon={<ExpandMore/>}
+                        aria-controls={`attempt-accordion-content`}
+                        id={`attempt-accordion-header`}
+                    >
+                        <Typography variant={"h5"}>Attempt Average Scores</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails style={{maxWidth: 1500}}>
+                        {attemptScores.map(scores =>
+                            <AverageAttemptScoreTableComponent title={scores[0].llm} scores={scores} />
+                        )}
+                    </AccordionDetails>
+                </Accordion>
+            );
+        } else return <></>;
+
+    }
+
+    function AverageAttemptScoreTableComponent(props: {title: string, scores: AttemptScoreEntry[]}) {
+        const colWidht = 120;
+        const rankingGroupColumns: GridColDef[] = [
+            {field: 'attemptName', headerName: 'Attempt', width: 250},
+            {field: 'complexity', headerName: 'Complexity', width: colWidht},
+            {field: 'totalScore', headerName: 'Total', width: colWidht},
+            {field: 'correctness', headerName: 'Correctness', width: colWidht},
+            {field: 'suggestion', headerName: 'Suggestion', width: colWidht},
+            {field: 'codeStyle', headerName: 'Code Style', width: colWidht},
+            {field: 'overgeneration', headerName: 'Overgeneration', width: colWidht},
+        ];
+        return (
+            <Paper>
+                <Typography variant={'h5'}>
+                    {props.title}
+                </Typography>
+                <DataGrid
+                    rows={props.scores}
+                    getRowId={row => row.attemptId}
+                    columns={rankingGroupColumns}
+                    checkboxSelection={false}
+                    hideFooter={true}
+                    sx={{border: 0}}
+                    slots={{ toolbar: GridToolbar }}
                 />
             </Paper>
         )

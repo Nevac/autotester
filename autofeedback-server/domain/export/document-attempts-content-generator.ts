@@ -35,6 +35,7 @@ export default class DocumentAttemptsContentGenerator {
             const exercise = exercises[exerciseIndex];
             const chapterNumber = parseFloat(exerciseIndex) + 1;
             markdown += `# ${chapterNumber}. ${exercise.name} \n`
+            markdown += `**Schwierigkeit**: ${exercise.difficulty}\n`
             markdown += `${this.changeTaskHeaders(exercise.task)} \n`;
             markdown += `### Musterlösung \n`;
             markdown += `${exercise.solution} \n`
@@ -44,6 +45,7 @@ export default class DocumentAttemptsContentGenerator {
                 const attempt = attempts[attemptIndex];
                 const subChapterNumber = parseFloat(attemptIndex) + 1;
                 markdown += `## ${chapterNumber}.${subChapterNumber}. ${attempt.name} \n`;
+                markdown += `**Komplexität**: ${attempt.complexity}\n`
                 markdown += `${attempt.attempt} \n`;
                 markdown += `### Erwartetes Feedback \n`;
                 markdown += this.expectedFeedbackGenerator('Korrektheit', attempt.expectedFeedback.correctness);

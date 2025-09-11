@@ -145,9 +145,9 @@ export default class ScoreCalculator {
         codeStyle: MetricScore,
         overgeneration: MetricOvergenerationScore
     ): number {
-        return 0.35 * correctness.score +
-            0.25 * suggestion.score +
-            0.35 * codeStyle.score +
+        return 0.30 * correctness.score +
+            0.20 * suggestion.score +
+            0.45 * codeStyle.score +
             0.05 * overgeneration.score;
     }
 

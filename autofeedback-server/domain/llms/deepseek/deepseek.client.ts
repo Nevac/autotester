@@ -34,6 +34,7 @@ export default class DeepseekClient implements LlmClient {
                 top_p: LlmConfig.TOP_P,
                 frequency_penalty: LlmConfig.FREQ_PENALTY,
                 presence_penalty: LlmConfig.PRES_PENALTY,
+                temperature: LlmConfig.TEMP,
                 stream: true,
             })
             const { completion, requestId } = await this.collectChatStream(stream);
