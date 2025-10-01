@@ -29,7 +29,7 @@ import {SnackbarVariant, useSnackbar} from "../../../util/feedback/snackbar-hook
 import java from 'react-syntax-highlighter/dist/esm/languages/hljs/java';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import 'highlight.js/styles/vs2015.css';
-import {DataGrid, GridColDef, GridSortingInitialState, GridSortModel} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridSortingInitialState, GridSortModel, GridToolbar} from "@mui/x-data-grid";
 import {Llm} from "../../../llms/llm";
 import Paper from "@mui/material/Paper";
 import EvaluationEndpoint from "../../evaluation-endpoint";
@@ -202,6 +202,7 @@ export default function EvaluationGroupDetailComponent() {
                             rowSelectionModel={selectedLlm}
                             sx={{border: 0}}
                             initialState={{sorting: initialSorting}}
+                            slots={{ toolbar: GridToolbar }}
                             hideFooterSelectedRowCount
                         />
                     </Paper>
@@ -217,6 +218,7 @@ export default function EvaluationGroupDetailComponent() {
                             rowSelectionModel={selectedEvaluation}
                             sx={{border: 0}}
                             initialState={{sorting: initialSorting}}
+                            slots={{ toolbar: GridToolbar }}
                             hideFooterSelectedRowCount
                         />
                     </Paper>
