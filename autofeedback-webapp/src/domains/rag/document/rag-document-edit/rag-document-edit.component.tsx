@@ -56,6 +56,7 @@ export default function RagDocumentEditComponent() {
                         save={createRag}
                         key={ragDocument._id}
                         idInit={ragDocument.externalId}
+                        externallyManged={ragDocument.externallyManaged}
                         textInit={ragDocument.metadata.text}
                         categoryInit={ragDocument.metadata.category}
                         languageInit={ragDocument.metadata.language}

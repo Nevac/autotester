@@ -2,16 +2,17 @@ import {Document, model, Schema} from "mongoose";
 import Entity from "../../entities/entity";
 import EntityUtil from "../../entities/entity";
 import RagDocumentMetadata, {ragDocumentMetadataSchema} from "./rag-document-metadata";
-import {AttemptDocument} from "../../attempts/attempt";
 
 export interface IRagDoc {
     externalId: string,
+    externallyManaged: boolean,
     metadata: RagDocumentMetadata
 }
 
 export default class RagDoc implements IRagDoc, Entity {
     constructor(
         public readonly _id: string,
+        public readonly externallyManaged: boolean,
         public readonly externalId: string,
         public readonly metadata: RagDocumentMetadata,
         public readonly createdAt: Date,
@@ -23,6 +24,7 @@ export default class RagDoc implements IRagDoc, Entity {
 
         return new RagDoc(
             Entity.convertId(ragDocument._id),
+            ragDocument.externallyManaged,
             ragDocument.externalId,
             ragDocument.metadata,
             createdAt,
@@ -42,6 +44,7 @@ export default class RagDoc implements IRagDoc, Entity {
 export const ragDocumentSchema = new Schema<IRagDoc>(
     {
         externalId: { type: String, required: true },
+        externallyManaged: { type: Boolean, required: true },
         metadata: {type: ragDocumentMetadataSchema, required: true }
     },
     {

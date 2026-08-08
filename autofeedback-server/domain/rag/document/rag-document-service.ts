@@ -11,11 +11,11 @@ import DocumentRagContentGenerator from "../../export/document-rag-content-gener
 export default class RagDocumentService {
 
     private readonly repository: RagDocumentRepository
-    private readonly rag: RagClient
+    private readonly ragClient: RagClient
 
     constructor() {
         this.repository = new RagDocumentRepository();
-        this.rag = new PineconeClient(
+        this.ragClient = new PineconeClient(
             new TextEmbedding3LargeClient(),
             "main"
         );
@@ -35,13 +35,17 @@ export default class RagDocumentService {
 
     public async create(upsert: RagDocumentUpsert): Promise<RagDoc> {
         const ragDocument =  await this.repository.create(upsert);
-        await this.rag.upsert(upsert);
+        if(ragDocument.externallyManaged) {
+            await this.ragClient.upsert(upsert);
+        }
         return ragDocument;
     }
 
     public async update(id: string, upsert: RagDocumentUpsert): Promise<RagDoc> {
         try {
-            await this.rag.upsert(upsert);
+            if(upsert.externallyManaged) {
+                await this.ragClient.upsert(upsert);
+            }
             return await this.repository.update(id, upsert);
         } catch (e) {
             console.error(`Couldn't update RAG Document ${upsert.externalId}`)
@@ -50,7 +54,10 @@ export default class RagDocumentService {
     }
 
     public async delete(id: string): Promise<boolean> {
-        await this.rag.delete(id);
+        var ragDoc = await this.repository.getById(id);
+        if(ragDoc.externallyManaged) {
+            await this.ragClient.delete(id);
+        }
         return await this.repository.delete(id);
     }
 

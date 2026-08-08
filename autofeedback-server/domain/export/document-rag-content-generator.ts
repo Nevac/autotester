@@ -18,7 +18,8 @@ export default class DocumentRagContentGenerator {
 
         const ragDocsMap = new Map<string, RagDoc[]>();
         for (const ragDoc of ragDocs) {
-            const category = ragDoc.metadata.category;
+            const oCategory = ragDoc.metadata.category;
+            const category = oCategory !== undefined ? oCategory : "uncategorized"
             if(ragDocsMap.has(category)) {
                 ragDocsMap.get(category)!.push(ragDoc);
             } else {
@@ -74,7 +75,7 @@ export default class DocumentRagContentGenerator {
         return markdown;
     }
 
-    private static metadataRow(name: string, value: string): string {
-        return `| ${name} | ${value} |\n`;
+    private static metadataRow(name: string, value?: string): string {
+        return `| ${name} | ${value !== undefined || value !== "" ? value : "None"} |\n`;
     }
 }

@@ -8,7 +8,8 @@ export interface InputValue<T> {
     valueOrThrow: () => T,
     valueOrUndefined: () => T | undefined,
     setValue: Dispatch<SetStateAction<InputType<T>>>,
-    setRawValue: (value: T) => void
+    setRawValue: (value: T) => void,
+    options: InputOptions<T>,
     error: boolean,
     setError: Dispatch<SetStateAction<boolean>>,
     handleChange: (e: InputEvent) => void
@@ -19,10 +20,11 @@ interface InputOptions<T> {
     regex?: string
 }
 
-export default function useInputValue<T>(initValue: InputType<T>, options?: InputOptions<T>): InputValue<T>
+export default function useInputValue<T>(initValue: InputType<T>, initOptions: InputOptions<T> = {required: false, regex: undefined}): InputValue<T>
 {
     const [value, setValue] = useState<InputType<T>>(initValue);
     const [error, setError] = useState<boolean>(true);
+    const [options, setOptions] = useState<InputOptions<T>>(initOptions);
 
     useEffect(() => {
         checkValidation(value, options);
@@ -51,6 +53,7 @@ export default function useInputValue<T>(initValue: InputType<T>, options?: Inpu
         valueOrUndefined,
         setValue,
         setRawValue,
+        options,
         error,
         setError,
         handleChange

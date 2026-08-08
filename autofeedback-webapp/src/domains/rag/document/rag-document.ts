@@ -4,6 +4,7 @@ export default class RagDocument {
     constructor(
         public readonly _id: string,
         public readonly externalId: string,
+        public readonly externallyManaged: boolean,
         public readonly metadata: RagDocumentMetadata,
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
