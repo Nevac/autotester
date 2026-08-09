@@ -145,9 +145,9 @@ export default function RagStaticFormComponent(props: RagStaticFormProps) {
 
         const onAttemptRagDocumentSelected = (selection: GridRowSelectionModel) => {
             if(selectedAttempt) {
-                const map = new Map(exerciseRagDocumentsInput.valueOrThrow());
+                const map = new Map(attemptRagDocumentsInput.valueOrThrow());
                 map.set(selectedAttempt, selection.map(String))
-                exerciseRagDocumentsInput.setRawValue(map);
+                attemptRagDocumentsInput.setRawValue(map);
             }
         }
 
