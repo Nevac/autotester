@@ -15,23 +15,27 @@ import EvaluationState from "./evaluation-state";
 import ScoreCalculator from "./score/calculation/score-calculator";
 import {logger} from "../../logger";
 import Ast from "../ast/ast";
-import RagResponse from "../rag/client/rag-response";
+import RagClientResponse from "../rag/client/rag-response";
 import {EvaluationScoreCorrection} from "./score/correction/evaluation-score-correction";
 import ScoreCorrector from "./score/correction/score-corrector";
 import ConfusionDto from "./score/confusion/confusion-dto";
 import ExportDocumentContentGenerator from "../export/document-attempts-content-generator";
 import ExportDocumentGenerator from "../export/document-generator";
 import DocumentEvaluationsContentGenerator from "../export/document-evaluations-content-generator";
+import RagDocumentRepository from "../rag/document/rag-document-repository";
+import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
 
 export default class EvaluationService {
 
     private readonly evaluationRepository: EvaluationRepository;
+    private readonly ragDocRepository: RagDocumentRepository;
     private readonly llmService: LlmService;
     private readonly semanticEvaluatorClient: SemanticEvaluatorClient;
 
     constructor(
     ) {
         this.evaluationRepository = new EvaluationRepository();
+        this.ragDocRepository = new RagDocumentRepository();
         this.llmService = new LlmService();
         this.semanticEvaluatorClient = new ModernBertClient();
     }
@@ -47,25 +51,13 @@ export default class EvaluationService {
             logger.debug(`Start Evaluation [${evaluation.llm}][${evaluation._id}]`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
-            let ragResponse: RagResponse = RagResponse.empty(evaluation.ast);
-            if(evaluation.rag) {
-                const ragClient = new PineconeClient(
-                    new TextEmbedding3LargeClient(),
-                    evaluation.rag.apiId
-                );
-                ragResponse = await ragClient.retrieve(
-                    RagQueryBuilder.ofEvaluation(evaluation),
-                    evaluation.ast.enabled
-                );
-            }
-
-            const document = ragResponse.documents;
-            const ast = ragResponse.ast;
+            const documents = await this.loadRagDocuments(evaluation);
+            const ast = evaluation.ast;
 
             const response = await client.create(
                 ClientRequest.ofEvaluation(
                     evaluation,
-                    document
+                    documents
                 )
             );
 
@@ -74,7 +66,7 @@ export default class EvaluationService {
                 evaluation._id,
                 EvaluationUpdate.ofEvaluation(evaluation)
                     .setGeneratedFeedback(llmFeedback)
-                    .setRagDocuments(document)
+                    .setRagDocuments(documents)
                     .setAst(ast)
             );
 
@@ -196,7 +188,8 @@ export default class EvaluationService {
                         evaluationGroup.promptGroup,
                         llm[0],
                         Ast.empty(evaluationGroup.astEnabled),
-                        evaluationGroup.rag
+                        evaluationGroup.rag,
+                        evaluationGroup.ragStatic
                     )
                 )
             }
@@ -216,5 +209,44 @@ export default class EvaluationService {
 
     public async deleteByGroup(evaluationGroupId: string): Promise<boolean> {
         return await this.evaluationRepository.deleteAllByGroup(evaluationGroupId);
+    }
+
+    private async loadRagDocuments(evaluation: Evaluation): Promise<EvaluationRagDocument[]> {
+        let ragClientResponse: RagClientResponse = RagClientResponse.empty(evaluation.ast);
+        if(evaluation.rag) {
+            const ragClient = new PineconeClient(
+                new TextEmbedding3LargeClient(),
+                evaluation.rag.apiId
+            );
+            ragClientResponse = await ragClient.retrieve(
+                RagQueryBuilder.ofEvaluation(evaluation),
+                evaluation.ast.enabled
+            );
+        }
+
+        let exerciseDocuments: EvaluationRagDocument[] = [];
+        let attemptDocuments: EvaluationRagDocument[] = [];
+
+        if(evaluation.ragStatic) {
+            const ragStatic = evaluation.ragStatic;
+            const attemptId = evaluation.attempt._id.toString();
+            const exerciseId = evaluation.attempt.exercise._id.toString();
+
+            if(ragStatic.exerciseRagDocuments.has(exerciseId)) {
+                const ragDocuments = await this.ragDocRepository.getByIds(
+                    ragStatic.exerciseRagDocuments.get(exerciseId)!!
+                )
+                exerciseDocuments = EvaluationRagDocument.ofRagDocs(Array.from(ragDocuments.values()));
+            }
+
+            if(ragStatic.attemptRagDocuments.has(attemptId)) {
+                const ragDocuments = await this.ragDocRepository.getByIds(
+                    ragStatic.attemptRagDocuments.get(exerciseId)!!
+                )
+                attemptDocuments = EvaluationRagDocument.ofRagDocs(Array.from(ragDocuments.values()));
+            }
+        }
+
+        return Array.prototype.concat(ragClientResponse.documents, exerciseDocuments, attemptDocuments);
     }
 }

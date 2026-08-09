@@ -20,6 +20,7 @@ import ExportDocumentGenerator from "../../export/document-generator";
 import EvaluationGroupStatisticRequestDto from "./statistics/evaluation-group-statistic-request-dto";
 import EvaluationGroupStatistic from "./statistics/evaluation-group-statistic";
 import StatisticGenerator from "./statistics/statistic-generator";
+import RagStaticRepository from "../../rag/static/rag-static-repository";
 
 export default class EvaluationGroupService {
 
@@ -27,6 +28,7 @@ export default class EvaluationGroupService {
     private readonly promptGroupRepo: PromptGroupRepository;
     private readonly attemptRepository: AttemptRepository;
     private readonly ragRepository: RagRepository;
+    private readonly ragStaticRepository: RagStaticRepository;
     private readonly evaluationService: EvaluationService;
 
     constructor() {
@@ -34,6 +36,7 @@ export default class EvaluationGroupService {
         this.promptGroupRepo = new PromptGroupRepository();
         this.attemptRepository = new AttemptRepository();
         this.ragRepository = new RagRepository();
+        this.ragStaticRepository = new RagStaticRepository();
         this.evaluationService = new EvaluationService();
     }
 
@@ -58,6 +61,12 @@ export default class EvaluationGroupService {
             rag = await this.ragRepository.getById(evaluationGroupUpdateDto.ragId)
         }
 
+
+        let ragStatic;
+        if (evaluationGroupUpdateDto.ragStaticId) {
+            ragStatic = await this.ragStaticRepository.getById(evaluationGroupUpdateDto.ragStaticId);
+        }
+
         const evalGroup = await this.evaluationGroupRepository.create(
             new EvaluationGroupUpsert(
                 evaluationGroupUpdateDto.name,
@@ -78,7 +87,8 @@ export default class EvaluationGroupService {
                 ),
                 EvaluationState.RUNNING,
                 evaluationGroupUpdateDto.astEnabled,
-                rag
+                rag,
+                ragStatic
             )
         );
         const evaluations = await this.evaluationService.createByGroup(evalGroup);

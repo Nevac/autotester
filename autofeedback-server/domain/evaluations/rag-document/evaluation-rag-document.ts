@@ -1,6 +1,7 @@
 import {Schema} from "mongoose";
 import {QueryResponse, ScoredPineconeRecord} from "@pinecone-database/pinecone";
 import RagResponseMetadata from "../../rag/rag-response-metadata";
+import RagDoc from "../../rag/document/rag-doc";
 
 interface IRagDocument {
     id: string,
@@ -16,11 +17,11 @@ export default class EvaluationRagDocument implements IRagDocument {
     constructor(
         public readonly id: string,
         public readonly text: string,
-        public readonly category: string,
-        public readonly language: string,
-        public readonly topic: string,
-        public readonly type: string,
-        public readonly constructs: string[]
+        public readonly category: string = "",
+        public readonly language: string = "",
+        public readonly topic: string = "",
+        public readonly type: string = "",
+        public readonly constructs: string[] = []
     ) {}
 
     public static ofPineconeRecords(records: ScoredPineconeRecord<RagResponseMetadata>[]): EvaluationRagDocument[] {
@@ -35,6 +36,22 @@ export default class EvaluationRagDocument implements IRagDocument {
                 record.metadata!.constructs
             )
         );
+    }
+
+    public static ofRagDocs(ragDocs: RagDoc[]): EvaluationRagDocument[] {
+        return ragDocs.map(ragDoc => EvaluationRagDocument.ofRagDoc(ragDoc));
+    }
+
+    public static ofRagDoc(ragDoc: RagDoc): EvaluationRagDocument {
+        return new EvaluationRagDocument(
+            ragDoc._id,
+            ragDoc.metadata.text,
+            ragDoc.metadata.category,
+            ragDoc.metadata.language,
+            ragDoc.metadata.topic,
+            ragDoc.metadata.type,
+            ragDoc.metadata.constructs
+        )
     }
 }
 
