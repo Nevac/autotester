@@ -89,15 +89,33 @@ export default function RagStaticFormComponent(props: RagStaticFormProps) {
 
     const renderSelection = () => {
         const ragDocumentsColumns: GridColDef[] = [
-            { field: 'externalId', headerName: 'Name', width: 1000 },
+            { field: 'externalId', headerName: 'Name', width: 600 },
         ];
 
         const attemptColumns: GridColDef[] = [
-            { field: 'name', headerName: 'Name', width: 1000 },
+            { field: 'name', headerName: 'Name', width: 600 },
+            { field: '_id', headerName: 'Docs', width: 100, valueFormatter: (value) => {
+                    const _id = String(value);
+                    const attemptsRagDocuments = attemptRagDocumentsInput.valueOrThrow();
+                    if(attemptsRagDocuments.has(value)) {
+                        const docCount = attemptsRagDocuments.get(value)!!.length
+                        return docCount > 0 ? docCount : "";
+                    }
+                    return "";
+            }},
         ];
 
         const exercisesColumns: GridColDef[] = [
-            { field: 'name', headerName: 'Name', width: 1000 },
+            { field: 'name', headerName: 'Name', width: 600 },
+            { field: '_id', headerName: 'Docs', width: 100, valueFormatter: (value) => {
+                    const _id = String(value);
+                    const exerciseRagDocuments = exerciseRagDocumentsInput.valueOrThrow();
+                    if(exerciseRagDocuments.has(value)) {
+                        const docCount = exerciseRagDocuments.get(value)!!.length
+                        return docCount > 0 ? docCount : "";
+                    }
+                    return "";
+                }},
         ];
 
         const initialSorting: GridSortingInitialState = {
