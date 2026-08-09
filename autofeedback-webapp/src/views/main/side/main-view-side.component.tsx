@@ -14,6 +14,7 @@ import EvaluationGroupBrowserComponent
 import RagBrowserComponent from "../../../domains/rag/groups/rag-browser/rag-browser.component";
 import RagDocumentBrowserComponent
     from "../../../domains/rag/document/rag-document-browser/rag-document-browser.component";
+import RagStaticBrowserComponent from "../../../domains/rag/static/rag-static-browser/rag-static-browser.component";
 
 export default function MainViewSideComponent() {
     const [value, setValue] = React.useState(0);
@@ -33,6 +34,7 @@ export default function MainViewSideComponent() {
         ["evaluation-group", 4],
         ["rag", 5],
         ["rag-document", 6],
+        ["rag-static", 7],
     ]);
 
     useEffect(() => {
@@ -58,8 +60,9 @@ export default function MainViewSideComponent() {
                     <MenuItem value={2}>Prompts</MenuItem>
                     <MenuItem value={3}>Attempt</MenuItem>
                     <MenuItem value={4}>Evaluation</MenuItem>
-                    <MenuItem value={5}>RAG</MenuItem>
+                    <MenuItem value={5}>RAG Clients</MenuItem>
                     <MenuItem value={6}>RAG Documents</MenuItem>
+                    <MenuItem value={7}>RAG Static Maps</MenuItem>
                 </Select>
             </FormControl>
             <TabPanel value={value} index={0} padding={0}>
@@ -82,6 +85,9 @@ export default function MainViewSideComponent() {
             </TabPanel>
             <TabPanel value={value} index={6} padding={0}>
                 <RagDocumentBrowserComponent/>
+            </TabPanel>
+            <TabPanel value={value} index={7} padding={0}>
+                <RagStaticBrowserComponent/>
             </TabPanel>
         </PaperDefaultComponent>
     )

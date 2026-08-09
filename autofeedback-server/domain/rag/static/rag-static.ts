@@ -36,8 +36,8 @@ export default class RagStatic implements IRagStatic, Entity {
 export const ragStaticSchema = new Schema<IRagStatic>(
     {
         name: { type: String, required: true },
-        exerciseRagDocuments: {type: String, required: true },
-        attemptRagDocuments: {type: String, required: true },
+        exerciseRagDocuments: {type: Map<String, String[]>, required: true },
+        attemptRagDocuments: {type: Map<String, String[]>, required: true },
     },
     {
         timestamps: true

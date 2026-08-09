@@ -12,6 +12,7 @@ import AttemptResource from "./domain/attempts/attempt-resource";
 import EvaluationResource from "./domain/evaluations/evaluation-resource";
 import RagResource from "./domain/rag/rag-resource"
 import RagDocumentResource from "./domain/rag/document/rag-document-resource";
+import RagStaticResource from "./domain/rag/static/rag-static-resource";
 
 //For env File
 dotenv.config();
@@ -44,6 +45,7 @@ const evaluationGroupResource = new EvaluationGroupResource(router);
 const evaluationResource = new EvaluationResource(router);
 const attemptResource = new AttemptResource(router);
 const ragResource = new RagResource(router);
+const ragStaticResource = new RagStaticResource(router);
 const ragDocumentResource = new RagDocumentResource(router);
 app.use('/api', router);
 

@@ -2,6 +2,7 @@ import RagStaticRepository from "./rag-static-repository";
 import RagStatic from "./rag-static";
 import RagStaticListEntry from "./rag-static-list-entry";
 import RagStaticUpdate from "./rag-static-update";
+import RagStaticUpdateDto from "./rag-static-update-dto";
 
 export default class RagStaticService {
 
@@ -24,12 +25,33 @@ export default class RagStaticService {
         return await this.repository.getById(id);
     }
 
-    public async create(promptGroupUpdate: RagStaticUpdate): Promise<RagStatic> {
-        return await this.repository.create(promptGroupUpdate);
+    public async create(ragStaticUpdateDto: RagStaticUpdateDto): Promise<RagStatic> {
+        return await this.repository.create(
+            new RagStaticUpdate(
+                ragStaticUpdateDto.name,
+                new Map(ragStaticUpdateDto.exerciseRagDocuments.map(entry =>
+                    [entry.entityId, entry.ragDocuments] as const
+                )),
+                new Map(ragStaticUpdateDto.attemptRagDocuments.map(entry =>
+                    [entry.entityId, entry.ragDocuments] as const
+                )),
+            )
+        );
     }
 
-    public async update(id: string, update: RagStaticUpdate): Promise<RagStatic> {
-        return await this.repository.update(id, update);
+    public async update(id: string, update: RagStaticUpdateDto): Promise<RagStatic> {
+        return await this.repository.update(
+            id,
+            new RagStaticUpdate(
+                update.name,
+                new Map(update.exerciseRagDocuments.map(entry =>
+                    [entry.entityId, entry.ragDocuments] as const
+                )),
+                new Map(update.attemptRagDocuments.map(entry =>
+                    [entry.entityId, entry.ragDocuments] as const
+                )),
+            )
+        );
     }
 
     public async delete(id: string): Promise<boolean> {

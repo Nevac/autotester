@@ -1,0 +1,6 @@
+.rag-create-box {
+    display: flex;
+    gap: 40px;
+    flex-direction: column;
+    flex: 1;
+}

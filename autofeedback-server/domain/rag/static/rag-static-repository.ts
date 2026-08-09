@@ -34,6 +34,7 @@ export default class RagStaticRepository {
     }
 
     public async create(ragStaticUpdate: RagStaticUpdate): Promise<RagStatic> {
+        console.log(ragStaticUpdate);
         return await RagStaticModel.create(
             ragStaticUpdate
         ).then(document => {

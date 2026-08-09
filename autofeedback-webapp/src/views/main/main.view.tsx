@@ -27,6 +27,8 @@ import EvaluationGroupExportComponent
     from "../../domains/evaluation/groups/evaluation-group-export/evaluation-group-export.component";
 import EvaluationGroupStatisticsComponent
     from "../../domains/evaluation/groups/evaluation-group-statistics/evaluation-group-statistics.component";
+import RagStaticCreateComponent from "../../domains/rag/static/rag-static-create/rag-static-create.component";
+import RagStaticEditComponent from "../../domains/rag/static/rag-static-edit/rag-static-edit.component";
 
 export default function MainView() {
 
@@ -55,10 +57,11 @@ export default function MainView() {
                             <Route path={Routes.EVALUATION_GROUP_STATISTICS} element={<EvaluationGroupStatisticsComponent/>}/>
                             <Route path={Routes.RAG_CREATE} element={<RagCreateComponent/>}/>
                             <Route path={Routes.RAG_EDIT} element={<RagEditComponent/>}/>
+                            <Route path={Routes.RAG_STATIC_CREATE} element={<RagStaticCreateComponent/>}/>
+                            <Route path={Routes.RAG_STATIC_EDIT} element={<RagStaticEditComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_CREATE} element={<RagDocumentCreateComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_EDIT} element={<RagDocumentEditComponent/>}/>
                             <Route path={Routes.RAG_DOCUMENT_EXPORT} element={<RagDocumentExportComponent/>}/>
-
                         </RoutesComponent>
                     </PaperDefaultComponent>
                 </div>
