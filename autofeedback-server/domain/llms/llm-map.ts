@@ -10,6 +10,7 @@ import OpenReasoningClient from "./open-reasoning-nemotron/open-reasoning-client
 export const llmMap = new Map<string, LlmClient>([
     [Llm.GPT_4_1, new ChatGptClient("gpt-4.1-2025-04-14")],
     [Llm.GPT_5, new ChatGptClient("gpt-5-2025-08-07")],
+    [Llm.GPT_5_2, new ChatGptClient("gpt-5.2-2025-12-11")],
     [Llm.O1_MINI, new OxClient("o1-mini-2024-09-12")],
     [Llm.O3, new OxClient("o3-2025-04-16")],
     [Llm.O4_MINI, new OxClient("o4-mini-2025-04-16")],

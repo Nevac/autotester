@@ -1,6 +1,7 @@
 export enum Llm {
     GPT_4_1 = "gpt-4-1",
     GPT_5 = "gpt-5",
+    GPT_5_2 = "gpt-5-2",
     O1_MINI = "01-mini",
     O3 = "o3",
     O4_MINI = "o4-mini",
