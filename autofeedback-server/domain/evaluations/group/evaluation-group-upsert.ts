@@ -5,6 +5,7 @@ import EvaluationState from "../evaluation-state";
 import Rag from "../../rag/rag";
 import {EvaluationGroup} from "./evaluation-group";
 import {Llm} from "../../llms/llm";
+import RagStatic from "../../rag/static/rag-static";
 
 export default class EvaluationGroupUpsert {
     bestLlm?: Llm;
@@ -17,7 +18,8 @@ export default class EvaluationGroupUpsert {
         public llms: Map<string, EvaluationGroupLlm>,
         public state: EvaluationState,
         public astEnabled: boolean,
-        public rag?: Rag
+        public rag?: Rag,
+        public ragStatic?: RagStatic
     ) {}
 
     public static ofEvaluationGroup(evaluationGroup: EvaluationGroup): EvaluationGroupUpsert {
@@ -28,7 +30,8 @@ export default class EvaluationGroupUpsert {
             evaluationGroup.llms,
             evaluationGroup.state,
             evaluationGroup.astEnabled,
-            evaluationGroup.rag
+            evaluationGroup.rag,
+            evaluationGroup.ragStatic
         )
     }
 

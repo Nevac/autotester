@@ -29,13 +29,15 @@ import EnumUtil from "../../../util/enum/EnumUtil";
 import RagListItem from "../../../rag/groups/rag-list-item";
 import RagEndpoint from "../../../rag/groups/rag-endpoint";
 import {evaluationGroupsUpdateSlice} from "../evaluation-groups-update.slice";
+import RagStaticEndpoint from "../../../rag/static/rag-static-endpoint";
 
 interface ChatGroupFormProps {
     nameInit?: string,
     exerciseInit?: string,
     promptGroupInit?: string,
     attemptsInit?: string[],
-    ragInit?: string,
+    ragClientInit?: string,
+    ragStaticInit?: string,
     llmsInit?: Llm[],
     astInit?: boolean,
 }
@@ -60,7 +62,8 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
     const nameInput = useInputValue<string>(props.nameInit, {required: true});
     const promptGroupInput = useInputValue<string>(props.promptGroupInit, {required: true});
     const attemptsInput = useInputValue<string[]>(props.attemptsInit, {required: true});
-    const ragInput = useInputValue<string | undefined>(props.ragInit, {required: false});
+    const ragClientInput = useInputValue<string | undefined>(props.ragClientInit, {required: false});
+    const ragStaticInput = useInputValue<string | undefined>(props.ragStaticInit, {required: false});
     const llmsInput = useInputValue<string[]>(props.llmsInit, {required: true});
     const astInput = useInputValue<boolean>(props.astInit ? props.astInit : true, {required: true});
     const isFormValid = useFormValidationHook([
@@ -72,14 +75,17 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
 
     const [selectableAttempts, setSelectableAttempts] = useState<AttemptListItem[]>([]);
     const [selectablePromptGroups, setselectablePromptGroups] = useState<PromptGroupListItem[]>([]);
-    const [selectableRags, setSelectableRags] = useState<RagListItem[]>([]);
-    const ragSelectRef = useRef<HTMLInputElement>(null)
+    const [selectableRagClients, setSelectableRagClients] = useState<RagListItem[]>([]);
+    const [selectableRagStatics, setSelectableRagStatics] = useState<RagListItem[]>([]);
+    const ragClientSelectRef = useRef<HTMLInputElement>(null)
+    const ragStaticSelectRef = useRef<HTMLInputElement>(null)
     const [selectableLlms, setSelectableLlms] = useState<SelectableLlm[]>([]);
 
     const evaluationGroupEndpoint = new EvaluationGroupEndpoint();
     const attemptEndpoint = new AttemptEndpoint();
     const promptGroupEndpoint = new PromptGroupEndpoint();
     const ragEndpoint = new RagEndpoint();
+    const ragStaticEndpoint = new RagStaticEndpoint();
 
     const [openSnackbar, Snackbar] = useSnackbar();
 
@@ -99,9 +105,15 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
                 console.error(err);
             });
         ragEndpoint.getListItems()
-            .then(items => setSelectableRags(items))
+            .then(items => setSelectableRagClients(items))
             .catch(err => {
-                openSnackbar("Failed to load rag selection", SnackbarVariant.ERROR);
+                openSnackbar("Failed to load rag client selection", SnackbarVariant.ERROR);
+                console.error(err);
+            });
+        ragStaticEndpoint.getListItems()
+            .then(items => setSelectableRagStatics(items))
+            .catch(err => {
+                openSnackbar("Failed to load rag client selection", SnackbarVariant.ERROR);
                 console.error(err);
             });
         const llms = Object.values(Llm).map(llm => SelectableLlm.of(llm));
@@ -116,7 +128,8 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
                 attemptsInput.valueOrThrow(),
                 llmsInput.valueOrThrow(),
                 astInput.valueOrThrow(),
-                ragInput.valueOrUndefined()
+                ragClientInput.valueOrUndefined(),
+                ragStaticInput.valueOrUndefined()
             )
         ).then(state => {
             if(state == EndpointResponeStatus.SUCCESS) {
@@ -127,12 +140,18 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
         });
     }
 
-    const resetRagSelection = () => {
-        console.log("RESET")
-        if(ragSelectRef?.current) {
-            ragSelectRef.current.value = "";
+    const resetRagClientSelection = () => {
+        if(ragClientSelectRef?.current) {
+            ragClientSelectRef.current.value = "";
         }
-        ragInput.setRawValue(undefined);
+        ragClientInput.setRawValue(undefined);
+    }
+
+    const resetRagStaticSelection = () => {
+        if(ragStaticSelectRef?.current) {
+            ragStaticSelectRef.current.value = "";
+        }
+        ragStaticInput.setRawValue(undefined);
     }
 
     const llmColumns: GridColDef[] = [
@@ -145,46 +164,67 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
     ];
 
     return (
-        <PaperDefaultComponent className={'evaluation-group-form-modal-paper'}>
+        <div className={'evaluation-group-form-container'}>
             <Snackbar/>
             <Typography id="modal-modal-title" variant="h6" component="h2">
                 Create new Evaluation
             </Typography>
+            <TextField
+                id="name"
+                label="Name"
+                className='evaluation-group-form-modal-text-area'
+                value={nameInput.value}
+                onChange={nameInput.handleChange}
+                required
+                error={nameInput.error}
+            />
             <div className={'evaluation-group-form-modal-text-area-container'}>
-                <TextField
-                    id="name"
-                    label="Name"
-                    className='evaluation-group-form-modal-text-area'
-                    value={nameInput.value}
-                    onChange={nameInput.handleChange}
-                    required
-                    error={nameInput.error}
-                />
-                <div>
-                    <FormControl fullWidth style={{display: "flex", flexDirection: "row"}}>
+                <div style={{flex: "1 1 auto"}}>
+                    <FormControl style={{display: "flex", flexDirection: "row"}}>
                         <TextField
                             fullWidth
                             select
                             id="rag-label"
-                            value={ragInput.value}
-                            label="RAG"
-                            onChange={ragInput.handleChange}
-                            error={ragInput.error}
-                            ref={ragSelectRef}
+                            value={ragClientInput.value}
+                            label="RAG Client"
+                            onChange={ragClientInput.handleChange}
+                            error={ragClientInput.error}
+                            ref={ragClientSelectRef}
                         >
-                            {selectableRags.map(rags =>
+                            {selectableRagClients.map(rags =>
                                 <MenuItem value={rags._id}>{rags.name}</MenuItem>
                             )}
                         </TextField>
-                        <Button variant={"outlined"} onClick={resetRagSelection}>
+                        <Button variant={"outlined"} onClick={resetRagClientSelection}>
                             Reset
                         </Button>
                     </FormControl>
                     <FormControl style={{width: 400}}>
-                        <FormControlLabel control={<Checkbox defaultChecked />} label="Use AST" />
+                        <FormControlLabel control={<Checkbox/>} label="Use AST" />
                     </FormControl>
                 </div>
-                <FormControl fullWidth>
+                <div style={{flex: "1 1 auto"}}>
+                    <FormControl style={{display: "flex", flexDirection: "row"}}>
+                        <TextField
+                            fullWidth
+                            select
+                            id="rag-static-label"
+                            value={ragStaticInput.value}
+                            label="RAG static map"
+                            onChange={ragStaticInput.handleChange}
+                            error={ragStaticInput.error}
+                            ref={ragStaticSelectRef}
+                        >
+                            {selectableRagStatics.map(rags =>
+                                <MenuItem value={rags._id}>{rags.name}</MenuItem>
+                            )}
+                        </TextField>
+                        <Button variant={"outlined"} onClick={resetRagStaticSelection}>
+                            Reset
+                        </Button>
+                    </FormControl>
+                </div>
+                <FormControl style={{flex: "1 1 auto"}}>
                     <TextField
                         select
                         id="prompt-group-label"
@@ -234,6 +274,6 @@ export default function EvaluationGroupFormComponent(props: ChatGroupFormProps) 
             <Button variant={"contained"} onClick={createChat} disabled={!isFormValid}>
                 Save
             </Button>
-        </PaperDefaultComponent>
+        </div>
     )
 }

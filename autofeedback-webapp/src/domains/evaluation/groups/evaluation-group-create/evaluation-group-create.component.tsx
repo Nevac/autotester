@@ -2,6 +2,8 @@ import EvaluationGroupFormComponent from "../evaluation-group-form/evaluation-gr
 
 export default function EvaluationGroupCreateComponent() {
     return (
-        <EvaluationGroupFormComponent/>
+        <div style={{padding: 20, width: "100%"}}>
+            <EvaluationGroupFormComponent/>
+        </div>
     )
 }

@@ -5,6 +5,7 @@ export default class EvaluationGroupUpdate {
         public readonly attemptIds: string[],
         public readonly llms: string[],
         public readonly astEnabled: boolean,
-        public readonly ragId?: string
+        public readonly ragClientId?: string,
+        public readonly ragStaticId?: string,
     ) {}
 }

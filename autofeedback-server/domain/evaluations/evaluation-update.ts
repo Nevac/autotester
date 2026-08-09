@@ -9,6 +9,7 @@ import {Evaluation} from "./evaluation";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
 import Ast from "../ast/ast";
 import {EvaluationScoreUpsert} from "./score/evaluation-score-upsert";
+import RagStatic from "../rag/static/rag-static";
 
 export default class EvaluationUpdate {
     public state: EvaluationState = EvaluationState.INITIATED;
@@ -24,7 +25,8 @@ export default class EvaluationUpdate {
         public promptGroup: PromptGroup,
         public llm: Llm,
         public ast: Ast,
-        public rag?: Rag
+        public ragClient?: Rag,
+        public ragStatic?: RagStatic
     ) {}
 
     public static ofEvaluation(
@@ -37,7 +39,8 @@ export default class EvaluationUpdate {
             evaluation.promptGroup,
             evaluation.llm,
             evaluation.ast,
-            evaluation.rag
+            evaluation.rag,
+            evaluation.ragStatic
         )
             .setSemanticStatistic(evaluation.semanticStatistic)
             .setScore(EvaluationScoreUpsert.ofEvaluationScore(evaluation.score))

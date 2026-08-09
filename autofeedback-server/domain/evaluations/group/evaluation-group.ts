@@ -8,6 +8,7 @@ import EvaluationGroupLlm, {evaluationGroupLlmSchema} from "./llm/evaluation-gro
 import EvaluationState from "../evaluation-state";
 import Rag, {ragSchema} from "../../rag/rag";
 import {EvaluationDocument} from "../evaluation";
+import RagStatic, {ragStaticSchema} from "../../rag/static/rag-static";
 
 
 export interface IEvaluationGroup {
@@ -18,6 +19,7 @@ export interface IEvaluationGroup {
     state: EvaluationState,
     astEnabled: boolean,
     rag?: Rag,
+    ragStatic?: RagStatic,
     bestLlm?: Llm,
     bestScore?: number
 }
@@ -36,6 +38,7 @@ export class EvaluationGroup implements IEvaluationGroup, Entity {
         public readonly createdAt: Date,
         public readonly updatedAt: Date,
         public readonly rag?: Rag,
+        public readonly ragStatic?: RagStatic,
         public readonly bestLlm?: Llm,
         public readonly bestScore?: number
     ) {}
@@ -54,6 +57,7 @@ export class EvaluationGroup implements IEvaluationGroup, Entity {
             createdAt,
             updatedAt,
             evaluationGroup.rag,
+            evaluationGroup.ragStatic,
             evaluationGroup.bestLlm,
             evaluationGroup.bestScore
         )
@@ -76,6 +80,7 @@ export const evaluationGroupSchema = new Schema<IEvaluationGroup>(
         llms: { type: Map, of: evaluationGroupLlmSchema, required: true },
         state: { type: String, required: true },
         rag: { type: ragSchema, required: false },
+        ragStatic: { type: ragStaticSchema, required: false },
         astEnabled: { type: Boolean, required: true },
         bestScore: { type: Number, required: false },
         bestLlm: { type: String, required: false }

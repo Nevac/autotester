@@ -7,7 +7,8 @@ export default class EvaluationGroupInsertDto {
         public readonly attemptIds: Set<string>,
         public readonly llms: Set<Llm>,
         public readonly astEnabled: boolean,
-        public readonly ragId?: string
+        public readonly ragId?: string,
+        public readonly ragStaticId?: string,
     ) {
     }
 }
