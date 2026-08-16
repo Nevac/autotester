@@ -117,6 +117,17 @@ export default class EvaluationGroupService {
         return evalGroup;
     }
 
+    public async generateAllSemanticStatistics(id: string): Promise<EvaluationGroup> {
+        const evalGroup = await this.evaluationGroupRepository.getById(id);
+
+        const evaluations = await this.evaluationService.getByGroupId(id);
+        await this.evaluationService.generateAllSemanticStatistics(evaluations)
+
+        await this.scoreEvaluationGroup(evalGroup);
+        return evalGroup;
+    }
+
+
     public async recalculateScore(id: string): Promise<EvaluationGroup> {
         const evalGroup = await this.evaluationGroupRepository.getById(id);
         await this.scoreEvaluationGroup(evalGroup);

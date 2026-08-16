@@ -24,6 +24,8 @@ import ExportDocumentGenerator from "../export/document-generator";
 import DocumentEvaluationsContentGenerator from "../export/document-evaluations-content-generator";
 import RagDocumentRepository from "../rag/document/rag-document-repository";
 import EvaluationRagDocument from "./rag-document/evaluation-rag-document";
+import ExpectedFeedback from "../attempts/expected-feedback/expected-feedback";
+import EvaluationSemanticStatistic from "./statistic/evaluation-semantic-statistic";
 
 export default class EvaluationService {
 
@@ -32,8 +34,7 @@ export default class EvaluationService {
     private readonly llmService: LlmService;
     private readonly semanticEvaluatorClient: SemanticEvaluatorClient;
 
-    constructor(
-    ) {
+    constructor() {
         this.evaluationRepository = new EvaluationRepository();
         this.ragDocRepository = new RagDocumentRepository();
         this.llmService = new LlmService();
@@ -47,7 +48,7 @@ export default class EvaluationService {
                 .setState(EvaluationState.RUNNING)
         );
 
-        try{
+        try {
             logger.debug(`Start Evaluation [${evaluation.llm}][${evaluation._id}]`)
             const client = this.llmService.resolveLlmService(evaluation.llm);
 
@@ -70,17 +71,10 @@ export default class EvaluationService {
                     .setAst(ast)
             );
 
-            const evaluationStatistic = await this.semanticEvaluatorClient.evaluate(
+            const evaluationStatistic = await this.generateSemanticStatistics(
                 llmFeedback,
                 evaluation.attempt.expectedFeedback
-            ).catch(err => {
-                console.log(err);
-                undefined
-            });
-
-            if(!evaluationStatistic) {
-                throw new Error();
-            }
+            )
 
             const evaluationScore = ScoreCalculator.calculateFromStatistic(
                 evaluation.attempt.expectedFeedback,
@@ -105,6 +99,25 @@ export default class EvaluationService {
 
     }
 
+    private async generateSemanticStatistics(
+        llmFeedback: string,
+        expectedFeedback: ExpectedFeedback
+    ): Promise<EvaluationSemanticStatistic> {
+        const evaluationStatistic = await this.semanticEvaluatorClient.evaluate(
+            llmFeedback,
+            expectedFeedback
+        ).catch(err => {
+            console.log(err);
+            undefined
+        });
+
+        if (!evaluationStatistic) {
+            throw new Error();
+        }
+
+        return evaluationStatistic
+    }
+
     public async calculateScoresFromStatistic(evaluations: Map<string, Evaluation>): Promise<Map<string, Evaluation>> {
         const updates = new Map(
             Array.from(evaluations.entries()).map(([id, evaluation]) => {
@@ -121,6 +134,37 @@ export default class EvaluationService {
 
         return await this.evaluationRepository.updateAll(updates);
     }
+
+    public async generateAllSemanticStatistics(evaluations: Map<string, Evaluation>): Promise<Map<string, Evaluation>> {
+        const entries: [string, EvaluationUpdate][] = []
+        let count = 0;
+
+        for(let [id, evaluation] of evaluations.entries()) {
+            count++;
+            console.log(`Generated ${count}/${evaluations.size} statistics`)
+            const semanticStatistic = await this.generateSemanticStatistics(
+                evaluation.generatedFeedback,
+                evaluation.attempt.expectedFeedback
+            );
+
+            const evaluationScore =
+                ScoreCalculator.calculateFromStatistic(
+                    evaluation.attempt.expectedFeedback,
+                    semanticStatistic
+                );
+
+            const update = EvaluationUpdate.ofEvaluation(evaluation)
+                .setSemanticStatistic(semanticStatistic)
+                .setScore(evaluationScore);
+
+            entries.push([id, update]);
+        }
+
+        const updates = new Map<string, EvaluationUpdate>(entries);
+
+        return this.evaluationRepository.updateAll(updates);
+    }
+
 
     public async correctScore(id: string, correction: EvaluationScoreCorrection): Promise<Evaluation> {
         const evaluationUpdate = EvaluationUpdate.ofEvaluation(
@@ -178,8 +222,8 @@ export default class EvaluationService {
 
     public async createByGroup(evaluationGroup: EvaluationGroup): Promise<Map<string, Evaluation>> {
         const evaluations = [];
-        for(const llm of evaluationGroup.llms) {
-            for(const attempt of evaluationGroup.attempts.values()) {
+        for (const llm of evaluationGroup.llms) {
+            for (const attempt of evaluationGroup.attempts.values()) {
                 evaluations.push(
                     new EvaluationUpdate(
                         llm[0] + "-" + attempt.name,
@@ -213,7 +257,7 @@ export default class EvaluationService {
 
     private async loadRagDocuments(evaluation: Evaluation): Promise<EvaluationRagDocument[]> {
         let ragClientResponse: RagClientResponse = RagClientResponse.empty(evaluation.ast);
-        if(evaluation.rag) {
+        if (evaluation.rag) {
             const ragClient = new PineconeClient(
                 new TextEmbedding3LargeClient(),
                 evaluation.rag.apiId
@@ -227,19 +271,19 @@ export default class EvaluationService {
         let exerciseDocuments: EvaluationRagDocument[] = [];
         let attemptDocuments: EvaluationRagDocument[] = [];
 
-        if(evaluation.ragStatic) {
+        if (evaluation.ragStatic) {
             const ragStatic = evaluation.ragStatic;
             const attemptId = evaluation.attempt._id.toString();
             const exerciseId = evaluation.attempt.exercise._id.toString();
 
-            if(ragStatic.exerciseRagDocuments.has(exerciseId)) {
+            if (ragStatic.exerciseRagDocuments.has(exerciseId)) {
                 const ragDocuments = await this.ragDocRepository.getByIds(
                     ragStatic.exerciseRagDocuments.get(exerciseId)!!
                 )
                 exerciseDocuments = EvaluationRagDocument.ofRagDocs(Array.from(ragDocuments.values()));
             }
 
-            if(ragStatic.attemptRagDocuments.has(attemptId)) {
+            if (ragStatic.attemptRagDocuments.has(attemptId)) {
                 const ragDocuments = await this.ragDocRepository.getByIds(
                     ragStatic.attemptRagDocuments.get(exerciseId)!!
                 )

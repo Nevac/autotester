@@ -162,6 +162,9 @@ export default function EvaluationGroupDetailComponent() {
                 <Button variant={'contained'} onClick={calculateScore}>
                     <ReplayIcon/> <Typography>Recalculate Score</Typography>
                 </Button>
+                <Button variant={'contained'} onClick={generateSemanticStatistics}>
+                    <ReplayIcon/> <Typography>Regenerate Semantic Statistics</Typography>
+                </Button>
             </Box>
         )
     }
@@ -180,6 +183,18 @@ export default function EvaluationGroupDetailComponent() {
     function calculateScore(): void {
         if(evaluationGroup) {
             evaluationGroupEndpoint.calculateScore(evaluationGroup._id)
+                .then(state => {
+                    if(state == EndpointResponeStatus.SUCCESS) {
+                        openSnackbar("Recalculation Successful", SnackbarVariant.SUCCESS);
+                        dispatch(evaluationGroupUpdateSlice.actions.update())
+                    } else openSnackbar("Failed to perform retry", SnackbarVariant.ERROR);
+                });
+        }
+    }
+
+    function generateSemanticStatistics(): void {
+        if(evaluationGroup) {
+            evaluationGroupEndpoint.generateSemanticStatistics(evaluationGroup._id)
                 .then(state => {
                     if(state == EndpointResponeStatus.SUCCESS) {
                         openSnackbar("Recalculation Successful", SnackbarVariant.SUCCESS);

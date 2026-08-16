@@ -63,6 +63,11 @@ export default class EvaluationGroupResource {
             res.json(evaluationGroup);
         });
 
+        router.post(`/${this.RESOURCE}/:id/generateSemanticStatistics`, async (req, res, next) => {
+            const evaluationGroup = await this.service.generateAllSemanticStatistics(req.params.id).catch(next);
+            res.json(evaluationGroup);
+        });
+
         router.post(`/${this.RESOURCE}/:id/correctScore`, async (req, res, next) => {
             const evaluation = await this.service.correctScore(
                 req.params.id,

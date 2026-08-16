@@ -70,6 +70,19 @@ export default class EvaluationGroupEndpoint {
         })
     }
 
+    public generateSemanticStatistics(id: string): Promise<EndpointResponeStatus> {
+        return fetch(`${this.ENDPOINT}/${id}/generateSemanticStatistics`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(res => {
+            if(res.ok) return EndpointResponeStatus.SUCCESS
+            return EndpointResponeStatus.FAIL;
+        })
+    }
+
     public correctScore(id: string, correctScoreDto: CorrectScoreDto): Promise<Evaluation> {
         return fetch(`${this.ENDPOINT}/${id}/correctScore`, {
             method: "POST",
