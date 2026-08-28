@@ -285,7 +285,7 @@ export default class EvaluationService {
 
             if (ragStatic.attemptRagDocuments.has(attemptId)) {
                 const ragDocuments = await this.ragDocRepository.getByIds(
-                    ragStatic.attemptRagDocuments.get(exerciseId)!!
+                    ragStatic.attemptRagDocuments.get(attemptId)!!
                 )
                 attemptDocuments = EvaluationRagDocument.ofRagDocs(Array.from(ragDocuments.values()));
             }

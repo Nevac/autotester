@@ -63,7 +63,9 @@ export default class DocumentAttemptsContentGenerator {
     private static changeTaskHeaders(task: string): string {
         return task
             .replace(/## /g, "### ")
-            .replace(/# /g, "### ");
+            .replace(/# /g, "### ")
+            .replace(/==== /g, "####")
+            .replace(/=== /g, "###");
     }
 
     private static expectedFeedbackGenerator(metric: string, feedbackReferences: FeedbackReference[]): string {

@@ -263,7 +263,7 @@ export default class EvaluationGroupService {
             evaluationGroups,
             evaluations
         );
-        return await ExportDocumentGenerator.pdf("Anhang 3. Evaluation mit RAG AST", htmlContent);
+        return await ExportDocumentGenerator.pdf("Anhang FS26 Evaluation ohne und mit RAG", htmlContent);
     }
 
     public async statistic(request: EvaluationGroupStatisticRequestDto): Promise<EvaluationGroupStatistic> {

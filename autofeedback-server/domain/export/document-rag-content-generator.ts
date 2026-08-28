@@ -60,7 +60,7 @@ export default class DocumentRagContentGenerator {
 
     private static extractTitle(ragDoc: RagDoc) {
         const text = ragDoc.metadata.text;
-        return text.slice(3, text.indexOf("\n"));
+        return text.slice(2, text.indexOf("\n"));
     }
 
     private static metadataGenerator(metadata: RagDocumentMetadata): string {

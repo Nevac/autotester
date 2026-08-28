@@ -140,63 +140,61 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
         );
     }
 
-    const renderExternalForm = () => {
-        if(externallyManagedInput.value) {
-            return <>
-                <Typography variant={'h5'}>Metadata</Typography>
-                <div className={'rag-document-form-text-area-container'}>
-                    {renderTextInput("category", "Category", categoryInput)}
-                    {renderTextInput("language", "Language", languageInput)}
-                    {renderTextInput("topic", "Topic", topicInput)}
-                    {renderTextInput("type", "Type", typeInput)}
-                </div>
+    const renderMetadata = () => {
+        return <>
+            <Typography variant={'h5'}>Metadata</Typography>
+            <div className={'rag-document-form-text-area-container'}>
+                {renderTextInput("category", "Category", categoryInput)}
+                {renderTextInput("language", "Language", languageInput)}
+                {renderTextInput("topic", "Topic", topicInput)}
+                {renderTextInput("type", "Type", typeInput)}
+            </div>
 
 
-                <div className={'rag-document-form-text-area-container'}>
-                    <div style={{display: "flex", flexDirection: "column", flex: 1, gap: 10, minHeight: 0}}>
-                        <TextField
-                            style={{overflowY: "scroll", flex: 1}}
-                            id="task"
-                            label="Add to Constructs"
-                            className='prompt-group-form-text-area'
-                            multiline
-                            value={constructInput.value}
-                            onChange={constructInput.handleChange}
-                            fullWidth
-                        />
-                        {renderConstructAddButton()}
-                    </div>
-                    <div style={{flex: 1, display: "flex"}}>
-                        <List
-                            subheader={
-                                <div style={{padding: 10, display: "flex", justifyContent: "start", background: "#121212"}}>
-                                    Constructs
-                                </div>
-                            }
-                            style={{border: "1px solid gray", flex: 1, borderRadius: 5}}
-                        >
-                            {constructsInput.value ? constructsInput.valueOrThrow().map((item, index) =>
-                                <ListItem disablePadding key={index}>
-                                    <ListItemButton
-                                        selected={index === selectedConstructIndex}
-                                        onClick={() => onClickConstructs(item, index)}>
-                                        <Paper style={{padding: 10, flex: 1}}>
-                                            <ListItemText primary={item}/>
-                                        </Paper>
-                                    </ListItemButton>
-                                    <Button onClick={() => removeConstruct(index)}
-                                            variant={"contained"}
-                                            color={"error"}
-                                    >
-                                        <Delete/>
-                                    </Button>
-                                </ListItem>
-                            ) : <></>}
-                        </List>
-                    </div>
+            <div className={'rag-document-form-text-area-container'}>
+                <div style={{display: "flex", flexDirection: "column", flex: 1, gap: 10, minHeight: 0}}>
+                    <TextField
+                        style={{overflowY: "scroll", flex: 1}}
+                        id="task"
+                        label="Add to Constructs"
+                        className='prompt-group-form-text-area'
+                        multiline
+                        value={constructInput.value}
+                        onChange={constructInput.handleChange}
+                        fullWidth
+                    />
+                    {renderConstructAddButton()}
                 </div>
-            </>
-        }
+                <div style={{flex: 1, display: "flex"}}>
+                    <List
+                        subheader={
+                            <div style={{padding: 10, display: "flex", justifyContent: "start", background: "#121212"}}>
+                                Constructs
+                            </div>
+                        }
+                        style={{border: "1px solid gray", flex: 1, borderRadius: 5}}
+                    >
+                        {constructsInput.value ? constructsInput.valueOrThrow().map((item, index) =>
+                            <ListItem disablePadding key={index}>
+                                <ListItemButton
+                                    selected={index === selectedConstructIndex}
+                                    onClick={() => onClickConstructs(item, index)}>
+                                    <Paper style={{padding: 10, flex: 1}}>
+                                        <ListItemText primary={item}/>
+                                    </Paper>
+                                </ListItemButton>
+                                <Button onClick={() => removeConstruct(index)}
+                                        variant={"contained"}
+                                        color={"error"}
+                                >
+                                    <Delete/>
+                                </Button>
+                            </ListItem>
+                        ) : <></>}
+                    </List>
+                </div>
+            </div>
+        </>
     }
 
     return (
@@ -212,7 +210,7 @@ export default function RagDocumentFormComponent(props: PromptGroupFormProps) {
             <div className={'rag-document-form-text-area-container'}>
                 {renderTextInput("externalId", "Title or external Id in RAG database", idInput, props.isIdEditEnabled)}
             </div>
-            {renderExternalForm()}
+            {renderMetadata()}
             <div>
                 <Button variant={"contained"} onClick={replaceN}>
                     <Typography>
